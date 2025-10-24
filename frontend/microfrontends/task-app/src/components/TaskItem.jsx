@@ -1,42 +1,12 @@
 import React from 'react';
 import './TaskItem.css';
 
-// Safe Tooltip component that handles module federation errors
+// Simple tooltip fallback that uses native title attribute
 const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }) => {
-  const [TooltipComponent, setTooltipComponent] = React.useState(null);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    // Try to import Tooltip dynamically
-    import('sharedComponents/Tooltip')
-      .then(module => {
-        setTooltipComponent(module.default);
-        setIsLoading(false);
-      })
-      .catch(error => {
-        console.warn('Tooltip component not available, falling back to native title attribute:', error);
-        setTooltipComponent(null);
-        setIsLoading(false);
-      });
-  }, []);
-
-  // Show loading state or fallback
-  if (isLoading) {
-    return <>{children}</>;
-  }
-
-  // If Tooltip component is available, use it
-  if (TooltipComponent) {
-    return (
-      <TooltipComponent content={content} position={position} maxWidth={maxWidth}>
-        {children}
-      </TooltipComponent>
-    );
-  }
-
-  // Fallback to native title attribute
+  // For now, just use native title attribute to avoid module federation issues
+  // TODO: Implement proper tooltip when module federation is stable
   return (
-    <span title={content}>
+    <span title={content} style={{ display: 'inline-block', width: '100%' }}>
       {children}
     </span>
   );
