@@ -1,46 +1,42 @@
 import axios from 'axios';
+import { API_CONFIG } from '../constants';
 
 /**
  * Unified API Client for consistent API usage across all microfrontends
  * Provides centralized configuration, error handling, and authentication
  */
 
-// API Configuration - Direct to individual services
-export const API_BASE_URLS = {
-  auth: 'http://localhost:3001/api',
-  users: 'http://localhost:3001/api',
-  tasks: 'http://localhost:3002/api',
-  notifications: 'http://localhost:3003/api'
-};
+// API Configuration - Using centralized constants
+export const API_BASE_URLS = API_CONFIG.BASE_URLS;
 
 // Create axios instances for different services
 export const authApi = axios.create({
-  baseURL: API_BASE_URLS.auth,
-  timeout: 30000,
+  baseURL: API_BASE_URLS.AUTH,
+  timeout: API_CONFIG.TIMEOUTS.DEFAULT,
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
 export const taskApi = axios.create({
-  baseURL: API_BASE_URLS.tasks,
-  timeout: 30000,
+  baseURL: API_BASE_URLS.TASKS,
+  timeout: API_CONFIG.TIMEOUTS.DEFAULT,
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
 export const notificationApi = axios.create({
-  baseURL: API_BASE_URLS.notifications,
-  timeout: 30000,
+  baseURL: API_BASE_URLS.NOTIFICATIONS,
+  timeout: API_CONFIG.TIMEOUTS.DEFAULT,
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
 export const userApi = axios.create({
-  baseURL: API_BASE_URLS.users,
-  timeout: 30000,
+  baseURL: API_BASE_URLS.USERS,
+  timeout: API_CONFIG.TIMEOUTS.DEFAULT,
   headers: {
     'Content-Type': 'application/json'
   }

@@ -1,5 +1,6 @@
 import React from 'react';
 import './TaskItem.css';
+import { TASK_CONSTANTS } from 'sharedComponents/constants';
 
 // Simple tooltip fallback that uses native title attribute
 const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }) => {
@@ -39,20 +40,16 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill priority-badge ${
-          task.priority === 'urgent' ? 'priority-urgent' :
-          task.priority === 'high' ? 'priority-high' :
-          task.priority === 'medium' ? 'priority-medium' : 'priority-low'
+          TASK_CONSTANTS.PRIORITY_CONFIG[task.priority]?.bgClass || 'priority-low'
         }`}>
-          {task.priority || 'low'}
+          {TASK_CONSTANTS.PRIORITY_CONFIG[task.priority]?.label || task.priority || 'low'}
         </span>
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill status-badge ${
-          task.status === 'completed' ? 'status-completed' :
-          task.status === 'in_progress' ? 'status-in-progress' :
-          task.status === 'cancelled' ? 'status-cancelled' : 'status-pending'
+          TASK_CONSTANTS.STATUS_CONFIG[task.status]?.bgClass || 'status-pending'
         }`}>
-          {task.status || 'pending'}
+          {TASK_CONSTANTS.STATUS_CONFIG[task.status]?.label || task.status || 'pending'}
         </span>
       </td>
       <td>

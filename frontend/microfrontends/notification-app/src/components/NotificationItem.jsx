@@ -1,4 +1,5 @@
 import React from 'react';
+import { NOTIFICATION_CONSTANTS } from 'sharedComponents/constants';
 
 // Simple tooltip fallback that uses native title attribute
 const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }) => {
@@ -71,8 +72,10 @@ const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDel
         </SafeTooltip>
       </td>
       <td className="text-center">
-        <span className={`badge rounded-pill ${getTypeColor(notification.type)}`}>
-          {notification.type || 'info'}
+        <span className={`badge rounded-pill ${
+          NOTIFICATION_CONSTANTS.TYPE_CONFIG[notification.type]?.bgClass || 'bg-info'
+        }`}>
+          {NOTIFICATION_CONSTANTS.TYPE_CONFIG[notification.type]?.label || notification.type || 'info'}
         </span>
       </td>
       <td className="text-center">

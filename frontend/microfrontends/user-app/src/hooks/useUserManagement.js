@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from 'sharedComponents/useAuth';
+import { USER_CONSTANTS } from 'sharedComponents/constants';
 
 export const useUserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -8,15 +9,7 @@ export const useUserManagement = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [modalMode, setModalMode] = useState('add');
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    password: '',
-    role: 'user',
-    isActive: true
-  });
+  const [formData, setFormData] = useState(USER_CONSTANTS.DEFAULT_FORM);
 
   const { makeAuthenticatedRequest, isAuthenticated } = useAuth();
 
@@ -36,18 +29,11 @@ export const useUserManagement = () => {
 
       const response = await makeAuthenticatedRequest('http://localhost:3001/api/users');
       
-      if (response.ok) {
-        const data = await response.json();
-        const usersData = data.users || data || [];
-        setUsers(Array.isArray(usersData) ? usersData : []);
-        setApiStatus('connected');
-      } else {
-        setApiStatus('error');
-        setUsers([]);
-        if (window.showError) {
-          window.showError('Failed to fetch users. Please try again.');
-        }
-      }
+      // Axios response has data property, not ok/json like fetch
+      const data = response.data;
+      const usersData = data.users || data || [];
+      setUsers(Array.isArray(usersData) ? usersData : []);
+      setApiStatus('connected');
     } catch (error) {
       console.error('Error fetching users:', error);
       setApiStatus('error');
@@ -132,23 +118,16 @@ export const useUserManagement = () => {
 
       const response = await makeAuthenticatedRequest(url, {
         method,
-        body: JSON.stringify(formData)
+        data: formData  // Axios uses 'data' instead of 'body'
       });
       
-      if (response.ok) {
-        const result = await response.json();
-        if (window.showSuccess) {
-          window.showSuccess(modalMode === 'add' ? 'User created successfully!' : 'User updated successfully!');
-        }
-        fetchUsers();
-        setShowModal(false);
-      } else {
-        const errorText = await response.text();
-        console.error('Failed to save user:', response.status, errorText);
-        if (window.showError) {
-          window.showError(`Failed to save user: ${errorText}`);
-        }
+      // Axios response has data property, not ok/json like fetch
+      const result = response.data;
+      if (window.showSuccess) {
+        window.showSuccess(modalMode === 'add' ? 'User created successfully!' : 'User updated successfully!');
       }
+      fetchUsers();
+      setShowModal(false);
     } catch (error) {
       console.error('Error saving user:', error);
     }

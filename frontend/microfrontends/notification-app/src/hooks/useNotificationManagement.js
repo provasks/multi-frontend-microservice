@@ -34,30 +34,23 @@ export const useNotificationManagement = () => {
 
       const response = await makeAuthenticatedRequest('http://localhost:3003/api/notifications');
       
-      if (response.ok) {
-        const data = await response.json();
-        const notificationsData = data.notifications || data || [];
-        const serverNotifications = Array.isArray(notificationsData) ? notificationsData : [];
-        
-        setNotifications(prevNotifications => {
-          const merged = serverNotifications.map(serverNotification => {
-            const localNotification = prevNotifications.find(n => n._id === serverNotification._id);
-            if (localNotification && localNotification.isRead !== serverNotification.isRead) {
-              return { ...serverNotification, isRead: localNotification.isRead };
-            }
-            return serverNotification;
-          });
-          return merged;
+      // Axios response has data property, not ok/json like fetch
+      const data = response.data;
+      const notificationsData = data.notifications || data || [];
+      const serverNotifications = Array.isArray(notificationsData) ? notificationsData : [];
+      
+      setNotifications(prevNotifications => {
+        const merged = serverNotifications.map(serverNotification => {
+          const localNotification = prevNotifications.find(n => n._id === serverNotification._id);
+          if (localNotification && localNotification.isRead !== serverNotification.isRead) {
+            return { ...serverNotification, isRead: localNotification.isRead };
+          }
+          return serverNotification;
         });
-        
-        setApiStatus('connected');
-      } else {
-        setApiStatus('error');
-        setNotifications([]);
-        if (window.showError) {
-          window.showError('Failed to fetch notifications. Please try again.');
-        }
-      }
+        return merged;
+      });
+      
+      setApiStatus('connected');
     } catch (error) {
       console.error('Error fetching notifications:', error);
       setApiStatus('error');
@@ -210,29 +203,13 @@ export const useNotificationManagement = () => {
         method: 'PATCH'
       });
       
-      if (response.ok) {
-        const result = await response.json();
-        if (result.notification && result.notification.isRead === true) {
-          if (window.showSuccess) {
-            window.showSuccess('Notification marked as read!');
-          }
-          fetchNotifications();
+      // Axios response has data property, not ok/json like fetch
+      const result = response.data;
+      if (result.notification && result.notification.isRead === true) {
+        if (window.showSuccess) {
+          window.showSuccess('Notification marked as read!');
         }
-      } else {
-        const errorText = await response.text();
-        console.error('Failed to mark notification as read:', response.status, errorText);
-        
-        setNotifications(prevNotifications => 
-          prevNotifications.map(notification => 
-            notification._id === notificationId 
-              ? { ...notification, isRead: false }
-              : notification
-          )
-        );
-        
-        if (window.showError) {
-          window.showError(`Failed to mark notification as read: ${errorText}`);
-        }
+        fetchNotifications();
       }
     } catch (error) {
       console.error('Error marking notification as read:', error);

@@ -1,4 +1,5 @@
 import React from 'react';
+import { USER_CONSTANTS } from 'sharedComponents/constants';
 
 // Simple tooltip fallback that uses native title attribute
 const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }) => {
@@ -57,10 +58,9 @@ const UserItem = React.memo(({ user, onEdit }) => {
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill ${
-          user.role === 'admin' ? 'bg-danger' : 
-          user.role === 'moderator' ? 'bg-warning text-dark' : 'bg-secondary'
+          USER_CONSTANTS.ROLE_CONFIG[user.role]?.bgClass || 'bg-secondary'
         }`}>
-          {user.role || 'user'}
+          {USER_CONSTANTS.ROLE_CONFIG[user.role]?.label || user.role || 'user'}
         </span>
       </td>
       <td className="text-center">

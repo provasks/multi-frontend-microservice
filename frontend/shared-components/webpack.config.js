@@ -57,7 +57,8 @@ module.exports = {
         './useGlobalErrorHandler': './src/hooks/useGlobalErrorHandler',
         './useRateLimit': './src/hooks/useRateLimit',
         './security': './src/utils/security',
-        './unifiedApiClient': './src/utils/unifiedApiClient'
+        './unifiedApiClient': './src/utils/unifiedApiClient',
+        './constants': './src/constants'
       },
       shared: {
         react: {

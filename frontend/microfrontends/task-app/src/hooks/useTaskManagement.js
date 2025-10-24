@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useDebounce } from './useDebounce';
 import { useAuth } from 'sharedComponents/useAuth';
 import { apiHelpers } from 'sharedComponents/unifiedApiClient';
+import { TASK_CONSTANTS } from 'sharedComponents/constants';
 
 export const useTaskManagement = () => {
   const [tasks, setTasks] = useState([]);
@@ -11,13 +12,7 @@ export const useTaskManagement = () => {
   const [editingTask, setEditingTask] = useState(null);
   const [modalMode, setModalMode] = useState('add');
   const [searchTerm, setSearchTerm] = useState('');
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    priority: 'medium',
-    status: 'pending',
-    assignedTo: ''
-  });
+  const [formData, setFormData] = useState(TASK_CONSTANTS.DEFAULT_FORM);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { isAuthenticated } = useAuth();
