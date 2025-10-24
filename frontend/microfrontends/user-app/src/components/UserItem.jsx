@@ -1,5 +1,31 @@
 import React from 'react';
-import Tooltip from 'sharedComponents/Tooltip';
+
+// Safe Tooltip component that handles module federation errors
+const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }) => {
+  try {
+    // Try to import Tooltip dynamically
+    const Tooltip = React.lazy(() => 
+      import('sharedComponents/Tooltip').catch(() => ({
+        default: ({ children }) => <>{children}</>
+      }))
+    );
+    
+    return (
+      <React.Suspense fallback={<>{children}</>}>
+        <Tooltip content={content} position={position} maxWidth={maxWidth}>
+          {children}
+        </Tooltip>
+      </React.Suspense>
+    );
+  } catch (error) {
+    console.warn('Tooltip component not available, falling back to native title attribute');
+    return (
+      <span title={content}>
+        {children}
+      </span>
+    );
+  }
+};
 
 const UserItem = React.memo(({ user, onEdit }) => {
   return (
@@ -12,7 +38,7 @@ const UserItem = React.memo(({ user, onEdit }) => {
              user.name && user.name.charAt ? user.name.charAt(0).toUpperCase() : 'U'}
           </div>
           <div>
-            <Tooltip 
+            <SafeTooltip 
               content={user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.name || 'Unknown User'}
               position="top"
               maxWidth="200px"
@@ -21,8 +47,8 @@ const UserItem = React.memo(({ user, onEdit }) => {
                 {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 
                  user.name || 'Unknown User'}
               </div>
-            </Tooltip>
-            <Tooltip 
+            </SafeTooltip>
+            <SafeTooltip 
               content={`@${user.username || 'no-username'}`}
               position="top"
               maxWidth="150px"
@@ -30,12 +56,12 @@ const UserItem = React.memo(({ user, onEdit }) => {
               <div className="text-muted small">
                 @{user.username || 'no-username'}
               </div>
-            </Tooltip>
+            </SafeTooltip>
           </div>
         </div>
       </td>
       <td className="text-center">
-        <Tooltip 
+        <SafeTooltip 
           content={user.email || 'No email'}
           position="top"
           maxWidth="250px"
@@ -43,7 +69,7 @@ const UserItem = React.memo(({ user, onEdit }) => {
           <div className="small">
             {user.email || 'No email'}
           </div>
-        </Tooltip>
+        </SafeTooltip>
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill ${

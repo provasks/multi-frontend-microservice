@@ -1,12 +1,38 @@
 import React from 'react';
-import Tooltip from 'sharedComponents/Tooltip';
 import './TaskItem.css';
+
+// Safe Tooltip component that handles module federation errors
+const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }) => {
+  try {
+    // Try to import Tooltip dynamically
+    const Tooltip = React.lazy(() => 
+      import('sharedComponents/Tooltip').catch(() => ({
+        default: ({ children }) => <>{children}</>
+      }))
+    );
+    
+    return (
+      <React.Suspense fallback={<>{children}</>}>
+        <Tooltip content={content} position={position} maxWidth={maxWidth}>
+          {children}
+        </Tooltip>
+      </React.Suspense>
+    );
+  } catch (error) {
+    console.warn('Tooltip component not available, falling back to native title attribute');
+    return (
+      <span title={content}>
+        {children}
+      </span>
+    );
+  }
+};
 
 const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
   return (
     <tr className="align-middle task-item">
       <td className="task-title">
-        <Tooltip 
+        <SafeTooltip 
           content={task.title || 'Untitled Task'}
           position="top"
           maxWidth="300px"
@@ -14,10 +40,10 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
           <span className="title-text">
             {task.title || 'Untitled Task'}
           </span>
-        </Tooltip>
+        </SafeTooltip>
       </td>
       <td>
-        <Tooltip 
+        <SafeTooltip 
           content={task.description || 'No description'}
           position="top"
           maxWidth="400px"
@@ -25,7 +51,7 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
           <div className="task-description">
             {task.description || 'No description'}
           </div>
-        </Tooltip>
+        </SafeTooltip>
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill priority-badge ${
@@ -51,7 +77,7 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
             {task.assignedToUser && task.assignedToUser.user && task.assignedToUser.user.firstName ? task.assignedToUser.user.firstName.charAt(0) : 'U'}
           </div>
           <div className="user-info">
-            <Tooltip 
+            <SafeTooltip 
               content={task.assignedToUser && task.assignedToUser.user ? `${task.assignedToUser.user.firstName || ''} ${task.assignedToUser.user.lastName || ''}` : 'Unknown User'}
               position="top"
               maxWidth="200px"
@@ -59,8 +85,8 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
               <div className="user-name">
                 {task.assignedToUser && task.assignedToUser.user ? `${task.assignedToUser.user.firstName || ''} ${task.assignedToUser.user.lastName || ''}` : 'Unknown User'}
               </div>
-            </Tooltip>
-            <Tooltip 
+            </SafeTooltip>
+            <SafeTooltip 
               content={task.assignedToUser && task.assignedToUser.user ? task.assignedToUser.user.email : 'No email'}
               position="top"
               maxWidth="250px"
@@ -68,7 +94,7 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
               <div className="user-email">
                 {task.assignedToUser && task.assignedToUser.user ? task.assignedToUser.user.email : 'No email'}
               </div>
-            </Tooltip>
+            </SafeTooltip>
           </div>
         </div>
       </td>

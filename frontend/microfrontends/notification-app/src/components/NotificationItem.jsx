@@ -1,5 +1,31 @@
 import React from 'react';
-import Tooltip from 'sharedComponents/Tooltip';
+
+// Safe Tooltip component that handles module federation errors
+const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }) => {
+  try {
+    // Try to import Tooltip dynamically
+    const Tooltip = React.lazy(() => 
+      import('sharedComponents/Tooltip').catch(() => ({
+        default: ({ children }) => <>{children}</>
+      }))
+    );
+    
+    return (
+      <React.Suspense fallback={<>{children}</>}>
+        <Tooltip content={content} position={position} maxWidth={maxWidth}>
+          {children}
+        </Tooltip>
+      </React.Suspense>
+    );
+  } catch (error) {
+    console.warn('Tooltip component not available, falling back to native title attribute');
+    return (
+      <span title={content}>
+        {children}
+      </span>
+    );
+  }
+};
 
 const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDelete }) => {
   const getTypeIcon = (type) => {
@@ -28,7 +54,7 @@ const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDel
         <div className="d-flex align-items-center">
           <i className={`${getTypeIcon(notification.type)} me-2`}></i>
           <div>
-            <Tooltip 
+            <SafeTooltip 
               content={notification.title || 'Untitled Notification'}
               position="top"
               maxWidth="300px"
@@ -36,8 +62,8 @@ const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDel
               <div className="fw-bold">
                 {notification.title || 'Untitled Notification'}
               </div>
-            </Tooltip>
-            <Tooltip 
+            </SafeTooltip>
+            <SafeTooltip 
               content={notification.type || 'info'}
               position="top"
               maxWidth="150px"
@@ -45,12 +71,12 @@ const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDel
               <div className="text-muted small">
                 {notification.type || 'info'}
               </div>
-            </Tooltip>
+            </SafeTooltip>
           </div>
         </div>
       </td>
       <td>
-        <Tooltip 
+        <SafeTooltip 
           content={notification.message || 'No message'}
           position="top"
           maxWidth="500px"
@@ -58,7 +84,7 @@ const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDel
           <div className="text-truncate" style={{ maxWidth: '500px' }}>
             {notification.message || 'No message'}
           </div>
-        </Tooltip>
+        </SafeTooltip>
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill ${getTypeColor(notification.type)}`}>
