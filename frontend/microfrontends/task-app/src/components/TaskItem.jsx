@@ -10,7 +10,7 @@ const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }
     // Try to import Tooltip dynamically
     import('sharedComponents/Tooltip')
       .then(module => {
-        setTooltipComponent(() => module.default);
+        setTooltipComponent(module.default);
         setIsLoading(false);
       })
       .catch(error => {
