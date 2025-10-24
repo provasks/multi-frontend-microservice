@@ -1,0 +1,25 @@
+{
+  "name": "task-management-frontend",
+  "version": "1.0.0",
+  "description": "Task Management System Frontend with Webpack Module Federation",
+  "scripts": {
+    "install:all": "npm install && cd shell-app && npm install && cd ../microfrontends/user-app && npm install && cd ../task-app && npm install && cd ../notification-app && npm install && cd ../shared-components && npm install",
+    "start:shell": "cd shell-app && npm start",
+    "start:user": "cd microfrontends/user-app && npm start",
+    "start:task": "cd microfrontends/task-app && npm start",
+    "start:notification": "cd microfrontends/notification-app && npm start",
+    "start:shared": "cd shared-components && npm start",
+    "start:all": "concurrently \"npm run start:shell\" \"npm run start:user\" \"npm run start:task\" \"npm run start:notification\" \"npm run start:shared\"",
+    "build:all": "cd shell-app && npm run build && cd ../microfrontends/user-app && npm run build && cd ../task-app && npm run build && cd ../notification-app && npm run build && cd ../shared-components && npm run build",
+    "analyze:shell": "cd shell-app && npm run build && npx webpack-bundle-analyzer dist/static/js/*.js",
+    "analyze:user": "cd microfrontends/user-app && npm run build && npx webpack-bundle-analyzer dist/static/js/*.js",
+    "analyze:task": "cd microfrontends/task-app && npm run build && npx webpack-bundle-analyzer dist/static/js/*.js",
+    "analyze:notification": "cd microfrontends/notification-app && npm run build && npx webpack-bundle-analyzer dist/static/js/*.js",
+    "analyze:all": "npm run analyze:shell & npm run analyze:user & npm run analyze:task & npm run analyze:notification",
+    "stop:all": "powershell -Command \"Get-NetTCPConnection -LocalPort 4000,4001,4002,4003,4004 -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }\""
+  },
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "webpack-bundle-analyzer": "^4.10.2"
+  }
+}

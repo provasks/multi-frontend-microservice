@@ -1,0 +1,36 @@
+{
+  "name": "task-management-microservices",
+  "version": "1.0.0",
+  "description": "Microservice-based Task Management System",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "concurrently \"npm run start:gateway\" \"npm run start:user\" \"npm run start:task\" \"npm run start:notification\"",
+    "start:frontend": "cd frontend/shell-app && npm run dev",
+    "start:gateway": "cd backend/api-gateway && npm start",
+    "start:user": "cd backend/services/user-service && npm start",
+    "start:task": "cd backend/services/task-service && npm start",
+    "start:notification": "cd backend/services/notification-service && npm start",
+    "start:frontend:all": "cd frontend && npm start",
+    "install:all": "npm install && cd backend/api-gateway && npm install && cd ../services/user-service && npm install && cd ../task-service && npm install && cd ../notification-service && npm install && cd ../../frontend/shell-app && npm install",
+    "install:backend": "npm install && cd backend/api-gateway && npm install && cd ../services/user-service && npm install && cd ../task-service && npm install && cd ../notification-service && npm install",
+    "install:frontend": "cd frontend/shell-app && npm install",
+    "stop": "npm run stop:all",
+    "stop:all": "npm run stop:backend && npm run stop:frontend",
+    "stop:backend": "powershell -Command \"Get-NetTCPConnection -LocalPort 3000,3001,3002,3003 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }; Write-Host 'Backend services stopped on ports 3000-3003'\"",
+    "stop:frontend": "powershell -Command \"Get-NetTCPConnection -LocalPort 4000,4001,4002,4003,4004,4005 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }; Write-Host 'Frontend services stopped on ports 4000-4005'\"",
+    "stop:ports": "taskkill /F /IM node.exe 2>nul || echo No Node.js processes found",
+    "restart": "npm run stop:all && ping 127.0.0.1 -n 3 > nul && npm start",
+    "restart:backend": "npm run stop:backend && ping 127.0.0.1 -n 2 > nul && npm run start:backend",
+    "restart:frontend": "npm run stop:frontend && ping 127.0.0.1 -n 2 > nul && npm run start:frontend",
+    "docker:build": "cd backend && docker-compose build",
+    "docker:up": "cd backend && docker-compose up -d",
+    "docker:down": "cd backend && docker-compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": ["microservices", "nodejs", "mongodb", "task-management"],
+  "author": "",
+  "license": "MIT"
+}

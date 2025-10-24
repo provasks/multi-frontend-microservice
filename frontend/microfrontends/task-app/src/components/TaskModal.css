@@ -1,0 +1,133 @@
+.task-modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.task-modal .modal-dialog {
+  max-width: 600px;
+}
+
+.task-modal .modal-content {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.task-modal .modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1.5rem;
+}
+
+.task-modal .modal-title {
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.task-modal .btn-close {
+  filter: invert(1);
+  opacity: 0.8;
+}
+
+.task-modal .btn-close:hover {
+  opacity: 1;
+}
+
+.task-modal .modal-body {
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+
+.task-modal .form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
+
+.task-modal .form-control,
+.task-modal .form-select {
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.task-modal .form-control:focus,
+.task-modal .form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.task-modal .form-text {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.task-modal .modal-footer {
+  background-color: white;
+  border: none;
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.task-modal .btn {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.task-modal .btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.task-modal .btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+  transform: translateY(-1px);
+}
+
+.task-modal .btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.task-modal .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.task-modal .btn i {
+  margin-right: 0.5rem;
+}
+
+/* Form row spacing */
+.task-modal .row {
+  margin-bottom: 0;
+}
+
+.task-modal .mb-3 {
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .task-modal .modal-dialog {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+  
+  .task-modal .modal-body {
+    padding: 1.5rem;
+  }
+  
+  .task-modal .modal-footer {
+    padding: 1rem 1.5rem;
+  }
+}

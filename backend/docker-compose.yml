@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  # MongoDB instances for each service
+  user-db:
+    image: mongo:7.0
+    container_name: user-db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - user_db_data:/data/db
+    networks:
+      - microservices-network
+
+  task-db:
+    image: mongo:7.0
+    container_name: task-db
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - task_db_data:/data/db
+    networks:
+      - microservices-network
+
+  notification-db:
+    image: mongo:7.0
+    container_name: notification-db
+    ports:
+      - "27019:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - notification_db_data:/data/db
+    networks:
+      - microservices-network
+
+  # Microservices
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - MONGODB_URI=mongodb://admin:password@user-db:27017/userdb?authSource=admin
+      - JWT_SECRET=your-jwt-secret-key
+    depends_on:
+      - user-db
+    networks:
+      - microservices-network
+
+  task-service:
+    build: ./task-service
+    container_name: task-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - MONGODB_URI=mongodb://admin:password@task-db:27017/taskdb?authSource=admin
+      - USER_SERVICE_URL=http://user-service:3001
+    depends_on:
+      - task-db
+      - user-service
+    networks:
+      - microservices-network
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+      - MONGODB_URI=mongodb://admin:password@notification-db:27017/notificationdb?authSource=admin
+      - TASK_SERVICE_URL=http://task-service:3002
+    depends_on:
+      - notification-db
+      - task-service
+    networks:
+      - microservices-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - USER_SERVICE_URL=http://user-service:3001
+      - TASK_SERVICE_URL=http://task-service:3002
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3003
+    depends_on:
+      - user-service
+      - task-service
+      - notification-service
+    networks:
+      - microservices-network
+
+volumes:
+  user_db_data:
+  task_db_data:
+  notification_db_data:
+
+networks:
+  microservices-network:
+    driver: bridge

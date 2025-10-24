@@ -1,0 +1,90 @@
+.shared-button {
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.shared-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.shared-button:active {
+  transform: translateY(0);
+}
+
+.shared-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Button Variants */
+.shared-button.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.shared-button.secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.shared-button.success {
+  background-color: #198754;
+  color: white;
+}
+
+.shared-button.danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.shared-button.warning {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.shared-button.info {
+  background-color: #0dcaf0;
+  color: #000;
+}
+
+.shared-button.light {
+  background-color: #f8f9fa;
+  color: #000;
+  border: 1px solid #dee2e6;
+}
+
+.shared-button.dark {
+  background-color: #212529;
+  color: white;
+}
+
+/* Button Sizes */
+.shared-button.sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+
+.shared-button.lg {
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+}
+
+/* Button Shapes */
+.shared-button.rounded {
+  border-radius: 50px;
+}
+
+.shared-button.square {
+  border-radius: 0;
+}
