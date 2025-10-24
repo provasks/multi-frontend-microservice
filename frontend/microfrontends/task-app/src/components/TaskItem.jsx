@@ -3,29 +3,43 @@ import './TaskItem.css';
 
 // Safe Tooltip component that handles module federation errors
 const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }) => {
-  try {
+  const [TooltipComponent, setTooltipComponent] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
     // Try to import Tooltip dynamically
-    const Tooltip = React.lazy(() => 
-      import('sharedComponents/Tooltip').catch(() => ({
-        default: ({ children }) => <>{children}</>
-      }))
-    );
-    
+    import('sharedComponents/Tooltip')
+      .then(module => {
+        setTooltipComponent(() => module.default);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.warn('Tooltip component not available, falling back to native title attribute:', error);
+        setTooltipComponent(null);
+        setIsLoading(false);
+      });
+  }, []);
+
+  // Show loading state or fallback
+  if (isLoading) {
+    return <>{children}</>;
+  }
+
+  // If Tooltip component is available, use it
+  if (TooltipComponent) {
     return (
-      <React.Suspense fallback={<>{children}</>}>
-        <Tooltip content={content} position={position} maxWidth={maxWidth}>
-          {children}
-        </Tooltip>
-      </React.Suspense>
-    );
-  } catch (error) {
-    console.warn('Tooltip component not available, falling back to native title attribute');
-    return (
-      <span title={content}>
+      <TooltipComponent content={content} position={position} maxWidth={maxWidth}>
         {children}
-      </span>
+      </TooltipComponent>
     );
   }
+
+  // Fallback to native title attribute
+  return (
+    <span title={content}>
+      {children}
+    </span>
+  );
 };
 
 const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
