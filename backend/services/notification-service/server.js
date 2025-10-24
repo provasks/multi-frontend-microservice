@@ -1,32 +1,34 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const dotenv = require('dotenv');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./config/swagger');
 const notificationRoutes = require('./routes/notificationRoutes');
 const notificationService = require('./services/notificationService');
 const scheduledNotificationService = require('./services/scheduledNotificationService');
+const { createSecurityMiddleware, ErrorHandler } = require('../../shared');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3003;
 
-// Middleware
-app.use(cors({
-  origin: [
+// Security Middleware
+const securityMiddleware = createSecurityMiddleware({
+  enableHelmet: true,
+  enableCORS: true,
+  enableRateLimit: true,
+  corsOrigins: [
     'http://localhost:3000',
     'http://localhost:4000',
     'http://localhost:4001',
     'http://localhost:4002',
-    'http://localhost:4003'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
-app.use(express.json());
+    'http://localhost:4003',
+    'http://localhost:4004'
+  ]
+});
+
+securityMiddleware.setupCompleteSecurity(app);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tms_notifications')
@@ -53,13 +55,8 @@ app.get('/health', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    error: 'Something went wrong!',
-    message: err.message 
-  });
-});
+app.use(ErrorHandler.handle);
+app.use(ErrorHandler.notFound);
 
 app.listen(PORT, () => {
   console.log(`Notification Service running on port ${PORT}`);
