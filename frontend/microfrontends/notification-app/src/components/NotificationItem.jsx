@@ -1,4 +1,5 @@
 import React from 'react';
+import Tooltip from 'sharedComponents/Tooltip';
 
 const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDelete }) => {
   const getTypeIcon = (type) => {
@@ -27,19 +28,37 @@ const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDel
         <div className="d-flex align-items-center">
           <i className={`${getTypeIcon(notification.type)} me-2`}></i>
           <div>
-            <div className="fw-bold">
-              {notification.title || 'Untitled Notification'}
-            </div>
-            <div className="text-muted small">
-              {notification.type || 'info'}
-            </div>
+            <Tooltip 
+              content={notification.title || 'Untitled Notification'}
+              position="top"
+              maxWidth="300px"
+            >
+              <div className="fw-bold">
+                {notification.title || 'Untitled Notification'}
+              </div>
+            </Tooltip>
+            <Tooltip 
+              content={notification.type || 'info'}
+              position="top"
+              maxWidth="150px"
+            >
+              <div className="text-muted small">
+                {notification.type || 'info'}
+              </div>
+            </Tooltip>
           </div>
         </div>
       </td>
       <td>
-        <div className="text-truncate" style={{ maxWidth: '500px' }} title={notification.message || 'No message'}>
-          {notification.message || 'No message'}
-        </div>
+        <Tooltip 
+          content={notification.message || 'No message'}
+          position="top"
+          maxWidth="500px"
+        >
+          <div className="text-truncate" style={{ maxWidth: '500px' }}>
+            {notification.message || 'No message'}
+          </div>
+        </Tooltip>
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill ${getTypeColor(notification.type)}`}>

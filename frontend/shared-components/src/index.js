@@ -7,6 +7,7 @@ export { default as SearchBar } from './components/SearchBar';
 export { default as Modal } from './components/Modal';
 export { default as Button } from './components/Button';
 export { default as Badge } from './components/Badge';
+export { default as Tooltip } from './components/Tooltip';
 
 // Export shared hooks
 export { useAuth } from './hooks/useAuth';

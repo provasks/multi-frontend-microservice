@@ -52,6 +52,7 @@ module.exports = {
         './Modal': './src/components/Modal',
         './Button': './src/components/Button',
         './Badge': './src/components/Badge',
+        './Tooltip': './src/components/Tooltip',
         './useAuth': './src/hooks/useAuth',
         './useGlobalErrorHandler': './src/hooks/useGlobalErrorHandler',
         './useRateLimit': './src/hooks/useRateLimit',

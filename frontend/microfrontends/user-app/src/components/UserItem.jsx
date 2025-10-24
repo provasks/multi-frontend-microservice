@@ -1,4 +1,5 @@
 import React from 'react';
+import Tooltip from 'sharedComponents/Tooltip';
 
 const UserItem = React.memo(({ user, onEdit }) => {
   return (
@@ -11,20 +12,38 @@ const UserItem = React.memo(({ user, onEdit }) => {
              user.name && user.name.charAt ? user.name.charAt(0).toUpperCase() : 'U'}
           </div>
           <div>
-            <div className="fw-bold">
-              {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 
-               user.name || 'Unknown User'}
-            </div>
-            <div className="text-muted small">
-              @{user.username || 'no-username'}
-            </div>
+            <Tooltip 
+              content={user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.name || 'Unknown User'}
+              position="top"
+              maxWidth="200px"
+            >
+              <div className="fw-bold">
+                {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 
+                 user.name || 'Unknown User'}
+              </div>
+            </Tooltip>
+            <Tooltip 
+              content={`@${user.username || 'no-username'}`}
+              position="top"
+              maxWidth="150px"
+            >
+              <div className="text-muted small">
+                @{user.username || 'no-username'}
+              </div>
+            </Tooltip>
           </div>
         </div>
       </td>
       <td className="text-center">
-        <div className="small">
-          {user.email || 'No email'}
-        </div>
+        <Tooltip 
+          content={user.email || 'No email'}
+          position="top"
+          maxWidth="250px"
+        >
+          <div className="small">
+            {user.email || 'No email'}
+          </div>
+        </Tooltip>
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill ${
