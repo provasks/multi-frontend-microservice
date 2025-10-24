@@ -1,0 +1,24 @@
+{
+  "name": "task-management-shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and configurations for Task Management System backend services",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "joi": "^17.9.2",
+    "jsonwebtoken": "^9.0.2",
+    "axios": "^1.5.0",
+    "swagger-jsdoc": "^6.2.8"
+  },
+  "keywords": [
+    "shared",
+    "utilities",
+    "middleware",
+    "validation",
+    "constants"
+  ],
+  "author": "Task Management System",
+  "license": "MIT"
+}
