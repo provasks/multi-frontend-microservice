@@ -2,6 +2,12 @@
   transition: all 0.2s ease;
 }
 
+.task-item td {
+  vertical-align: middle;
+  height: auto;
+  min-height: 60px; /* Ensure minimum height for consistency */
+}
+
 .task-item:hover {
   background-color: #f8f9fa;
   transform: translateY(-1px);
@@ -10,6 +16,11 @@
 .task-title {
   font-weight: 600;
   color: #212529;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.task-title .title-text {
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

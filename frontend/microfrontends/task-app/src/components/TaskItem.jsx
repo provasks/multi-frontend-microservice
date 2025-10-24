@@ -5,7 +5,9 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
   return (
     <tr className="align-middle task-item">
       <td className="task-title">
-        {task.title || 'Untitled Task'}
+        <span className="title-text">
+          {task.title || 'Untitled Task'}
+        </span>
       </td>
       <td>
         <div className="task-description" title={task.description || 'No description'}>
