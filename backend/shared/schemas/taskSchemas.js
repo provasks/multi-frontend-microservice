@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const BACKEND_CONSTANTS = require('../constants');
 
 /**
  * Task Service Validation Schemas
@@ -8,30 +9,35 @@ const taskSchemas = {
   // Task creation schema
   create: Joi.object({
     title: Joi.string()
-      .min(1)
-      .max(200)
+      .min(BACKEND_CONSTANTS.VALIDATION.TASK_TITLE.MIN_LENGTH)
+      .max(BACKEND_CONSTANTS.VALIDATION.TASK_TITLE.MAX_LENGTH)
       .required()
       .messages({
-        'string.min': 'Task title is required',
-        'string.max': 'Task title cannot exceed 200 characters',
-        'any.required': 'Task title is required'
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_TITLE_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_TITLE_MAX_LENGTH,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_TITLE_REQUIRED
       }),
     
     description: Joi.string()
-      .max(1000)
+      .max(BACKEND_CONSTANTS.VALIDATION.TASK_DESCRIPTION.MAX_LENGTH)
       .allow('')
-      .optional(),
+      .optional()
+      .messages({
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_DESCRIPTION_MAX_LENGTH
+      }),
     
     priority: Joi.string()
       .valid('low', 'medium', 'high', 'urgent')
-      .default('medium'),
+      .default('medium')
+      .messages({
+        'any.only': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_PRIORITY_INVALID
+      }),
     
     assignedTo: Joi.string()
       .pattern(/^[0-9a-fA-F]{24}$/)
-      .required()
+      .optional()
       .messages({
-        'string.pattern.base': 'Invalid assigned user ID format',
-        'any.required': 'Assigned user is required'
+        'string.pattern.base': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USER_ID_INVALID
       }),
     
     dueDate: Joi.date()
@@ -39,6 +45,7 @@ const taskSchemas = {
       .greater('now')
       .optional()
       .messages({
+        'date.format': 'Due date must be a valid ISO date',
         'date.greater': 'Due date must be in the future'
       }),
     
@@ -46,46 +53,67 @@ const taskSchemas = {
       .items(Joi.string().max(50))
       .max(10)
       .optional()
+      .messages({
+        'array.max': 'Maximum 10 tags allowed',
+        'string.max': 'Tag cannot exceed 50 characters'
+      })
   }),
 
   // Task update schema
   update: Joi.object({
     title: Joi.string()
-      .min(1)
-      .max(200)
-      .optional(),
+      .min(BACKEND_CONSTANTS.VALIDATION.TASK_TITLE.MIN_LENGTH)
+      .max(BACKEND_CONSTANTS.VALIDATION.TASK_TITLE.MAX_LENGTH)
+      .optional()
+      .messages({
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_TITLE_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_TITLE_MAX_LENGTH
+      }),
     
     description: Joi.string()
-      .max(1000)
+      .max(BACKEND_CONSTANTS.VALIDATION.TASK_DESCRIPTION.MAX_LENGTH)
       .allow('')
-      .optional(),
-    
-    status: Joi.string()
-      .valid('pending', 'in_progress', 'completed', 'cancelled')
-      .optional(),
+      .optional()
+      .messages({
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_DESCRIPTION_MAX_LENGTH
+      }),
     
     priority: Joi.string()
       .valid('low', 'medium', 'high', 'urgent')
-      .optional(),
+      .optional()
+      .messages({
+        'any.only': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_PRIORITY_INVALID
+      }),
+    
+    status: Joi.string()
+      .valid('pending', 'in-progress', 'completed', 'cancelled')
+      .optional()
+      .messages({
+        'any.only': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_STATUS_INVALID
+      }),
     
     assignedTo: Joi.string()
       .pattern(/^[0-9a-fA-F]{24}$/)
       .optional()
       .messages({
-        'string.pattern.base': 'Invalid assigned user ID format'
+        'string.pattern.base': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USER_ID_INVALID
       }),
     
     dueDate: Joi.date()
       .iso()
-      .optional(),
+      .optional()
+      .messages({
+        'date.format': 'Due date must be a valid ISO date'
+      }),
     
     tags: Joi.array()
       .items(Joi.string().max(50))
       .max(10)
-      .optional(),
-    
-    isArchived: Joi.boolean()
       .optional()
+      .messages({
+        'array.max': 'Maximum 10 tags allowed',
+        'string.max': 'Tag cannot exceed 50 characters'
+      })
   }),
 
   // Task query schema
@@ -94,50 +122,65 @@ const taskSchemas = {
       .integer()
       .min(1)
       .max(1000)
-      .default(1),
+      .default(BACKEND_CONSTANTS.PAGINATION.DEFAULT_PAGE)
+      .messages({
+        'number.base': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PAGE_INVALID,
+        'number.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PAGE_INVALID,
+        'number.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PAGE_INVALID
+      }),
     
     limit: Joi.number()
       .integer()
       .min(1)
-      .max(100)
-      .default(10),
+      .max(BACKEND_CONSTANTS.PAGINATION.MAX_LIMIT)
+      .default(BACKEND_CONSTANTS.PAGINATION.DEFAULT_LIMIT)
+      .messages({
+        'number.base': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LIMIT_INVALID,
+        'number.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LIMIT_INVALID,
+        'number.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LIMIT_INVALID
+      }),
     
     search: Joi.string()
       .max(100)
-      .optional(),
-    
-    status: Joi.string()
-      .valid('pending', 'in_progress', 'completed', 'cancelled')
-      .optional(),
+      .optional()
+      .messages({
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.SEARCH_MAX_LENGTH
+      }),
     
     priority: Joi.string()
       .valid('low', 'medium', 'high', 'urgent')
-      .optional(),
+      .optional()
+      .messages({
+        'any.only': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_PRIORITY_INVALID
+      }),
+    
+    status: Joi.string()
+      .valid('pending', 'in-progress', 'completed', 'cancelled')
+      .optional()
+      .messages({
+        'any.only': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_STATUS_INVALID
+      }),
     
     assignedTo: Joi.string()
       .pattern(/^[0-9a-fA-F]{24}$/)
       .optional()
       .messages({
-        'string.pattern.base': 'Invalid assigned user ID format'
+        'string.pattern.base': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USER_ID_INVALID
       }),
     
-    createdBy: Joi.string()
-      .pattern(/^[0-9a-fA-F]{24}$/)
+    dueDateFrom: Joi.date()
+      .iso()
       .optional()
       .messages({
-        'string.pattern.base': 'Invalid creator ID format'
+        'date.format': 'Due date from must be a valid ISO date'
       }),
     
-    isArchived: Joi.boolean()
-      .optional(),
-    
-    sort: Joi.string()
-      .valid('createdAt', 'updatedAt', 'title', 'dueDate', 'priority')
-      .default('createdAt'),
-    
-    order: Joi.string()
-      .valid('asc', 'desc')
-      .default('desc')
+    dueDateTo: Joi.date()
+      .iso()
+      .optional()
+      .messages({
+        'date.format': 'Due date to must be a valid ISO date'
+      })
   }),
 
   // Task ID parameter schema
@@ -146,32 +189,8 @@ const taskSchemas = {
       .pattern(/^[0-9a-fA-F]{24}$/)
       .required()
       .messages({
-        'string.pattern.base': 'Invalid task ID format',
-        'any.required': 'Task ID is required'
-      })
-  }),
-
-  // Comment schema
-  comment: Joi.object({
-    text: Joi.string()
-      .min(1)
-      .max(500)
-      .required()
-      .messages({
-        'string.min': 'Comment text is required',
-        'string.max': 'Comment cannot exceed 500 characters',
-        'any.required': 'Comment text is required'
-      })
-  }),
-
-  // Comment ID parameter schema
-  commentId: Joi.object({
-    commentId: Joi.string()
-      .pattern(/^[0-9a-fA-F]{24}$/)
-      .required()
-      .messages({
-        'string.pattern.base': 'Invalid comment ID format',
-        'any.required': 'Comment ID is required'
+        'string.pattern.base': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_ID_INVALID,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.TASK_ID_REQUIRED
       })
   })
 };

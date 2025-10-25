@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const BACKEND_CONSTANTS = require('../constants');
 
 /**
  * User Service Validation Schemas
@@ -9,32 +10,32 @@ const userSchemas = {
   register: Joi.object({
     username: Joi.string()
       .alphanum()
-      .min(3)
-      .max(30)
+      .min(BACKEND_CONSTANTS.VALIDATION.USERNAME.MIN_LENGTH)
+      .max(BACKEND_CONSTANTS.VALIDATION.USERNAME.MAX_LENGTH)
       .required()
       .messages({
-        'string.alphanum': 'Username must contain only alphanumeric characters',
-        'string.min': 'Username must be at least 3 characters long',
-        'string.max': 'Username cannot exceed 30 characters',
-        'any.required': 'Username is required'
+        'string.alphanum': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USERNAME_ALPHANUM,
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USERNAME_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USERNAME_MAX_LENGTH,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USERNAME_REQUIRED
       }),
     
     email: Joi.string()
       .email()
       .required()
       .messages({
-        'string.email': 'Please provide a valid email address',
-        'any.required': 'Email is required'
+        'string.email': BACKEND_CONSTANTS.VALIDATION_MESSAGES.EMAIL_INVALID,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.EMAIL_REQUIRED
       }),
     
     password: Joi.string()
-      .min(6)
-      .max(128)
+      .min(BACKEND_CONSTANTS.VALIDATION.PASSWORD.MIN_LENGTH)
+      .max(BACKEND_CONSTANTS.VALIDATION.PASSWORD.MAX_LENGTH)
       .required()
       .messages({
-        'string.min': 'Password must be at least 6 characters long',
-        'string.max': 'Password cannot exceed 128 characters',
-        'any.required': 'Password is required'
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PASSWORD_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PASSWORD_MAX_LENGTH,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PASSWORD_REQUIRED
       }),
     
     firstName: Joi.string()
@@ -42,9 +43,9 @@ const userSchemas = {
       .max(50)
       .required()
       .messages({
-        'string.min': 'First name is required',
-        'string.max': 'First name cannot exceed 50 characters',
-        'any.required': 'First name is required'
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.FIRST_NAME_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.FIRST_NAME_MAX_LENGTH,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.FIRST_NAME_REQUIRED
       }),
     
     lastName: Joi.string()
@@ -52,9 +53,9 @@ const userSchemas = {
       .max(50)
       .required()
       .messages({
-        'string.min': 'Last name is required',
-        'string.max': 'Last name cannot exceed 50 characters',
-        'any.required': 'Last name is required'
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LAST_NAME_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LAST_NAME_MAX_LENGTH,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LAST_NAME_REQUIRED
       })
   }),
 
@@ -64,14 +65,14 @@ const userSchemas = {
       .email()
       .required()
       .messages({
-        'string.email': 'Please provide a valid email address',
-        'any.required': 'Email is required'
+        'string.email': BACKEND_CONSTANTS.VALIDATION_MESSAGES.EMAIL_INVALID,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.EMAIL_REQUIRED
       }),
     
     password: Joi.string()
       .required()
       .messages({
-        'any.required': 'Password is required'
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PASSWORD_REQUIRED
       })
   }),
 
@@ -79,27 +80,46 @@ const userSchemas = {
   update: Joi.object({
     username: Joi.string()
       .alphanum()
-      .min(3)
-      .max(30)
-      .optional(),
+      .min(BACKEND_CONSTANTS.VALIDATION.USERNAME.MIN_LENGTH)
+      .max(BACKEND_CONSTANTS.VALIDATION.USERNAME.MAX_LENGTH)
+      .optional()
+      .messages({
+        'string.alphanum': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USERNAME_ALPHANUM,
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USERNAME_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USERNAME_MAX_LENGTH
+      }),
     
     email: Joi.string()
       .email()
-      .optional(),
+      .optional()
+      .messages({
+        'string.email': BACKEND_CONSTANTS.VALIDATION_MESSAGES.EMAIL_INVALID
+      }),
     
     firstName: Joi.string()
       .min(1)
       .max(50)
-      .optional(),
+      .optional()
+      .messages({
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.FIRST_NAME_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.FIRST_NAME_MAX_LENGTH
+      }),
     
     lastName: Joi.string()
       .min(1)
       .max(50)
-      .optional(),
+      .optional()
+      .messages({
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LAST_NAME_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LAST_NAME_MAX_LENGTH
+      }),
     
     role: Joi.string()
       .valid('user', 'admin', 'moderator')
-      .optional(),
+      .optional()
+      .messages({
+        'any.only': BACKEND_CONSTANTS.VALIDATION_MESSAGES.ROLE_INVALID
+      }),
     
     isActive: Joi.boolean()
       .optional()
@@ -110,17 +130,17 @@ const userSchemas = {
     currentPassword: Joi.string()
       .required()
       .messages({
-        'any.required': 'Current password is required'
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.CURRENT_PASSWORD_REQUIRED
       }),
     
     newPassword: Joi.string()
-      .min(6)
-      .max(128)
+      .min(BACKEND_CONSTANTS.VALIDATION.PASSWORD.MIN_LENGTH)
+      .max(BACKEND_CONSTANTS.VALIDATION.PASSWORD.MAX_LENGTH)
       .required()
       .messages({
-        'string.min': 'New password must be at least 6 characters long',
-        'string.max': 'New password cannot exceed 128 characters',
-        'any.required': 'New password is required'
+        'string.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PASSWORD_MIN_LENGTH,
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PASSWORD_MAX_LENGTH,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.NEW_PASSWORD_REQUIRED
       })
   }),
 
@@ -130,21 +150,37 @@ const userSchemas = {
       .integer()
       .min(1)
       .max(1000)
-      .default(1),
+      .default(BACKEND_CONSTANTS.PAGINATION.DEFAULT_PAGE)
+      .messages({
+        'number.base': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PAGE_INVALID,
+        'number.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PAGE_INVALID,
+        'number.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.PAGE_INVALID
+      }),
     
     limit: Joi.number()
       .integer()
       .min(1)
-      .max(100)
-      .default(10),
+      .max(BACKEND_CONSTANTS.PAGINATION.MAX_LIMIT)
+      .default(BACKEND_CONSTANTS.PAGINATION.DEFAULT_LIMIT)
+      .messages({
+        'number.base': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LIMIT_INVALID,
+        'number.min': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LIMIT_INVALID,
+        'number.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.LIMIT_INVALID
+      }),
     
     search: Joi.string()
       .max(100)
-      .optional(),
+      .optional()
+      .messages({
+        'string.max': BACKEND_CONSTANTS.VALIDATION_MESSAGES.SEARCH_MAX_LENGTH
+      }),
     
     role: Joi.string()
       .valid('user', 'admin', 'moderator')
-      .optional(),
+      .optional()
+      .messages({
+        'any.only': BACKEND_CONSTANTS.VALIDATION_MESSAGES.ROLE_INVALID
+      }),
     
     isActive: Joi.boolean()
       .optional()
@@ -156,8 +192,8 @@ const userSchemas = {
       .pattern(/^[0-9a-fA-F]{24}$/)
       .required()
       .messages({
-        'string.pattern.base': 'Invalid user ID format',
-        'any.required': 'User ID is required'
+        'string.pattern.base': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USER_ID_INVALID,
+        'any.required': BACKEND_CONSTANTS.VALIDATION_MESSAGES.USER_ID_REQUIRED
       })
   })
 };

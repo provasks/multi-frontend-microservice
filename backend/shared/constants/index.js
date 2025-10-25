@@ -154,6 +154,71 @@ const BACKEND_CONSTANTS = {
     }
   },
 
+  // Validation Messages
+  VALIDATION_MESSAGES: {
+    // Username validation messages
+    USERNAME_ALPHANUM: 'Username must contain only alphanumeric characters',
+    USERNAME_MIN_LENGTH: 'Username must be at least 3 characters long',
+    USERNAME_MAX_LENGTH: 'Username cannot exceed 30 characters',
+    USERNAME_REQUIRED: 'Username is required',
+    
+    // Email validation messages
+    EMAIL_INVALID: 'Please provide a valid email address',
+    EMAIL_REQUIRED: 'Email is required',
+    
+    // Password validation messages
+    PASSWORD_MIN_LENGTH: 'Password must be at least 6 characters long',
+    PASSWORD_MAX_LENGTH: 'Password cannot exceed 128 characters',
+    PASSWORD_REQUIRED: 'Password is required',
+    CURRENT_PASSWORD_REQUIRED: 'Current password is required',
+    NEW_PASSWORD_REQUIRED: 'New password is required',
+    
+    // Name validation messages
+    FIRST_NAME_MIN_LENGTH: 'First name is required',
+    FIRST_NAME_MAX_LENGTH: 'First name cannot exceed 50 characters',
+    FIRST_NAME_REQUIRED: 'First name is required',
+    LAST_NAME_MIN_LENGTH: 'Last name is required',
+    LAST_NAME_MAX_LENGTH: 'Last name cannot exceed 50 characters',
+    LAST_NAME_REQUIRED: 'Last name is required',
+    
+    // Task validation messages
+    TASK_TITLE_MIN_LENGTH: 'Task title is required',
+    TASK_TITLE_MAX_LENGTH: 'Task title cannot exceed 200 characters',
+    TASK_TITLE_REQUIRED: 'Task title is required',
+    TASK_DESCRIPTION_MAX_LENGTH: 'Task description cannot exceed 1000 characters',
+    TASK_PRIORITY_INVALID: 'Priority must be low, medium, or high',
+    TASK_STATUS_INVALID: 'Status must be pending, in-progress, or completed',
+    
+    // Notification validation messages
+    NOTIFICATION_TITLE_MIN_LENGTH: 'Notification title is required',
+    NOTIFICATION_TITLE_MAX_LENGTH: 'Notification title cannot exceed 100 characters',
+    NOTIFICATION_TITLE_REQUIRED: 'Notification title is required',
+    NOTIFICATION_MESSAGE_REQUIRED: 'Notification message is required',
+    NOTIFICATION_TYPE_INVALID: 'Type must be info, warning, or error',
+    
+    // ID validation messages
+    USER_ID_INVALID: 'Invalid user ID format',
+    USER_ID_REQUIRED: 'User ID is required',
+    TASK_ID_INVALID: 'Invalid task ID format',
+    TASK_ID_REQUIRED: 'Task ID is required',
+    NOTIFICATION_ID_INVALID: 'Invalid notification ID format',
+    NOTIFICATION_ID_REQUIRED: 'Notification ID is required',
+    
+    // Query validation messages
+    PAGE_INVALID: 'Page must be a positive integer',
+    LIMIT_INVALID: 'Limit must be between 1 and 100',
+    SEARCH_MAX_LENGTH: 'Search term cannot exceed 100 characters',
+    
+    // Role validation messages
+    ROLE_INVALID: 'Role must be user, admin, or moderator',
+    
+    // General validation messages
+    FIELD_REQUIRED: 'This field is required',
+    FIELD_INVALID: 'Invalid field value',
+    FIELD_TOO_LONG: 'Field value is too long',
+    FIELD_TOO_SHORT: 'Field value is too short'
+  },
+
   // Rate Limiting
   RATE_LIMIT: {
     WINDOW_MS: 15 * 60 * 1000, // 15 minutes
