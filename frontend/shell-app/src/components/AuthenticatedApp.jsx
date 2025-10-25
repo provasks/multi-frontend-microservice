@@ -2,6 +2,7 @@ import React, { useState, Suspense } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import ErrorTesting from './ErrorTesting';
 import ReduxTest from './ReduxTest';
+import IdleTimeoutTest from './IdleTimeoutTest';
 
 // Lazy load micro-frontends with error handling
 const UserManagement = React.lazy(() => import('userApp/UserManagement').catch(() => ({ default: () => <div className="alert alert-danger">Failed to load User Management</div> })));
@@ -59,6 +60,7 @@ const AuthenticatedApp = ({ onLogout }) => {
     if (path === '/notifications') return 'notifications';
     if (path === '/error-testing') return 'error-testing';
     if (path === '/redux-test') return 'redux-test';
+    if (path === '/idle-timeout-test') return 'idle-timeout-test';
     return 'tasks'; // default to tasks
   };
   
@@ -197,6 +199,28 @@ const AuthenticatedApp = ({ onLogout }) => {
               <i className="fas fa-cogs me-2"></i>
               Redux Test
             </button>
+            <button
+              className={`nav-link btn btn-link text-light px-3 py-2 rounded ${activeTab === 'idle-timeout-test' ? 'bg-dark' : ''}`}
+              onClick={() => navigate('/idle-timeout-test')}
+              style={{
+                transition: 'all 0.3s ease',
+                border: 'none',
+                textDecoration: 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== 'idle-timeout-test') {
+                  e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== 'idle-timeout-test') {
+                  e.target.style.backgroundColor = 'transparent';
+                }
+              }}
+            >
+              <i className="fas fa-clock me-2"></i>
+              Idle Timeout Test
+            </button>
           </div>
           
           <div className="navbar-nav">
@@ -220,6 +244,7 @@ const AuthenticatedApp = ({ onLogout }) => {
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/error-testing" element={<ErrorTesting />} />
               <Route path="/redux-test" element={<ReduxTest />} />
+              <Route path="/idle-timeout-test" element={<IdleTimeoutTest />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>

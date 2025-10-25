@@ -74,18 +74,32 @@ class SecurityMiddleware {
    * Get rate limiting configuration
    */
   getRateLimitConfig() {
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
     return {
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100, // limit each IP to 100 requests per windowMs
+      windowMs: isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 5 minutes in dev, 15 minutes in prod
+      max: isDevelopment ? 500 : 100, // 500 requests in dev, 100 in prod
       message: {
-        error: 'Too many requests from this IP, please try again later.',
-        retryAfter: '15 minutes'
+        error: isDevelopment 
+          ? 'Too many requests from this IP, please try again in 5 minutes.' 
+          : 'Too many requests from this IP, please try again later.',
+        retryAfter: isDevelopment ? '5 minutes' : '15 minutes'
       },
       standardHeaders: true,
       legacyHeaders: false,
       skip: (req) => {
-        // Skip rate limiting for health checks
-        return req.path === '/health' || req.path === '/api-docs';
+        // Skip rate limiting for health checks and API docs
+        if (req.path === '/health' || req.path === '/api-docs') {
+          return true;
+        }
+        
+        // Skip rate limiting for localhost in development
+        if (isDevelopment) {
+          const ip = req.ip || req.connection.remoteAddress;
+          return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+        }
+        
+        return false;
       }
     };
   }
@@ -94,16 +108,25 @@ class SecurityMiddleware {
    * Get login rate limiting configuration
    */
   getLoginRateLimitConfig() {
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
     return {
-      windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 5, // limit each IP to 5 login attempts per windowMs
+      windowMs: isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 5 minutes in dev, 15 minutes in prod
+      max: isDevelopment ? 20 : 5, // 20 attempts in dev, 5 in prod
       message: {
-        error: 'Too many login attempts, please try again later.',
-        retryAfter: '15 minutes'
+        error: isDevelopment 
+          ? 'Too many login attempts, please try again in 5 minutes.' 
+          : 'Too many login attempts, please try again later.',
+        retryAfter: isDevelopment ? '5 minutes' : '15 minutes'
       },
       standardHeaders: true,
       legacyHeaders: false,
-      skipSuccessfulRequests: true
+      skipSuccessfulRequests: true,
+      // Skip rate limiting for localhost in development
+      skip: isDevelopment ? (req) => {
+        const ip = req.ip || req.connection.remoteAddress;
+        return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+      } : undefined
     };
   }
 

@@ -1,38 +1,45 @@
 /**
- * Storage utility for handling localStorage operations
- * Separates storage concerns from Redux state management
+ * Storage utility for handling session storage operations
+ * Simplified to use only sessionStorage for temporary data
  */
 
 class Storage {
-  static getToken() {
+  static getSessionData(key) {
     if (typeof window === 'undefined') return null;
-    return localStorage.getItem('token');
+    try {
+      const data = sessionStorage.getItem(key);
+      return data ? JSON.parse(data) : null;
+    } catch (error) {
+      console.error('Error getting session data:', error);
+      return null;
+    }
   }
 
-  static setToken(token) {
+  static setSessionData(key, data) {
     if (typeof window === 'undefined') return;
-    localStorage.setItem('token', token);
+    try {
+      sessionStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+      console.error('Error setting session data:', error);
+    }
   }
 
-  static clearToken() {
+  static clearSessionData(key) {
     if (typeof window === 'undefined') return;
-    localStorage.removeItem('token');
-  }
-
-  static getTheme() {
-    if (typeof window === 'undefined') return 'light';
-    return localStorage.getItem('theme') || 'light';
-  }
-
-  static setTheme(theme) {
-    if (typeof window === 'undefined') return;
-    localStorage.setItem('theme', theme);
+    try {
+      sessionStorage.removeItem(key);
+    } catch (error) {
+      console.error('Error clearing session data:', error);
+    }
   }
 
   static clearAll() {
     if (typeof window === 'undefined') return;
-    localStorage.removeItem('token');
-    localStorage.removeItem('theme');
+    try {
+      sessionStorage.clear();
+    } catch (error) {
+      console.error('Error clearing session storage:', error);
+    }
   }
 }
 

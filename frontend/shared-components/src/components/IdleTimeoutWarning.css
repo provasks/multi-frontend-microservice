@@ -1,0 +1,167 @@
+/* Idle Timeout Warning Styles */
+.idle-timeout-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.idle-timeout-warning__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.idle-timeout-warning__modal {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
+  padding: 2rem;
+  text-align: center;
+  animation: slideIn 0.3s ease-out;
+}
+
+.idle-timeout-warning__icon {
+  font-size: 3rem;
+  color: #f39c12;
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite;
+}
+
+.idle-timeout-warning__content h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.idle-timeout-warning__content p {
+  margin: 0 0 1.5rem 0;
+  color: #7f8c8d;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.idle-timeout-warning__content strong {
+  color: #e74c3c;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.idle-timeout-warning__actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.idle-timeout-warning__actions .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+}
+
+.idle-timeout-warning__actions .btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.idle-timeout-warning__actions .btn-primary:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+.idle-timeout-warning__actions .btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.idle-timeout-warning__actions .btn-secondary:hover {
+  background: #7f8c8d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .idle-timeout-warning__modal {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .idle-timeout-warning__actions {
+    flex-direction: column;
+  }
+  
+  .idle-timeout-warning__actions .btn {
+    width: 100%;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .idle-timeout-warning__modal {
+    background: #2c3e50;
+    color: white;
+  }
+  
+  .idle-timeout-warning__content h3 {
+    color: white;
+  }
+  
+  .idle-timeout-warning__content p {
+    color: #bdc3c7;
+  }
+}

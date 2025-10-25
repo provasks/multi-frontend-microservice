@@ -1,4 +1,5 @@
 const { useDispatch, useSelector } = require('react-redux');
+const useIdleTimeout = require('./hooks/useIdleTimeout');
 
 // Simple auth hook
 const useAuth = () => {
@@ -139,5 +140,6 @@ module.exports = {
   useAuth,
   useTasks,
   useNotifications,
-  useUI
+  useUI,
+  useIdleTimeout
 };

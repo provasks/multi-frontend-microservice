@@ -1,4 +1,5 @@
 const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
+const WebpackEnvPlugin = require('./src/config/webpackEnvPlugin');
 
 module.exports = {
   mode: 'development',
@@ -40,6 +41,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new WebpackEnvPlugin(),
     new ModuleFederationPlugin({
       name: 'sharedComponents',
       filename: 'remoteEntry.js',
@@ -53,13 +55,18 @@ module.exports = {
         './Button': './src/components/Button',
         './Badge': './src/components/Badge',
         './Tooltip': './src/components/Tooltip',
+        './IdleTimeoutWarning': './src/components/IdleTimeoutWarning',
+        './IdleTimeoutConfig': './src/components/IdleTimeoutConfig',
+        './TouchpadDebug': './src/components/TouchpadDebug',
         './useAuth': './src/hooks/useAuth',
         './useGlobalErrorHandler': './src/hooks/useGlobalErrorHandler',
         './useRateLimit': './src/hooks/useRateLimit',
         './security': './src/utils/security',
         './unifiedApiClient': './src/utils/unifiedApiClient',
         './constants': './src/constants',
+        './frontendConfig': './src/config/frontendConfig',
         './storage': './src/utils/storage',
+        './logout': './src/utils/logout',
         './ReduxStore': './src/store/simpleStore',
         './ReduxHooks': './src/store/simpleHooks',
         './ReduxSelectors': './src/store/selectors/authSelectors'

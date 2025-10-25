@@ -221,9 +221,9 @@ const BACKEND_CONSTANTS = {
 
   // Rate Limiting
   RATE_LIMIT: {
-    WINDOW_MS: 15 * 60 * 1000, // 15 minutes
-    MAX_REQUESTS: 100, // limit each IP to 100 requests per windowMs
-    LOGIN_MAX_REQUESTS: 5 // limit login attempts
+    WINDOW_MS: process.env.NODE_ENV === 'development' ? 5 * 60 * 1000 : 15 * 60 * 1000, // 5 minutes in dev, 15 minutes in prod
+    MAX_REQUESTS: process.env.NODE_ENV === 'development' ? 500 : 100, // 500 requests in dev, 100 in prod
+    LOGIN_MAX_REQUESTS: process.env.NODE_ENV === 'development' ? 20 : 5 // 20 attempts in dev, 5 in prod
   },
 
   // File Upload

@@ -1,6 +1,6 @@
 /**
  * Storage middleware for Redux
- * Handles localStorage operations as side effects of Redux actions
+ * Simplified to handle only session storage operations
  */
 
 const Storage = require('../../utils/storage');
@@ -8,22 +8,18 @@ const Storage = require('../../utils/storage');
 const storageMiddleware = (store) => (next) => (action) => {
   const result = next(action);
   
-  // Handle storage operations based on action type
+  // Handle session storage operations based on action type
   switch (action.type) {
     case 'auth/loginSuccess':
-      if (action.payload.token) {
-        Storage.setToken(action.payload.token);
+      // Store user data in session storage
+      if (action.payload.user) {
+        Storage.setSessionData('user', action.payload.user);
       }
       break;
       
     case 'auth/logout':
-      Storage.clearToken();
-      break;
-      
-    case 'ui/setTheme':
-      if (action.payload) {
-        Storage.setTheme(action.payload);
-      }
+      // Clear session data on logout
+      Storage.clearAll();
       break;
       
     default:

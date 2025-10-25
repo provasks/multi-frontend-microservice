@@ -53,7 +53,7 @@ const getCurrentUser = createAsyncThunk(
 // Initial state
 const initialState = {
   user: null,
-  token: localStorage.getItem('token'),
+  token: null,
   isAuthenticated: false,
   isLoading: false,
   error: null,
@@ -94,7 +94,9 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.lastLogin = new Date().toISOString();
         state.error = null;
-        localStorage.setItem('token', action.payload.token);
+        
+        // Dispatch idle timeout login action
+        // This will be handled by the idle timeout slice
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -113,7 +115,6 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
-        localStorage.setItem('token', action.payload.token);
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -127,7 +128,9 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.error = null;
         state.lastLogin = null;
-        localStorage.removeItem('token');
+        
+        // Dispatch idle timeout logout action
+        // This will be handled by the idle timeout slice
       })
       
       // Get current user
@@ -143,7 +146,6 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
         state.isAuthenticated = false;
-        localStorage.removeItem('token');
       });
   },
 });

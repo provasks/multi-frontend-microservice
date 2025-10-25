@@ -1,14 +1,15 @@
 const { configureStore, createSlice } = require('@reduxjs/toolkit');
 const Storage = require('../utils/storage');
 const storageMiddleware = require('./middleware/storageMiddleware');
+const idleTimeoutSlice = require('./slices/idleTimeoutSlice');
 
 // Simple auth slice
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
     user: null,
-    token: Storage.getToken(),
-    isAuthenticated: !!Storage.getToken(),
+    token: null,
+    isAuthenticated: false,
     isLoading: false,
     error: null
   },
@@ -111,7 +112,7 @@ const notificationsSlice = createSlice({
 const uiSlice = createSlice({
   name: 'ui',
   initialState: {
-    theme: Storage.getTheme(),
+    theme: 'light',
     sidebarOpen: true,
     loading: {
       global: false,
@@ -143,7 +144,8 @@ const store = configureStore({
     auth: authSlice.reducer,
     tasks: tasksSlice.reducer,
     notifications: notificationsSlice.reducer,
-    ui: uiSlice.reducer
+    ui: uiSlice.reducer,
+    idleTimeout: idleTimeoutSlice.reducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(storageMiddleware),
@@ -155,11 +157,13 @@ const authActions = authSlice.actions;
 const tasksActions = tasksSlice.actions;
 const notificationsActions = notificationsSlice.actions;
 const uiActions = uiSlice.actions;
+const idleTimeoutActions = idleTimeoutSlice.actions;
 
 module.exports = {
   store,
   authActions,
   tasksActions,
   notificationsActions,
-  uiActions
+  uiActions,
+  idleTimeoutActions
 };

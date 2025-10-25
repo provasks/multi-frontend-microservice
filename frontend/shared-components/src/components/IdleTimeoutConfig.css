@@ -1,0 +1,300 @@
+/* Idle Timeout Configuration Styles */
+.idle-timeout-config {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: inline-block;
+}
+
+.idle-timeout-config__trigger {
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+}
+
+.idle-timeout-config__trigger:hover {
+  background: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+}
+
+.idle-timeout-config__indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #e74c3c;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+  animation: pulse 2s infinite;
+}
+
+.idle-timeout-config__modal {
+  position: absolute;
+  bottom: 50px;
+  left: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  min-width: 350px;
+  z-index: 1000;
+  animation: slideUp 0.3s ease-out;
+}
+
+.idle-timeout-config__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.idle-timeout-config__header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.idle-timeout-config__close {
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.idle-timeout-config__close:hover {
+  background: #ecf0f1;
+  color: #2c3e50;
+}
+
+.idle-timeout-config__content {
+  padding: 1.5rem;
+}
+
+.idle-timeout-config__section {
+  margin-bottom: 1.5rem;
+}
+
+.idle-timeout-config__section:last-child {
+  margin-bottom: 0;
+}
+
+.idle-timeout-config__label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.idle-timeout-config__label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3498db;
+}
+
+.idle-timeout-config__presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.idle-timeout-config__preset {
+  background: #ecf0f1;
+  color: #2c3e50;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.idle-timeout-config__preset:hover {
+  background: #d5dbdb;
+  border-color: #95a5a6;
+}
+
+.idle-timeout-config__preset.active {
+  background: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.idle-timeout-config__input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.idle-timeout-config__input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.idle-timeout-config__status {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  text-align: center;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.idle-timeout-config__actions {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #ecf0f1;
+  justify-content: flex-end;
+}
+
+.idle-timeout-config__actions .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.idle-timeout-config__actions .btn-primary {
+  background: #3498db;
+  color: white;
+}
+
+.idle-timeout-config__actions .btn-primary:hover {
+  background: #2980b9;
+  transform: translateY(-1px);
+}
+
+.idle-timeout-config__actions .btn-secondary {
+  background: #95a5a6;
+  color: white;
+}
+
+.idle-timeout-config__actions .btn-secondary:hover {
+  background: #7f8c8d;
+}
+
+.idle-timeout-config__actions .btn-warning {
+  background: #f39c12;
+  color: white;
+}
+
+.idle-timeout-config__actions .btn-warning:hover {
+  background: #e67e22;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .idle-timeout-config__modal {
+    right: -50px;
+    min-width: 300px;
+  }
+  
+  .idle-timeout-config__actions {
+    flex-direction: column;
+  }
+  
+  .idle-timeout-config__actions .btn {
+    width: 100%;
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .idle-timeout-config__modal {
+    background: #2c3e50;
+    color: white;
+  }
+  
+  .idle-timeout-config__header {
+    border-bottom-color: #34495e;
+  }
+  
+  .idle-timeout-config__header h3 {
+    color: white;
+  }
+  
+  .idle-timeout-config__label {
+    color: white;
+  }
+  
+  .idle-timeout-config__input {
+    background: #34495e;
+    border-color: #4a5f7a;
+    color: white;
+  }
+  
+  .idle-timeout-config__status {
+    background: #34495e;
+    color: white;
+  }
+  
+  .idle-timeout-config__actions {
+    border-top-color: #34495e;
+  }
+}

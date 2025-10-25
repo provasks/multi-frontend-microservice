@@ -4,6 +4,16 @@ import { Provider } from 'react-redux';
 import LoginForm from './components/LoginForm';
 import AuthenticatedApp from './components/AuthenticatedApp';
 import FloatingMessageManager from './components/FloatingMessageManager';
+
+// Import idle timeout components
+let IdleTimeoutWarning, IdleTimeoutConfig;
+try {
+  IdleTimeoutWarning = require('sharedComponents/IdleTimeoutWarning').default;
+  IdleTimeoutConfig = require('sharedComponents/IdleTimeoutConfig').default;
+  console.log('✅ Idle timeout components loaded successfully');
+} catch (error) {
+  console.warn('Idle timeout components not available:', error.message);
+}
 // import PerformanceMonitor from 'sharedComponents/PerformanceMonitor';
 // import { useGlobalErrorHandler } from 'sharedComponents/useGlobalErrorHandler';
 
@@ -25,6 +35,17 @@ const App = () => {
   // Global error handling for non-React errors (network, async, etc.)
   useEffect(() => {
     console.log('🚀 Setting up global error handlers...');
+    
+    // Handle idle timeout logout messages
+    const handleIdleTimeoutLogout = (event) => {
+      if (event.data && event.data.type === 'IDLE_TIMEOUT_LOGOUT') {
+        console.log('🕐 Idle timeout logout message received');
+        handleLogout();
+      }
+    };
+    
+    // Add message listener for idle timeout
+    window.addEventListener('message', handleIdleTimeoutLogout);
     
     const handleGlobalError = (event) => {
       console.log('🌐 Global error handler triggered:', event.error?.message || event.message);
@@ -120,6 +141,7 @@ const App = () => {
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
       window.removeEventListener('online', () => {});
       window.removeEventListener('offline', () => {});
+      window.removeEventListener('message', handleIdleTimeoutLogout);
     };
   }, []);
 
@@ -160,6 +182,7 @@ const App = () => {
       <div className="App">
         <FloatingMessageManager />
         {/* <PerformanceMonitor enabled={process.env.NODE_ENV === 'development'} /> */}
+        
         <Routes>
           <Route 
             path="/login" 
@@ -182,11 +205,24 @@ const App = () => {
     </Router>
   );
 
+  // Idle Timeout Components - only show when authenticated and Redux is available
+  const IdleTimeoutComponents = () => {
+    if (!isAuthenticated || !IdleTimeoutWarning || !IdleTimeoutConfig) return null;
+    
+    return (
+      <>
+        <IdleTimeoutWarning />
+        <IdleTimeoutConfig />
+      </>
+    );
+  };
+
   // Wrap with Redux Provider if store is available
   if (store) {
     return (
       <Provider store={store}>
         <AppContent />
+        <IdleTimeoutComponents />
       </Provider>
     );
   }
