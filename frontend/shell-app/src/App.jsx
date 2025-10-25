@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Provider } from 'react-redux';
 import LoginForm from './components/LoginForm';
 import AuthenticatedApp from './components/AuthenticatedApp';
 import FloatingMessageManager from './components/FloatingMessageManager';
 // import PerformanceMonitor from 'sharedComponents/PerformanceMonitor';
 // import { useGlobalErrorHandler } from 'sharedComponents/useGlobalErrorHandler';
+
+// Import Redux store from shared components
+let store, ReduxHooks;
+try {
+  const ReduxStore = require('sharedComponents/ReduxStore');
+  store = ReduxStore.store;
+  ReduxHooks = require('sharedComponents/ReduxHooks');
+  console.log('✅ Redux store and hooks loaded successfully');
+} catch (error) {
+  console.warn('Redux store not available, falling back to local state management:', error.message);
+}
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -142,7 +154,8 @@ const App = () => {
     );
   }
 
-  return (
+  // Render with Redux Provider if available
+  const AppContent = () => (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div className="App">
         <FloatingMessageManager />
@@ -168,6 +181,18 @@ const App = () => {
       </div>
     </Router>
   );
+
+  // Wrap with Redux Provider if store is available
+  if (store) {
+    return (
+      <Provider store={store}>
+        <AppContent />
+      </Provider>
+    );
+  }
+
+  // Fallback to regular app without Redux
+  return <AppContent />;
 };
 
 export default App;

@@ -104,6 +104,10 @@ module.exports = {
           singleton: true,
           requiredVersion: '^6.8.0',
         },
+        'react-redux': {
+          singleton: true,
+          requiredVersion: '^9.0.4',
+        },
       },
     }),
     new HtmlWebpackPlugin({

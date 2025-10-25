@@ -58,7 +58,11 @@ module.exports = {
         './useRateLimit': './src/hooks/useRateLimit',
         './security': './src/utils/security',
         './unifiedApiClient': './src/utils/unifiedApiClient',
-        './constants': './src/constants'
+        './constants': './src/constants',
+        './storage': './src/utils/storage',
+        './ReduxStore': './src/store/simpleStore',
+        './ReduxHooks': './src/store/simpleHooks',
+        './ReduxSelectors': './src/store/selectors/authSelectors'
       },
       shared: {
         react: {
@@ -69,6 +73,26 @@ module.exports = {
         'react-dom': {
           singleton: true,
           requiredVersion: '^18.2.0',
+          eager: false,
+        },
+        '@reduxjs/toolkit': {
+          singleton: true,
+          requiredVersion: '^2.0.1',
+          eager: false,
+        },
+        'react-redux': {
+          singleton: true,
+          requiredVersion: '^9.0.4',
+          eager: false,
+        },
+        'redux-persist': {
+          singleton: true,
+          requiredVersion: '^6.0.0',
+          eager: false,
+        },
+        'reselect': {
+          singleton: true,
+          requiredVersion: '^5.0.1',
           eager: false,
         },
       },

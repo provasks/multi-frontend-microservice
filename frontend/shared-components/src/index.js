@@ -10,15 +10,22 @@ export { default as Badge } from './components/Badge';
 export { default as Tooltip } from './components/Tooltip';
 
 // Export shared hooks
-export { useAuth } from './hooks/useAuth';
+export { useAuth as useAuthLocal } from './hooks/useAuth';
 export { useGlobalErrorHandler } from './hooks/useGlobalErrorHandler';
 export { useRateLimit, useGlobalRateLimit } from './hooks/useRateLimit';
+
+// Export Redux store and hooks (simple version)
+export { store, authActions, tasksActions, notificationsActions, uiActions } from './store/simpleStore';
+export { useAuth as useReduxAuth, useTasks, useNotifications, useUI } from './store/simpleHooks';
 
 // Export security utilities
 export * from './utils/security';
 
 // Export unified API client
 export * from './utils/unifiedApiClient';
+
+// Export storage utility
+export * from './utils/storage';
 
 // Export constants
 export * from './constants';

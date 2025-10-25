@@ -78,6 +78,11 @@ module.exports = {
           requiredVersion: '^18.2.0',
           eager: false,
         },
+        'react-redux': {
+          singleton: true,
+          requiredVersion: '^9.0.4',
+          eager: false,
+        },
       },
     }),
     new HtmlWebpackPlugin({
