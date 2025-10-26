@@ -235,6 +235,7 @@ export const useTaskManagement = () => {
         // Convert datetime-local format to ISO string
         const dueDate = new Date(apiData.dueDate);
         apiData.dueDate = dueDate.toISOString();
+        console.log('Due date provided in form, using it:', apiData.dueDate);
       } else {
         // Only set default due date for new tasks or if original task had no due date
         if (modalMode === 'add') {
@@ -242,14 +243,17 @@ export const useTaskManagement = () => {
           const defaultDueDate = new Date();
           defaultDueDate.setHours(defaultDueDate.getHours() + 6);
           apiData.dueDate = defaultDueDate.toISOString();
+          console.log('New task, setting default due date:', apiData.dueDate);
         } else if (modalMode === 'edit' && editingTask && !editingTask.dueDate) {
           // For existing tasks, only set default if original task had no due date
           const defaultDueDate = new Date();
           defaultDueDate.setHours(defaultDueDate.getHours() + 6);
           apiData.dueDate = defaultDueDate.toISOString();
+          console.log('Existing task without due date, setting default:', apiData.dueDate);
         } else {
           // For existing tasks with due date, don't change it
           delete apiData.dueDate;
+          console.log('Existing task with due date, preserving original due date');
         }
       }
 
