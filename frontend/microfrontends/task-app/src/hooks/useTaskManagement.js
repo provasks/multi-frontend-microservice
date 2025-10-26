@@ -145,6 +145,17 @@ export const useTaskManagement = () => {
       fetchTasks();
     } catch (error) {
       console.error('Error deleting task:', error);
+      
+      // Handle backend errors
+      if (error.response?.data?.error) {
+        if (window.showError) {
+          window.showError(error.response.data.error);
+        }
+      } else {
+        if (window.showError) {
+          window.showError(error.message || 'Failed to delete task. Please try again.');
+        }
+      }
     }
   }, [tasks, fetchTasks, isAuthenticated]);
 
@@ -253,6 +264,25 @@ export const useTaskManagement = () => {
       setShowModal(false);
     } catch (error) {
       console.error('Error saving task:', error);
+      
+      // Handle validation errors from backend
+      if (error.response?.status === 400 && error.response?.data?.errors) {
+        // Extract validation error messages
+        const errorMessages = error.response.data.errors.map(err => err.msg).join(', ');
+        if (window.showError) {
+          window.showError(`Validation Error: ${errorMessages}`);
+        }
+      } else if (error.response?.data?.error) {
+        // Handle other backend errors
+        if (window.showError) {
+          window.showError(error.response.data.error);
+        }
+      } else {
+        // Handle network or other errors
+        if (window.showError) {
+          window.showError(error.message || 'An error occurred. Please try again.');
+        }
+      }
     }
   }, [formData, modalMode, editingTask, fetchTasks, tasks, isAuthenticated]);
 
