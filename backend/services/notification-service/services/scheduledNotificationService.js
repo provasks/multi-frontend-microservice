@@ -30,13 +30,48 @@ const scheduledNotificationService = {
     try {
       console.log('Checking for overdue tasks...');
       
-      // This would typically query the task service for overdue tasks
-      // For now, we'll create a placeholder implementation
+      // Query task service for overdue tasks
+      const response = await axios.get(`${TASK_SERVICE_URL}/api/tasks/overdue`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       
-      // In a real implementation, you would:
-      // 1. Query the task service for overdue tasks
-      // 2. Create urgent notifications for each task's assigned user
-      // 3. Handle errors gracefully
+      const overdueTasks = response.data.tasks || [];
+      console.log(`Found ${overdueTasks.length} overdue tasks`);
+      
+      // Create notifications for each overdue task
+      for (const task of overdueTasks) {
+        try {
+          // Check if notification already exists to prevent duplicates
+          const existingNotification = await Notification.findOne({
+            userId: task.assignedTo,
+            taskId: task._id,
+            type: 'task_overdue',
+            isRead: false
+          });
+          
+          if (!existingNotification) {
+            // Create overdue notification
+            await Notification.create({
+              userId: task.assignedTo,
+              taskId: task._id,
+              type: 'task_overdue',
+              title: 'Task Overdue',
+              message: `Task "${task.title}" is now overdue`,
+              priority: 'urgent',
+              metadata: { taskTitle: task.title },
+              isRead: false
+            });
+            
+            console.log(`Created overdue notification for task: ${task.title} (${task._id})`);
+          } else {
+            console.log(`Overdue notification already exists for task: ${task.title} (${task._id})`);
+          }
+        } catch (taskError) {
+          console.error(`Error creating notification for task ${task._id}:`, taskError);
+        }
+      }
       
       console.log('Overdue check completed');
     } catch (error) {

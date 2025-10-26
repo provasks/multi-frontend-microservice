@@ -62,6 +62,33 @@ router.get('/', auth, taskController.getAllTasks);
 
 /**
  * @swagger
+ * /api/tasks/overdue:
+ *   get:
+ *     summary: Get all overdue tasks
+ *     tags: [Tasks]
+ *     description: Get all tasks that are past their due date and not completed
+ *     responses:
+ *       200:
+ *         description: List of overdue tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 tasks:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Task'
+ *                 count:
+ *                   type: integer
+ *                   description: Number of overdue tasks
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.get('/overdue', taskController.getOverdueTasks);
+
+/**
+ * @swagger
  * /api/tasks/{id}:
  *   get:
  *     summary: Get task by ID

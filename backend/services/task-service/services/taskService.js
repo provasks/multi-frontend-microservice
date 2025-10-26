@@ -4,6 +4,29 @@ const notificationService = require('./notificationService');
 
 class TaskService {
   /**
+   * Get all overdue tasks
+   */
+  async getOverdueTasks() {
+    try {
+      console.log('Querying overdue tasks...');
+      
+      const now = new Date();
+      const overdueTasks = await Task.find({
+        dueDate: { $lt: now },
+        status: { $nin: ['completed', 'cancelled'] }
+      }).populate('assignedTo', 'firstName lastName username email')
+        .populate('createdBy', 'firstName lastName username email')
+        .sort({ dueDate: 1 }); // Sort by due date (oldest first)
+      
+      console.log(`Found ${overdueTasks.length} overdue tasks`);
+      return overdueTasks;
+    } catch (error) {
+      console.error('Error in getOverdueTasks:', error);
+      throw error;
+    }
+  },
+
+  /**
    * Get all tasks with filtering and pagination
    */
   async getAllTasks({ userId, status, priority, assignedTo, search, page, limit, sortBy, sortOrder, authToken }) {

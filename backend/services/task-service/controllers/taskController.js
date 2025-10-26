@@ -3,6 +3,27 @@ const { validationResult } = require('express-validator');
 
 class TaskController {
   /**
+   * Get all overdue tasks
+   */
+  async getOverdueTasks(req, res) {
+    try {
+      console.log('Getting overdue tasks...');
+      
+      const overdueTasks = await taskService.getOverdueTasks();
+      
+      console.log(`Found ${overdueTasks.length} overdue tasks`);
+      
+      res.json({
+        tasks: overdueTasks,
+        count: overdueTasks.length
+      });
+    } catch (error) {
+      console.error('Get overdue tasks error:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  },
+
+  /**
    * Get all tasks with filtering and pagination
    */
   async getAllTasks(req, res) {
