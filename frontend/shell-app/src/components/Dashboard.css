@@ -2,11 +2,32 @@
 .stat-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border-left: 4px solid;
+  height: 120px; /* Fixed height for all stat cards */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Light background colors for stat cards */
+.stat-card.border-primary {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
+}
+
+.stat-card.border-success {
+  background: linear-gradient(135deg, #e8f5e8 0%, #f8f9fa 100%);
+}
+
+.stat-card.border-warning {
+  background: linear-gradient(135deg, #fff8e1 0%, #f8f9fa 100%);
+}
+
+.stat-card.border-danger {
+  background: linear-gradient(135deg, #ffebee 0%, #f8f9fa 100%);
 }
 
 .stat-icon {
@@ -23,6 +44,33 @@
   border: 1px solid #e9ecef;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 400px; /* Fixed height for chart cards */
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+/* Light background colors for chart cards */
+.card:nth-child(1) {
+  background: linear-gradient(135deg, #f0f8ff 0%, #f8f9fa 100%);
+}
+
+.card:nth-child(2) {
+  background: linear-gradient(135deg, #f0fff0 0%, #f8f9fa 100%);
+}
+
+.card:nth-child(3) {
+  background: linear-gradient(135deg, #fff5f5 0%, #f8f9fa 100%);
+}
+
+.card:nth-child(4) {
+  background: linear-gradient(135deg, #f5f0ff 0%, #f8f9fa 100%);
 }
 
 .card-header {
@@ -116,8 +164,9 @@
 /* Chart container styles */
 .chart-container {
   position: relative;
-  height: 300px;
+  height: 280px; /* Adjusted for fixed card height */
   width: 100%;
+  flex: 1;
 }
 
 /* Chart responsive adjustments */
@@ -139,14 +188,26 @@
 }
 
 /* Chart card hover effects */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
 .card:hover .chart-container {
-  transform: scale(1.02);
+  transform: scale(1.01);
   transition: transform 0.3s ease;
 }
 
 /* Chart legend styling */
 .chartjs-legend {
   margin-top: 10px;
+}
+
+/* Recent activity card improvements */
+.card:last-child {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  min-height: 400px;
 }
 
 /* Empty state styles */
@@ -156,6 +217,23 @@
 
 .text-center.text-muted i {
   opacity: 0.5;
+}
+
+/* Improved list group items */
+.list-group-item {
+  border: none;
+  border-bottom: 1px solid #e9ecef;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.list-group-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateX(5px);
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
 }
 
 /* Chart loading state */
