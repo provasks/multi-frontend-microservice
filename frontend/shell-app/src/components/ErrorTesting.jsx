@@ -238,172 +238,298 @@ const ErrorTesting = () => {
   console.log('🧪 ErrorTesting render called, showErrorComponent:', showErrorComponent, 'errorBoundaryKey:', errorBoundaryKey);
 
   return (
-    <div className="container mt-4">
+    <div className="container-fluid mt-4">
       <div className="row">
         <div className="col-12">
-          <h2>Error Testing Page</h2>
-          <p className="text-muted">Test various error scenarios and error handling mechanisms.</p>
+          <div className="d-flex align-items-center mb-4">
+            <div className="me-3">
+              <i className="fas fa-bug fa-2x text-danger"></i>
+            </div>
+            <div>
+              <h2 className="mb-1">Error Testing Laboratory</h2>
+              <p className="text-muted mb-0">Comprehensive testing suite for error handling mechanisms</p>
+            </div>
+          </div>
           
-          <div className="card">
-            <div className="card-header">
-              <h5 className="mb-0">Error Testing Controls</h5>
+          {/* Status Overview Card */}
+          <div className="card border-0 shadow-sm mb-4">
+            <div className="card-header bg-gradient bg-primary text-white">
+              <h5 className="mb-0">
+                <i className="fas fa-info-circle me-2"></i>
+                Error Handler Status
+              </h5>
             </div>
             <div className="card-body">
-              <div className="alert alert-info">
-                <h6>Error Handler Status:</h6>
-                <div className="row">
-                  <div className="col-md-6">
-                    <small>
-                      <strong>Global Handlers:</strong><br/>
-                      showError: {errorHandlersStatus.showError ? '✅' : '❌'}<br/>
-                      showSuccess: {errorHandlersStatus.showSuccess ? '✅' : '❌'}<br/>
-                      onError: {errorHandlersStatus.onError ? '✅' : '❌'}
-                    </small>
+              <div className="row">
+                <div className="col-md-6">
+                  <h6 className="text-primary mb-3">
+                    <i className="fas fa-globe me-2"></i>Global Handlers
+                  </h6>
+                  <div className="d-flex flex-column gap-2">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <span className="fw-medium">showError</span>
+                      <span className={`badge ${errorHandlersStatus.showError ? 'bg-success' : 'bg-danger'}`}>
+                        {errorHandlersStatus.showError ? 'Available' : 'Missing'}
+                      </span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <span className="fw-medium">showSuccess</span>
+                      <span className={`badge ${errorHandlersStatus.showSuccess ? 'bg-success' : 'bg-danger'}`}>
+                        {errorHandlersStatus.showSuccess ? 'Available' : 'Missing'}
+                      </span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <span className="fw-medium">onError</span>
+                      <span className={`badge ${errorHandlersStatus.onError ? 'bg-success' : 'bg-danger'}`}>
+                        {errorHandlersStatus.onError ? 'Available' : 'Missing'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="col-md-6">
-                    <small>
-                      <strong>Event System:</strong><br/>
-                      addEventListener: {errorHandlersStatus.addEventListener ? '✅' : '❌'}<br/>
-                      ErrorEvent: {errorHandlersStatus.ErrorEvent ? '✅' : '❌'}<br/>
-                      CustomEvent: {errorHandlersStatus.CustomEvent ? '✅' : '❌'}
-                    </small>
+                </div>
+                <div className="col-md-6">
+                  <h6 className="text-primary mb-3">
+                    <i className="fas fa-cogs me-2"></i>Event System
+                  </h6>
+                  <div className="d-flex flex-column gap-2">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <span className="fw-medium">addEventListener</span>
+                      <span className={`badge ${errorHandlersStatus.addEventListener ? 'bg-success' : 'bg-danger'}`}>
+                        {errorHandlersStatus.addEventListener ? 'Available' : 'Missing'}
+                      </span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <span className="fw-medium">ErrorEvent</span>
+                      <span className={`badge ${errorHandlersStatus.ErrorEvent ? 'bg-success' : 'bg-danger'}`}>
+                        {errorHandlersStatus.ErrorEvent ? 'Available' : 'Missing'}
+                      </span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <span className="fw-medium">CustomEvent</span>
+                      <span className={`badge ${errorHandlersStatus.CustomEvent ? 'bg-success' : 'bg-danger'}`}>
+                        {errorHandlersStatus.CustomEvent ? 'Available' : 'Missing'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className="row">
-                <div className="col-md-6">
-                  <h6>Global Error Handler Tests</h6>
+            </div>
+          </div>
+          {/* Error Testing Sections */}
+          <div className="row">
+            {/* Global Error Handler Tests */}
+            <div className="col-lg-6 mb-4">
+              <div className="card h-100 border-0 shadow-sm">
+                <div className="card-header bg-gradient bg-info text-white">
+                  <h6 className="mb-0">
+                    <i className="fas fa-globe me-2"></i>
+                    Global Error Handler Tests
+                  </h6>
+                </div>
+                <div className="card-body">
+                  <p className="text-muted small mb-3">Test global error handling mechanisms and event listeners</p>
                   <div className="d-grid gap-2">
                     <button 
-                      className="btn btn-primary" 
+                      className="btn btn-outline-primary" 
                       onClick={testGlobalErrorHandler}
                     >
+                      <i className="fas fa-exclamation-triangle me-2"></i>
                       Test Global Error Handler
                     </button>
                     <button 
-                      className="btn btn-secondary" 
+                      className="btn btn-outline-secondary" 
                       onClick={testErrorHandlerSetup}
                     >
+                      <i className="fas fa-cog me-2"></i>
                       Test Error Handler Setup
                     </button>
                     <button 
-                      className="btn btn-warning" 
+                      className="btn btn-outline-warning" 
                       onClick={testSimpleError}
                     >
+                      <i className="fas fa-bolt me-2"></i>
                       Test Simple Error
                     </button>
                     <button 
-                      className="btn btn-info" 
+                      className="btn btn-outline-info" 
                       onClick={testDirectError}
                     >
+                      <i className="fas fa-bullseye me-2"></i>
                       Test Direct Error
                     </button>
                     <button 
-                      className="btn btn-dark" 
+                      className="btn btn-outline-dark" 
                       onClick={testManualErrorDispatch}
                     >
+                      <i className="fas fa-hand-paper me-2"></i>
                       Test Manual Error Dispatch
                     </button>
                   </div>
                 </div>
-                
-                <div className="col-md-6">
-                  <h6>Specific Error Types</h6>
+              </div>
+            </div>
+            
+            {/* Specific Error Types */}
+            <div className="col-lg-6 mb-4">
+              <div className="card h-100 border-0 shadow-sm">
+                <div className="card-header bg-gradient bg-warning text-dark">
+                  <h6 className="mb-0">
+                    <i className="fas fa-exclamation-circle me-2"></i>
+                    Specific Error Types
+                  </h6>
+                </div>
+                <div className="card-body">
+                  <p className="text-muted small mb-3">Test specific error scenarios and application errors</p>
                   <div className="d-grid gap-2">
                     <button 
-                      className="btn btn-danger" 
+                      className="btn btn-outline-danger" 
                       onClick={testChunkLoadError}
                     >
+                      <i className="fas fa-cube me-2"></i>
                       Test Chunk Load Error
                     </button>
                     <button 
-                      className="btn btn-danger" 
+                      className="btn btn-outline-danger" 
                       onClick={testAuthError}
                     >
+                      <i className="fas fa-lock me-2"></i>
                       Test Auth Error
                     </button>
                     <button 
-                      className="btn btn-warning" 
+                      className="btn btn-outline-warning" 
                       onClick={testNetworkError}
                     >
+                      <i className="fas fa-wifi me-2"></i>
                       Test Network Error
                     </button>
                     <button 
-                      className="btn btn-warning" 
+                      className="btn btn-outline-warning" 
                       onClick={testValidationError}
                     >
+                      <i className="fas fa-check-circle me-2"></i>
                       Test Validation Error
                     </button>
                     <button 
-                      className="btn btn-success" 
+                      className="btn btn-outline-success" 
                       onClick={testSuccessMessage}
                     >
+                      <i className="fas fa-check me-2"></i>
                       Test Success Message
                     </button>
                   </div>
                 </div>
               </div>
-              
-              <div className="row mt-3">
-                <div className="col-md-6">
-                  <h6>JavaScript Error Types</h6>
+            </div>
+          </div>
+          
+          {/* JavaScript Error Types and React Error Boundary */}
+          <div className="row">
+            {/* JavaScript Error Types */}
+            <div className="col-lg-6 mb-4">
+              <div className="card h-100 border-0 shadow-sm">
+                <div className="card-header bg-gradient bg-danger text-white">
+                  <h6 className="mb-0">
+                    <i className="fab fa-js-square me-2"></i>
+                    JavaScript Error Types
+                  </h6>
+                </div>
+                <div className="card-body">
+                  <p className="text-muted small mb-3">Test native JavaScript error types and async operations</p>
                   <div className="d-grid gap-2">
                     <button 
-                      className="btn btn-warning" 
+                      className="btn btn-outline-warning" 
                       onClick={testTypeError}
                     >
+                      <i className="fas fa-exclamation me-2"></i>
                       Test TypeError
                     </button>
                     <button 
-                      className="btn btn-warning" 
+                      className="btn btn-outline-warning" 
                       onClick={testReferenceError}
                     >
+                      <i className="fas fa-question-circle me-2"></i>
                       Test ReferenceError
                     </button>
                     <button 
-                      className="btn btn-info" 
+                      className="btn btn-outline-info" 
                       onClick={testAsyncError}
                     >
+                      <i className="fas fa-clock me-2"></i>
                       Test Async Error
                     </button>
                     <button 
-                      className="btn btn-danger" 
+                      className="btn btn-outline-danger" 
                       onClick={testUnhandledRejection}
                     >
+                      <i className="fas fa-times-circle me-2"></i>
                       Test Unhandled Rejection
                     </button>
                   </div>
                 </div>
               </div>
-              
-              <hr />
-              
-              <div className="row">
-                <div className="col-12">
-                  <h6>React Error Boundary Tests</h6>
+            </div>
+            
+            {/* React Error Boundary Tests */}
+            <div className="col-lg-6 mb-4">
+              <div className="card h-100 border-0 shadow-sm">
+                <div className="card-header bg-gradient bg-secondary text-white">
+                  <h6 className="mb-0">
+                    <i className="fab fa-react me-2"></i>
+                    React Error Boundary Tests
+                  </h6>
+                </div>
+                <div className="card-body">
+                  <p className="text-muted small mb-3">Test React Error Boundary and component error handling</p>
                   <div className="d-grid gap-2">
                     <button 
-                      className="btn btn-danger" 
+                      className="btn btn-outline-danger" 
                       onClick={triggerErrorComponent}
                     >
+                      <i className="fas fa-play me-2"></i>
                       Trigger Error Component
                     </button>
                     <button 
-                      className="btn btn-secondary" 
+                      className="btn btn-outline-secondary" 
                       onClick={resetErrorComponent}
                     >
+                      <i className="fas fa-undo me-2"></i>
                       Reset Error Component
                     </button>
                   </div>
                   
                   {showErrorComponent && (
                     <div className="mt-3">
-                      <div className="alert alert-warning">
-                        <strong>Error Component Below:</strong> This will throw an error and test the Error Boundary.
+                      <div className="alert alert-warning border-0">
+                        <div className="d-flex align-items-center">
+                          <i className="fas fa-exclamation-triangle me-2"></i>
+                          <div>
+                            <strong>Error Component Below:</strong><br/>
+                            <small>This will throw an error and test the Error Boundary.</small>
+                          </div>
+                        </div>
                       </div>
-                      <ErrorComponent key={errorBoundaryKey} />
+                      <div className="border rounded p-3 bg-light">
+                        <ErrorComponent key={errorBoundaryKey} />
+                      </div>
                     </div>
                   )}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Footer Information */}
+          <div className="row mt-4">
+            <div className="col-12">
+              <div className="card border-0 bg-light">
+                <div className="card-body text-center">
+                  <h6 className="text-muted mb-2">
+                    <i className="fas fa-info-circle me-2"></i>
+                    Error Testing Information
+                  </h6>
+                  <p className="text-muted small mb-0">
+                    This testing suite helps verify that all error handling mechanisms are working correctly. 
+                    Check the browser console for detailed error logs and ensure error notifications appear as expected.
+                  </p>
                 </div>
               </div>
             </div>
