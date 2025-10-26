@@ -14,11 +14,22 @@ export const useTaskManagement = () => {
   const [modalMode, setModalMode] = useState('add');
   const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState(TASK_CONSTANTS.DEFAULT_FORM);
+  
+  // Pagination state
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalTasks: 0,
+    hasNext: false,
+    hasPrev: false
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { isAuthenticated } = useAuth();
 
-  const fetchTasks = useCallback(async (isRefresh = false) => {
+  const fetchTasks = useCallback(async (isRefresh = false, page = currentPage, limit = pageSize) => {
     try {
       if (isRefresh) {
         setRefreshing(true);
@@ -37,10 +48,22 @@ export const useTaskManagement = () => {
         return;
       }
 
-      // Use unified API client
-      const data = await apiHelpers.fetchTasks();
+      // Prepare filters
+      const filters = {};
+      if (debouncedSearchTerm) {
+        filters.search = debouncedSearchTerm;
+      }
+
+      // Use unified API client with pagination
+      const data = await apiHelpers.fetchTasks(page, limit, filters);
       const tasksData = data.tasks || data || [];
       setTasks(Array.isArray(tasksData) ? tasksData : []);
+      
+      // Update pagination state
+      if (data.pagination) {
+        setPagination(data.pagination);
+      }
+      
       setApiStatus('connected');
     } catch (error) {
       console.error('Error fetching tasks:', error);
@@ -50,11 +73,11 @@ export const useTaskManagement = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, currentPage, pageSize, debouncedSearchTerm]);
 
   useEffect(() => {
     fetchTasks();
-  }, [fetchTasks]);
+  }, [currentPage, pageSize, debouncedSearchTerm]);
 
   const handleAddTask = useCallback(() => {
     setModalMode('add');
@@ -200,21 +223,37 @@ export const useTaskManagement = () => {
     };
   }, [tasks]);
 
-  const filteredTasks = useMemo(() => {
-    if (!debouncedSearchTerm) return tasks;
-    
-    return tasks.filter(task => 
-      task.title?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-      task.description?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-      task.status?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-      task.priority?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-    );
-  }, [tasks, debouncedSearchTerm]);
+  // No client-side filtering needed since we're using server-side pagination
+  const filteredTasks = tasks;
 
   // Separate refresh function that doesn't cause flickering
   const refreshTasks = useCallback(() => {
     fetchTasks(true);
   }, [fetchTasks]);
+
+  // Pagination control functions
+  const handlePageChange = useCallback((newPage) => {
+    setCurrentPage(newPage);
+    fetchTasks(false, newPage, pageSize);
+  }, [fetchTasks, pageSize]);
+
+  const handlePageSizeChange = useCallback((newPageSize) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1); // Reset to first page
+    fetchTasks(false, 1, newPageSize);
+  }, [fetchTasks]);
+
+  const goToNextPage = useCallback(() => {
+    if (pagination.hasNext) {
+      handlePageChange(currentPage + 1);
+    }
+  }, [pagination.hasNext, currentPage, handlePageChange]);
+
+  const goToPrevPage = useCallback(() => {
+    if (pagination.hasPrev) {
+      handlePageChange(currentPage - 1);
+    }
+  }, [pagination.hasPrev, currentPage, handlePageChange]);
 
   return {
     // State
@@ -229,6 +268,9 @@ export const useTaskManagement = () => {
     formData,
     filteredTasks,
     taskStats,
+    pagination,
+    currentPage,
+    pageSize,
     
     // Actions
     fetchTasks,
@@ -240,6 +282,12 @@ export const useTaskManagement = () => {
     handleInputChange,
     handleCloseModal,
     handleSearchChange,
-    handleClearSearch
+    handleClearSearch,
+    
+    // Pagination actions
+    handlePageChange,
+    handlePageSizeChange,
+    goToNextPage,
+    goToPrevPage
   };
 };

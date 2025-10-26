@@ -349,11 +349,11 @@ const SHARED_COMPONENTS_CONFIG = {
     // Environment-specific overrides
     PRODUCTION: {
       TIMEOUT: 15 * 60 * 1000, // 15 minutes
-      WARNING_TIME: 2 * 60 * 1000 // 2 minutes
+      WARNING_TIME: 1 * 60 * 1000 // 2 minutes
     },
     
     DEVELOPMENT: {
-      TIMEOUT: 2 * 60 * 1000, // 2 minutes (same as default)
+      TIMEOUT: 20 * 60 * 1000, // 2 minutes (same as default)
       WARNING_TIME: 30 * 1000 // 30 seconds (same as default)
     },
     

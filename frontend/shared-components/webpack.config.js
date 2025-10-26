@@ -57,6 +57,7 @@ module.exports = {
         './Tooltip': './src/components/Tooltip',
         './IdleTimeoutWarning': './src/components/IdleTimeoutWarning',
         './IdleTimeoutConfig': './src/components/IdleTimeoutConfig',
+        './IdleTimeoutDebug': './src/components/IdleTimeoutDebug',
         './TouchpadDebug': './src/components/TouchpadDebug',
         './useAuth': './src/hooks/useAuth',
         './useGlobalErrorHandler': './src/hooks/useGlobalErrorHandler',

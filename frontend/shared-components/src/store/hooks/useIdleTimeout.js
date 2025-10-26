@@ -51,7 +51,7 @@ const useIdleTimeout = () => {
 
   // Handle timeout
   const handleTimeout = useCallback(() => {
-    console.log('🕐 Idle timeout reached - logging out user');
+    // Idle timeout reached - logging out user
     
     // Dispatch logout action first
     dispatch({ type: 'auth/logout' });
@@ -62,13 +62,13 @@ const useIdleTimeout = () => {
 
   // Handle warning
   const handleWarning = useCallback(() => {
-    console.log('⚠️ Idle timeout warning - user will be logged out soon');
+    // Idle timeout warning - user will be logged out soon
     dispatch({ type: 'idleTimeout/setWarning', payload: true });
   }, [dispatch]);
 
   // Handle reset
   const handleReset = useCallback(() => {
-    console.log('🔄 Resetting idle timeout due to user activity');
+    // Resetting idle timeout due to user activity
     dispatch({ type: 'idleTimeout/setWarning', payload: false });
     dispatch({ type: 'idleTimeout/updateLastActivity' });
     dispatch({ type: 'idleTimeout/setTimeRemaining', payload: timeout }); // Reset to full timeout
@@ -76,11 +76,11 @@ const useIdleTimeout = () => {
 
   // Initialize idle timeout
   useEffect(() => {
-    console.log('🔄 Initializing idle timeout:', { isEnabled, timeout, warningTime, isAuthenticated });
+    // Initializing idle timeout
     
     // Start idle timeout if enabled (even if not authenticated for testing)
     if (!isEnabled) {
-      console.log('❌ Idle timeout disabled');
+      // Idle timeout disabled
       return;
     }
 
@@ -98,7 +98,7 @@ const useIdleTimeout = () => {
       onReset: handleReset
     });
 
-    console.log('✅ Idle timeout initialized with', timeout / 1000, 'seconds timeout');
+    // Idle timeout initialized
 
     // Force activate the idle timeout
     dispatch({ type: 'idleTimeout/setActive', payload: true });
@@ -113,36 +113,30 @@ const useIdleTimeout = () => {
   // Update time remaining
   useEffect(() => {
     if (!isActive || !isEnabled) {
-      console.log('⏸️ Time remaining update paused:', { isActive, isEnabled });
+      // Time remaining update paused
       return;
     }
 
-    console.log('⏰ Starting time remaining update interval');
+    // Starting time remaining update interval
     
     const interval = setInterval(() => {
       const now = Date.now();
       const elapsed = now - lastActivity;
       const remaining = Math.max(0, timeout - elapsed);
       
-      console.log('⏰ Time remaining update:', {
-        now: new Date(now).toLocaleTimeString(),
-        lastActivity: new Date(lastActivity).toLocaleTimeString(),
-        elapsed: Math.round(elapsed / 1000),
-        remaining: Math.round(remaining / 1000),
-        formatted: formatTimeRemaining(remaining)
-      });
+      // Time remaining update
       
       dispatch({ type: 'idleTimeout/setTimeRemaining', payload: remaining });
       
       // If time is up, trigger timeout
       if (remaining <= 0) {
-        console.log('⏰ Time remaining reached zero - triggering timeout');
+        // Time remaining reached zero - triggering timeout
         clearInterval(interval);
       }
     }, 1000);
 
     return () => {
-      console.log('⏸️ Clearing time remaining update interval');
+      // Clearing time remaining update interval
       clearInterval(interval);
     };
   }, [isActive, isEnabled, timeout, lastActivity, dispatch, formatTimeRemaining]);

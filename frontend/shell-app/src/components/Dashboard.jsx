@@ -71,7 +71,7 @@ const Dashboard = () => {
 
       // Fetch data from all services
       const [tasksData, usersData, notificationsData] = await Promise.all([
-        apiHelpers.fetchTasks().catch(err => {
+        apiHelpers.fetchTasks(1, 1000).catch(err => { // Fetch all tasks (up to 1000)
           console.warn('Failed to fetch tasks:', err);
           return { tasks: [] };
         }),
@@ -95,14 +95,17 @@ const Dashboard = () => {
         total: tasks.length,
         completed: tasks.filter(task => task.status === 'completed').length,
         pending: tasks.filter(task => task.status === 'pending').length,
+        inProgress: tasks.filter(task => task.status === 'in_progress').length,
         overdue: tasks.filter(task => 
           task.status !== 'completed' && 
+          task.status !== 'cancelled' &&
           task.dueDate && 
           new Date(task.dueDate) < now
         ).length,
         highPriority: tasks.filter(task => task.priority === 'high').length,
         mediumPriority: tasks.filter(task => task.priority === 'medium').length,
-        lowPriority: tasks.filter(task => task.priority === 'low').length
+        lowPriority: tasks.filter(task => task.priority === 'low').length,
+        urgentPriority: tasks.filter(task => task.priority === 'urgent').length
       };
 
       // Calculate user statistics
@@ -138,7 +141,7 @@ const Dashboard = () => {
   };
 
   const StatCard = ({ title, value, icon, color, subtitle }) => (
-    <div className="col-md-3 mb-4">
+    <div className="col-lg col-md-4 col-sm-12 mb-4">
       <div className={`card stat-card border-${color}`}>
         <div className="card-body">
           <div className="d-flex align-items-center">
@@ -158,16 +161,18 @@ const Dashboard = () => {
 
   // Chart data preparation
   const getTaskStatusChartData = () => ({
-    labels: ['Completed', 'Pending', 'Overdue'],
+    labels: ['Completed', 'Pending', 'In Progress', 'Overdue'],
     datasets: [{
       data: [
         dashboardData.tasks.completed,
         dashboardData.tasks.pending,
+        dashboardData.tasks.inProgress,
         dashboardData.tasks.overdue
       ],
       backgroundColor: [
         '#28a745', // Green for completed
         '#ffc107', // Yellow for pending
+        '#17a2b8', // Blue for in progress
         '#dc3545'  // Red for overdue
       ],
       borderWidth: 2,
@@ -176,34 +181,32 @@ const Dashboard = () => {
   });
 
   const getTaskPriorityChartData = () => ({
-    labels: ['High Priority', 'Medium Priority', 'Low Priority'],
+    labels: ['Urgent', 'High', 'Medium', 'Low'],
     datasets: [
       {
-        label: 'High Priority',
-        data: [dashboardData.tasks.highPriority, 0, 0],
-        backgroundColor: '#dc3545',
-        borderColor: '#b02a37',
+        label: 'Task Count',
+        data: [
+          dashboardData.tasks.urgentPriority,
+          dashboardData.tasks.highPriority,
+          dashboardData.tasks.mediumPriority,
+          dashboardData.tasks.lowPriority
+        ],
+        backgroundColor: [
+          '#6f42c1', // Urgent - Purple
+          '#dc3545', // High - Red
+          '#ffc107', // Medium - Yellow
+          '#17a2b8'  // Low - Blue
+        ],
+        borderColor: [
+          '#5a32a3', // Urgent - Dark Purple
+          '#b02a37', // High - Dark Red
+          '#d39e00', // Medium - Dark Yellow
+          '#138496'  // Low - Dark Blue
+        ],
         borderWidth: 2,
-        borderRadius: 4,
-        borderSkipped: false
-      },
-      {
-        label: 'Medium Priority',
-        data: [0, dashboardData.tasks.mediumPriority, 0],
-        backgroundColor: '#ffc107',
-        borderColor: '#d39e00',
-        borderWidth: 2,
-        borderRadius: 4,
-        borderSkipped: false
-      },
-      {
-        label: 'Low Priority',
-        data: [0, 0, dashboardData.tasks.lowPriority],
-        backgroundColor: '#17a2b8',
-        borderColor: '#138496',
-        borderWidth: 2,
-        borderRadius: 4,
-        borderSkipped: false
+        borderRadius: 0,
+        borderSkipped: false,
+        barThickness: 60
       }
     ]
   });
@@ -284,6 +287,24 @@ const Dashboard = () => {
           usePointStyle: true,
           font: {
             size: 12
+          },
+          generateLabels: function(chart) {
+            const data = chart.data;
+            if (data.labels.length && data.datasets.length) {
+              return data.labels.map((label, index) => {
+                const dataset = data.datasets[0];
+                return {
+                  text: label,
+                  fillStyle: dataset.backgroundColor[index],
+                  strokeStyle: dataset.borderColor[index],
+                  lineWidth: dataset.borderWidth,
+                  pointStyle: 'rect',
+                  hidden: false,
+                  index: index
+                };
+              });
+            }
+            return [];
           }
         }
       }
@@ -402,6 +423,12 @@ const Dashboard = () => {
           value={dashboardData.tasks.pending}
           icon="fas fa-clock"
           color="warning"
+        />
+        <StatCard
+          title="In Progress Tasks"
+          value={dashboardData.tasks.inProgress}
+          icon="fas fa-play-circle"
+          color="info"
         />
         <StatCard
           title="Overdue Tasks"

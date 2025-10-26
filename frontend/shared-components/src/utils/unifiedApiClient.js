@@ -79,7 +79,7 @@ const configureApiInstance = (apiInstance) => {
       // Log successful requests in development
       if (process.env.NODE_ENV === 'development') {
         const duration = new Date() - response.config.metadata.startTime;
-        console.log(`✅ API ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status} (${duration}ms)`);
+        // API request completed successfully
       }
       
       return response;
@@ -205,9 +205,14 @@ export const getApiClient = (service) => {
  * Helper function for common API operations
  */
 export const apiHelpers = {
-  // Fetch tasks
-  fetchTasks: async () => {
-    const response = await taskApi.get('/tasks');
+  // Fetch tasks with pagination
+  fetchTasks: async (page = 1, limit = 10, filters = {}) => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      ...filters
+    });
+    const response = await taskApi.get(`/tasks?${params}`);
     return response.data;
   },
 

@@ -60,6 +60,11 @@ const AuthenticatedApp = ({ onLogout }) => {
   const getCurrentTab = () => {
     const path = location.pathname;
     
+    // Handle root path - should show dashboard as active
+    if (path === '/') {
+      return 'dashboard';
+    }
+    
     // Check main menu routes
     const mainMenuRoutes = shellConfig.SHELL_CONFIG.SHELL.NAVIGATION.MAIN_MENU;
     for (const menuItem of mainMenuRoutes) {
@@ -81,7 +86,7 @@ const AuthenticatedApp = ({ onLogout }) => {
     if (path === '/redux-test') return 'redux-test';
     if (path === '/idle-timeout-test') return 'idle-timeout-test';
     
-    return 'tasks'; // default to tasks
+    return 'dashboard'; // default to dashboard instead of tasks
   };
   
   const activeTab = getCurrentTab();

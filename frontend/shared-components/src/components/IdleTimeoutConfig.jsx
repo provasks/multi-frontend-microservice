@@ -20,19 +20,12 @@ const IdleTimeoutConfig = () => {
     resetIdleTimeout
   } = useIdleTimeout();
 
-  // Debug logging
-  console.log('🕐 IdleTimeoutConfig - Current values:', {
-    timeout: Math.round(timeout / 1000),
-    timeRemaining: Math.round(timeRemaining / 1000),
-    formattedTimeRemaining,
-    isEnabled,
-    isActive
-  });
+  // IdleTimeoutConfig current values
 
   // Force countdown to start if enabled but not active
   useEffect(() => {
     if (isEnabled && !isActive) {
-      console.log('🔄 Forcing idle timeout to start');
+      // Forcing idle timeout to start
       // This will be handled by the useIdleTimeout hook
     }
   }, [isEnabled, isActive]);
@@ -99,7 +92,7 @@ const IdleTimeoutConfig = () => {
               const minutes = Math.floor(seconds / 60);
               const remainingSeconds = seconds % 60;
               const display = minutes > 0 ? `${minutes}:${remainingSeconds.toString().padStart(2, '0')}` : `${seconds}s`;
-              console.log('🕐 Button countdown display:', { timeRemaining, seconds, display });
+              // Button countdown display
               return display;
             })()}
           </span>

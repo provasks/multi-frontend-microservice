@@ -30,13 +30,13 @@ class IdleTimeout {
   }
 
   init() {
-    console.log('🔄 IdleTimeout init:', { timeout: this.timeout / 1000, warningTime: this.warningTime / 1000 });
+    // IdleTimeout initialized
     this.reset();
     this.bindEvents();
   }
 
   bindEvents() {
-    console.log('🔗 Binding activity events:', this.events);
+    // Binding activity events
     this.events.forEach(event => {
       document.addEventListener(event, this.handleActivity.bind(this), true);
     });
@@ -61,13 +61,7 @@ class IdleTimeout {
     const isMouse = eventType.includes('mouse');
     const isKeyboard = eventType.includes('key');
     
-    console.log('🔄 User activity detected - resetting idle timeout', {
-      eventType,
-      isTouchpad,
-      isMouse,
-      isKeyboard,
-      timestamp: new Date().toLocaleTimeString()
-    });
+    // User activity detected - resetting idle timeout
     
     // Only reset if we're actually active and not already in warning state
     if (this.isActive && !this.isWarning) {
@@ -82,15 +76,11 @@ class IdleTimeout {
     this.isWarning = false;
     this.startTime = Date.now(); // Track when the timer was started
     
-    console.log('🔄 IdleTimeout reset:', { 
-      timeout: this.timeout / 1000, 
-      warningTime: this.warningTime / 1000,
-      warningIn: (this.timeout - this.warningTime) / 1000 
-    });
+    // IdleTimeout reset
     
     // Set warning timer
     this.warningTimer = setTimeout(() => {
-      console.log('⚠️ IdleTimeout warning triggered');
+      // IdleTimeout warning triggered
       this.isWarning = true;
       this.onWarning();
     }, this.timeout - this.warningTime);
@@ -100,12 +90,12 @@ class IdleTimeout {
       // Check if minimum session time has passed
       const sessionTime = Date.now() - (this.startTime || Date.now());
       if (sessionTime < this.minimumSessionTime) {
-        console.log('⏰ IdleTimeout prevented - minimum session time not reached');
+        // IdleTimeout prevented - minimum session time not reached
         this.reset(); // Reset the timer instead of timing out
         return;
       }
       
-      console.log('🕐 IdleTimeout timeout triggered');
+      // IdleTimeout timeout triggered
       this.isActive = false;
       this.onTimeout();
     }, this.timeout);
@@ -123,7 +113,7 @@ class IdleTimeout {
   }
 
   destroy() {
-    console.log('🛑 Destroying idle timeout');
+    // Destroying idle timeout
     this.clearTimers();
     this.events.forEach(event => {
       document.removeEventListener(event, this.handleActivity.bind(this), true);

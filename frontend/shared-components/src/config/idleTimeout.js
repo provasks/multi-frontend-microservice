@@ -10,7 +10,7 @@ const { SHARED_COMPONENTS_CONFIG, UTILITY_FUNCTIONS } = require('./frontendConfi
 const getEnvironmentConfig = () => {
   const env = UTILITY_FUNCTIONS.getEnvironment();
   
-  console.log('🔍 Idle timeout environment detected:', env);
+  // Environment detected for idle timeout configuration
   
   if (env === 'production') {
     return {

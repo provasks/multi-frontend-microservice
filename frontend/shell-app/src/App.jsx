@@ -13,7 +13,7 @@ try {
   IdleTimeoutWarning = require('sharedComponents/IdleTimeoutWarning').default;
   IdleTimeoutConfig = require('sharedComponents/IdleTimeoutConfig').default;
   IdleTimeoutDebug = require('sharedComponents/IdleTimeoutDebug').default;
-  console.log('✅ Idle timeout components loaded successfully');
+  // Idle timeout components loaded successfully
 } catch (error) {
   console.warn('Idle timeout components not available:', error.message);
 }
@@ -26,7 +26,7 @@ try {
   const ReduxStore = require('sharedComponents/ReduxStore');
   store = ReduxStore.store;
   ReduxHooks = require('sharedComponents/ReduxHooks');
-  console.log('✅ Redux store and hooks loaded successfully');
+  // Redux store and hooks loaded successfully
 } catch (error) {
   console.warn('Redux store not available, falling back to local state management:', error.message);
 }
@@ -37,12 +37,12 @@ const App = () => {
 
   // Global error handling for non-React errors (network, async, etc.)
   useEffect(() => {
-    console.log('🚀 Setting up global error handlers...');
+    // Setting up global error handlers
     
     // Handle idle timeout logout messages
     const handleIdleTimeoutLogout = (event) => {
       if (event.data && event.data.type === 'IDLE_TIMEOUT_LOGOUT') {
-        console.log('🕐 Idle timeout logout message received');
+        // Idle timeout logout message received
         handleLogout();
       }
     };
@@ -51,17 +51,17 @@ const App = () => {
     window.addEventListener('message', handleIdleTimeoutLogout);
     
     const handleGlobalError = (event) => {
-      console.log('🌐 Global error handler triggered:', event.error?.message || event.message);
+      // Global error handler triggered
       
       // Check if this is a React component error - let ErrorBoundary handle it
       if (event.error && event.error.message && event.error.message.includes('Component Error')) {
-        console.log('🚫 Ignoring React component error - ErrorBoundary should handle this');
+        // Ignoring React component error - ErrorBoundary should handle this
         return; // Don't interfere with ErrorBoundary
       }
       
       // Don't handle login form errors - let the form handle them
       if (event.error && event.error.message && event.error.message.includes('Login')) {
-        console.log('🚫 Ignoring login form error - form should handle this');
+        // Ignoring login form error - form should handle this
         return;
       }
       
@@ -88,11 +88,11 @@ const App = () => {
     };
 
     const handleUnhandledRejection = (event) => {
-      console.log('🌐 Unhandled rejection handler triggered:', event.reason?.message || event.reason);
+      // Unhandled rejection handler triggered
       
       // Don't handle login form rejections - let the form handle them
       if (event.reason && event.reason.message && event.reason.message.includes('Login')) {
-        console.log('🚫 Ignoring login form rejection - form should handle this');
+        // Ignoring login form rejection - form should handle this
         return;
       }
       
@@ -123,23 +123,23 @@ const App = () => {
     
     // Network status listeners
     window.addEventListener('online', () => {
-      console.log('Network: Online');
+      // Network: Online
       if (window.showSuccess) {
         window.showSuccess('Connection restored!');
       }
     });
 
     window.addEventListener('offline', () => {
-      console.log('Network: Offline');
+      // Network: Offline
       if (window.showError) {
         window.showError('No internet connection. Please check your network.');
       }
     });
 
-    console.log('✅ Global error handlers set up successfully');
+    // Global error handlers set up successfully
 
     return () => {
-      console.log('Cleaning up global error handlers...');
+      // Cleaning up global error handlers
       window.removeEventListener('error', handleGlobalError);
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
       window.removeEventListener('online', () => {});
