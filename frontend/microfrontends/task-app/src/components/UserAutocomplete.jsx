@@ -14,13 +14,6 @@ const UserAutocomplete = ({
   const initialCachedData = getCachedUsers();
   const initialUsers = initialCachedData ? (initialCachedData.users || initialCachedData || []) : [];
   
-  console.log('UserAutocomplete: Component initialization', {
-    hasCachedData: !!initialCachedData,
-    initialUsersCount: initialUsers.length,
-    loading: !initialCachedData,
-    value: value,
-    mode: value ? 'edit' : 'add'
-  });
   
   const [users, setUsers] = useState(initialUsers);
   const [filteredUsers, setFilteredUsers] = useState(initialUsers);
@@ -47,14 +40,12 @@ const UserAutocomplete = ({
       
       // If we already have cached data from initialization, we're done
       if (initialCachedData) {
-        console.log('UserAutocomplete: Already have cached data from initialization');
         usersFetchedRef.current = true;
         return;
       }
       
       try {
         // Fetch fresh data if no cache
-        console.log('UserAutocomplete: Fetching fresh users data');
         const response = await apiHelpers.fetchUsers();
         const usersList = response.users || response || [];
         
@@ -103,15 +94,12 @@ const UserAutocomplete = ({
   // Handle initial value when component mounts with cached data
   useEffect(() => {
     if (value && initialUsers.length > 0 && !selectedUser) {
-      console.log('UserAutocomplete: Setting initial value from cached data', { value, initialUsersCount: initialUsers.length });
       const user = initialUsers.find(u => u._id === value);
       if (user) {
         const displayName = `${user.firstName} ${user.lastName}`.trim() || user.username;
         setSearchTerm(displayName);
         setSelectedUser(user);
-        console.log('UserAutocomplete: Found user in cache', { user, displayName });
       } else {
-        console.log('UserAutocomplete: User not found in cache', { value });
       }
     }
   }, [value, initialUsers, selectedUser]);
