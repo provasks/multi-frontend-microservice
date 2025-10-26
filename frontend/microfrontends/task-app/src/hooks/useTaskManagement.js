@@ -87,7 +87,9 @@ export const useTaskManagement = () => {
       description: '',
       priority: 'medium',
       status: 'pending',
-      assignedTo: ''
+      assignedTo: '',
+      dueDate: '',
+      tags: ''
     });
     setShowModal(true);
   }, []);
@@ -95,12 +97,28 @@ export const useTaskManagement = () => {
   const handleEditTask = useCallback((task) => {
     setModalMode('edit');
     setEditingTask(task);
+    
+    // Format dueDate for datetime-local input (YYYY-MM-DDTHH:MM)
+    let formattedDueDate = '';
+    if (task.dueDate) {
+      const dueDate = new Date(task.dueDate);
+      formattedDueDate = dueDate.toISOString().slice(0, 16);
+    }
+    
+    // Format tags array as comma-separated string
+    let formattedTags = '';
+    if (task.tags && Array.isArray(task.tags)) {
+      formattedTags = task.tags.join(', ');
+    }
+    
     setFormData({
       title: task.title || '',
       description: task.description || '',
       priority: task.priority || 'medium',
       status: task.status || 'pending',
-      assignedTo: task.assignedTo || ''
+      assignedTo: task.assignedTo || '',
+      dueDate: formattedDueDate,
+      tags: formattedTags
     });
     setShowModal(true);
   }, []);
@@ -161,6 +179,7 @@ export const useTaskManagement = () => {
 
       const apiData = { ...formData };
       
+      // Handle assignedTo field
       if (!apiData.assignedTo || apiData.assignedTo.trim() === '') {
         const currentUserId = sessionStorage.getItem('userId') || '68f8370ab2ce0e1946772c30';
         apiData.assignedTo = currentUserId;
@@ -175,6 +194,25 @@ export const useTaskManagement = () => {
         apiData.assignedTo = apiData.assignedTo.trim();
       }
 
+      // Handle dueDate field - convert to ISO string if provided
+      if (apiData.dueDate && apiData.dueDate.trim() !== '') {
+        // Convert datetime-local format to ISO string
+        const dueDate = new Date(apiData.dueDate);
+        apiData.dueDate = dueDate.toISOString();
+      } else {
+        // Remove dueDate if empty
+        delete apiData.dueDate;
+      }
+
+      // Handle tags field - convert string to array if provided
+      if (apiData.tags && typeof apiData.tags === 'string') {
+        if (apiData.tags.trim() === '') {
+          apiData.tags = [];
+        } else {
+          apiData.tags = apiData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
+        }
+      }
+
       // Use unified API client
       if (modalMode === 'add') {
         await apiHelpers.createTask(apiData);
@@ -185,6 +223,19 @@ export const useTaskManagement = () => {
       if (window.showSuccess) {
         window.showSuccess(modalMode === 'add' ? 'Task created successfully!' : 'Task updated successfully!');
       }
+      
+      // Reset form data
+      setFormData({
+        title: '',
+        description: '',
+        priority: 'medium',
+        status: 'pending',
+        assignedTo: '',
+        dueDate: '',
+        tags: ''
+      });
+      setEditingTask(null);
+      
       fetchTasks();
       setShowModal(false);
     } catch (error) {

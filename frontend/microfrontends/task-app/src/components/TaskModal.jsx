@@ -90,6 +90,34 @@ const TaskModal = React.memo(({
                 </div>
               </div>
               <div className="row">
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="dueDate" className="form-label">Due Date</label>
+                  <input
+                    type="datetime-local"
+                    className="form-control"
+                    id="dueDate"
+                    name="dueDate"
+                    value={formData.dueDate || ''}
+                    onChange={onInputChange}
+                    min={new Date().toISOString().slice(0, 16)}
+                  />
+                  <div className="form-text">Optional - when should this task be completed?</div>
+                </div>
+                <div className="col-md-6 mb-3">
+                  <label htmlFor="tags" className="form-label">Tags (comma-separated)</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="tags"
+                    name="tags"
+                    value={formData.tags || ''}
+                    onChange={onInputChange}
+                    placeholder="e.g., urgent, bug, documentation"
+                  />
+                  <div className="form-text">Separate multiple tags with commas</div>
+                </div>
+              </div>
+              <div className="row">
                 <div className="col-12 mb-3">
                   <label htmlFor="description" className="form-label">Description</label>
                   <textarea

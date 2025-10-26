@@ -22,6 +22,7 @@ const TaskTable = React.memo(({ tasks, onEdit, onDelete }) => {
             <th className="text-center col-priority">Priority</th>
             <th className="text-center col-status">Status</th>
             <th className="text-center col-assigned">Assigned To</th>
+            <th className="text-center col-due">Due Date</th>
             <th className="text-center col-created">Created</th>
             <th className="text-center col-actions">Actions</th>
           </tr>

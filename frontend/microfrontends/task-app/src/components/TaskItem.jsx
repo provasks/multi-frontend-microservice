@@ -80,6 +80,23 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
         </div>
       </td>
       <td className="text-center">
+        {task.dueDate ? (
+          <div className="task-date">
+            <div className={`date-primary ${new Date(task.dueDate) < new Date() && task.status !== 'completed' ? 'text-danger fw-bold' : ''}`}>
+              {new Date(task.dueDate).toLocaleDateString()}
+            </div>
+            <div className="date-secondary">
+              {new Date(task.dueDate).toLocaleTimeString()}
+            </div>
+            {new Date(task.dueDate) < new Date() && task.status !== 'completed' && (
+              <div className="text-danger small">Overdue!</div>
+            )}
+          </div>
+        ) : (
+          <span className="text-muted">No due date</span>
+        )}
+      </td>
+      <td className="text-center">
         <div className="task-date">
           <div className="date-primary">{task.createdAt ? new Date(task.createdAt).toLocaleDateString() : 'Unknown'}</div>
           <div className="date-secondary">{task.createdAt ? new Date(task.createdAt).toLocaleTimeString() : ''}</div>
