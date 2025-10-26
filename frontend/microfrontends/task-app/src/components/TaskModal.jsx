@@ -119,7 +119,7 @@ const TaskModal = React.memo(({
               </div>
               <div className="row">
                 <div className="col-12 mb-3">
-                  <label htmlFor="description" className="form-label">Description</label>
+                  <label htmlFor="description" className="form-label">Description *</label>
                   <textarea
                     className="form-control"
                     id="description"
@@ -128,6 +128,7 @@ const TaskModal = React.memo(({
                     onChange={onInputChange}
                     placeholder="Enter task description"
                     rows="3"
+                    required
                   />
                 </div>
               </div>

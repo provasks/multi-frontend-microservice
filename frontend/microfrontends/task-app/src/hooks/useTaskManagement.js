@@ -162,6 +162,21 @@ export const useTaskManagement = () => {
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     
+    // Client-side validation
+    if (!formData.title || formData.title.trim() === '') {
+      if (window.showError) {
+        window.showError('Title is required');
+      }
+      return;
+    }
+    
+    if (!formData.description || formData.description.trim() === '') {
+      if (window.showError) {
+        window.showError('Description is required');
+      }
+      return;
+    }
+    
     try {
       if (!isAuthenticated()) {
         if (modalMode === 'add') {
