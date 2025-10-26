@@ -178,7 +178,7 @@ const Dashboard = () => {
   const getTaskPriorityChartData = () => ({
     labels: ['High Priority', 'Medium Priority', 'Low Priority'],
     datasets: [{
-      label: 'Tasks',
+      label: 'Number of Tasks',
       data: [
         dashboardData.tasks.highPriority,
         dashboardData.tasks.mediumPriority,
@@ -189,8 +189,14 @@ const Dashboard = () => {
         '#ffc107', // Yellow for medium
         '#17a2b8'  // Blue for low
       ],
-      borderWidth: 1,
-      borderColor: '#fff'
+      borderColor: [
+        '#b02a37', // Darker red border
+        '#d39e00', // Darker yellow border
+        '#138496'  // Darker blue border
+      ],
+      borderWidth: 2,
+      borderRadius: 4,
+      borderSkipped: false
     }]
   });
 
@@ -260,11 +266,50 @@ const Dashboard = () => {
 
   const barChartOptions = {
     ...chartOptions,
+    plugins: {
+      ...chartOptions.plugins,
+      legend: {
+        display: true,
+        position: 'bottom',
+        labels: {
+          padding: 20,
+          usePointStyle: true,
+          font: {
+            size: 12
+          },
+          generateLabels: function(chart) {
+            const data = chart.data;
+            if (data.labels.length && data.datasets.length) {
+              return data.labels.map((label, i) => ({
+                text: label,
+                fillStyle: data.datasets[0].backgroundColor[i],
+                strokeStyle: data.datasets[0].borderColor[i],
+                lineWidth: 2,
+                pointStyle: 'rect',
+                hidden: false,
+                index: i
+              }));
+            }
+            return [];
+          }
+        }
+      }
+    },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          stepSize: 1
+          stepSize: 1,
+          precision: 0
+        },
+        grid: {
+          display: true,
+          color: 'rgba(0, 0, 0, 0.1)'
+        }
+      },
+      x: {
+        grid: {
+          display: false
         }
       }
     }
