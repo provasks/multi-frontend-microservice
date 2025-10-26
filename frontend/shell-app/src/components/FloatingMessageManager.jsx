@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './FloatingMessageManager.css';
 
 const FloatingMessageManager = () => {
   const [messages, setMessages] = useState([]);
@@ -47,13 +48,12 @@ const FloatingMessageManager = () => {
   };
 
   return (
-    <div className="position-fixed" style={{ top: '20px', right: '20px', zIndex: 9999 }}>
+    <div className="position-fixed floating-message-container">
       {messages.map(message => (
         <div
           key={message.id}
-          className={`alert alert-${message.type} alert-dismissible fade show`}
+          className={`alert alert-${message.type} alert-dismissible fade show floating-message`}
           role="alert"
-          style={{ minWidth: '300px', marginBottom: '10px' }}
         >
           {message.text}
           <button

@@ -6,7 +6,7 @@ const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }
   // For now, just use native title attribute to avoid module federation issues
   // TODO: Implement proper tooltip when module federation is stable
   return (
-    <span title={content} style={{ display: 'inline-block', width: '100%' }}>
+    <span title={content} className="d-inline-block w-100">
       {children}
     </span>
   );
@@ -66,7 +66,7 @@ const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDel
           position="top"
           maxWidth="500px"
         >
-          <div className="text-truncate" style={{ maxWidth: '500px' }}>
+          <div className="text-truncate notification-message">
             {notification.message || 'No message'}
           </div>
         </SafeTooltip>

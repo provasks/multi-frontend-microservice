@@ -43,3 +43,37 @@
   font-size: 1.1rem;
   margin: 0;
 }
+
+/* Table column widths */
+.col-title {
+  width: 15%;
+}
+
+.col-description {
+  width: 30%;
+}
+
+.col-priority {
+  width: 10%;
+}
+
+.col-status {
+  width: 10%;
+}
+
+.col-assigned {
+  width: 15%;
+}
+
+.col-created {
+  width: 10%;
+}
+
+.col-actions {
+  width: 10%;
+}
+
+/* Loading container */
+.loading-container {
+  height: 400px;
+}

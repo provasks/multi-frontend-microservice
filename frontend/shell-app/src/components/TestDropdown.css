@@ -83,3 +83,8 @@
     background-color: rgba(0, 0, 0, 0.1);
   }
 }
+
+/* Loading spinner container */
+.loading-spinner-container {
+  height: 200px;
+}

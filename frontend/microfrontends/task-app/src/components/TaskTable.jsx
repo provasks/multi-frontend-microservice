@@ -17,13 +17,13 @@ const TaskTable = React.memo(({ tasks, onEdit, onDelete }) => {
       <table className="table table-striped table-hover table-bordered">
         <thead className="table-dark">
           <tr>
-            <th className="text-center" style={{ width: '15%' }}>Title</th>
-            <th className="text-center" style={{ width: '30%' }}>Description</th>
-            <th className="text-center" style={{ width: '10%' }}>Priority</th>
-            <th className="text-center" style={{ width: '10%' }}>Status</th>
-            <th className="text-center" style={{ width: '15%' }}>Assigned To</th>
-            <th className="text-center" style={{ width: '10%' }}>Created</th>
-            <th className="text-center" style={{ width: '10%' }}>Actions</th>
+            <th className="text-center col-title">Title</th>
+            <th className="text-center col-description">Description</th>
+            <th className="text-center col-priority">Priority</th>
+            <th className="text-center col-status">Status</th>
+            <th className="text-center col-assigned">Assigned To</th>
+            <th className="text-center col-created">Created</th>
+            <th className="text-center col-actions">Actions</th>
           </tr>
         </thead>
         <tbody>

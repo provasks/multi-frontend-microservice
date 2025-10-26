@@ -7,7 +7,7 @@ const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }
   // For now, just use native title attribute to avoid module federation issues
   // TODO: Implement proper tooltip when module federation is stable
   return (
-    <span title={content} style={{ display: 'inline-block', width: '100%' }}>
+    <span title={content} className="d-inline-block w-100">
       {children}
     </span>
   );
@@ -57,13 +57,13 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
           <div className="user-avatar me-2">
             {task.assignedToUser && task.assignedToUser.user && task.assignedToUser.user.firstName ? task.assignedToUser.user.firstName.charAt(0) : 'U'}
           </div>
-          <div className="user-info">
+          <div className="user-info flex-grow-1">
             <SafeTooltip 
               content={task.assignedToUser && task.assignedToUser.user ? `${task.assignedToUser.user.firstName || ''} ${task.assignedToUser.user.lastName || ''}` : 'Unknown User'}
               position="top"
               maxWidth="200px"
             >
-              <div className="user-name">
+              <div className="user-name mb-0">
                 {task.assignedToUser && task.assignedToUser.user ? `${task.assignedToUser.user.firstName || ''} ${task.assignedToUser.user.lastName || ''}` : 'Unknown User'}
               </div>
             </SafeTooltip>
@@ -72,7 +72,7 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
               position="top"
               maxWidth="250px"
             >
-              <div className="user-email">
+              <div className="user-email mb-0">
                 {task.assignedToUser && task.assignedToUser.user ? task.assignedToUser.user.email : 'No email'}
               </div>
             </SafeTooltip>
@@ -86,7 +86,7 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
         </div>
       </td>
       <td className="text-center">
-        <div className="action-buttons">
+        <div className="d-flex action-buttons">
           <button 
             className="btn action-btn action-btn-edit"
             onClick={() => onEdit(task)}

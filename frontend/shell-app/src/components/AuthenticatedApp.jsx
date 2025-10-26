@@ -120,7 +120,7 @@ const AuthenticatedApp = ({ onLogout }) => {
   };
 
   const LoadingSpinner = () => (
-    <div className="d-flex justify-content-center align-items-center" style={{ height: '200px' }}>
+    <div className="d-flex justify-content-center align-items-center loading-spinner-container">
       <div className="spinner-border" role="status">
         <span className="visually-hidden">Loading...</span>
       </div>
@@ -128,7 +128,7 @@ const AuthenticatedApp = ({ onLogout }) => {
   );
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid p-0">
       <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
         <div className="container-fluid">
           <a className="navbar-brand" href="#">
@@ -261,7 +261,7 @@ const AuthenticatedApp = ({ onLogout }) => {
         </div>
       </nav>
 
-      <div className="container-fluid p-4">
+      <div className="container-fluid px-0">
         <MicrofrontendErrorBoundary>
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>

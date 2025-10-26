@@ -1,0 +1,11 @@
+/* Floating Message Manager Styles */
+.floating-message-container {
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.floating-message {
+  min-width: 300px;
+  margin-bottom: 10px;
+}

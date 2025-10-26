@@ -91,6 +91,8 @@
 .user-avatar {
   width: 32px;
   height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   font-size: 12px;
   background-color: #0d6efd;
   color: white;
@@ -99,17 +101,16 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  flex-shrink: 0;
+  object-fit: cover;
 }
 
-.user-info {
-  flex-grow: 1;
-}
+/* Removed - using Bootstrap flex-grow-1 class instead */
 
 .user-name {
   font-weight: 600;
   font-size: 0.875rem;
   color: #212529;
-  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -122,7 +123,6 @@
 .user-email {
   color: #6c757d;
   font-size: 0.75rem;
-  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -147,7 +147,6 @@
 }
 
 .action-buttons {
-  display: flex;
   gap: 0.25rem;
 }
 

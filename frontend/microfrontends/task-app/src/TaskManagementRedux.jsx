@@ -185,13 +185,9 @@ const TaskManagementRedux = () => {
 
   if (tasks.isLoading) {
     return (
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-12">
-            <div className="d-flex justify-content-center align-items-center" style={{ height: '400px' }}>
-              <LoadingSpinner />
-            </div>
-          </div>
+      <div className="p-4">
+        <div className="d-flex justify-content-center align-items-center loading-container">
+          <LoadingSpinner />
         </div>
       </div>
     );
@@ -199,21 +195,17 @@ const TaskManagementRedux = () => {
 
   if (tasks.error) {
     return (
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-12">
-            <div className="alert alert-danger" role="alert">
-              <h4 className="alert-heading">Error!</h4>
-              <p>{tasks.error}</p>
-            </div>
-          </div>
+      <div className="p-4">
+        <div className="alert alert-danger" role="alert">
+          <h4 className="alert-heading">Error!</h4>
+          <p>{tasks.error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container-fluid">
+    <div className="p-4">
       <div className="row">
         <div className="col-12">
           <div className="d-flex justify-content-between align-items-center mb-4">
