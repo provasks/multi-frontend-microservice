@@ -30,6 +30,15 @@ export const useTaskManagement = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { isAuthenticated } = useAuth();
   
+  // Debug: Track debounced search term changes
+  useEffect(() => {
+    console.log('Debounced search term changed:', { 
+      searchTerm, 
+      debouncedSearchTerm, 
+      isDebouncing: searchTerm !== debouncedSearchTerm 
+    });
+  }, [searchTerm, debouncedSearchTerm]);
+  
   // Set search loading state when search term changes
   useEffect(() => {
     if (searchTerm && searchTerm !== debouncedSearchTerm) {
@@ -62,6 +71,7 @@ export const useTaskManagement = () => {
       const filters = {};
       if (debouncedSearchTerm) {
         filters.search = debouncedSearchTerm;
+        console.log('API call triggered with search term:', debouncedSearchTerm);
       }
 
       // Use unified API client with pagination
@@ -348,8 +358,9 @@ export const useTaskManagement = () => {
   }, []);
 
   const handleSearchChange = useCallback((value) => {
+    console.log('Search term changed:', { from: searchTerm, to: value });
     setSearchTerm(value);
-  }, []);
+  }, [searchTerm]);
 
   const handleClearSearch = useCallback(() => {
     setSearchTerm('');
