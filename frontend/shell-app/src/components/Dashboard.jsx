@@ -519,9 +519,6 @@ const Dashboard = () => {
                                   {statusTasks.length === 1 ? '1 task' : `${statusTasks.length} tasks`} in this category
                                 </small>
                               </div>
-                              <div className="ms-2">
-                                <i className="fas fa-chevron-down"></i>
-                              </div>
                             </div>
                           </button>
                         </h2>
