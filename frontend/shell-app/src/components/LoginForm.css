@@ -84,7 +84,7 @@
 }
 
 .form-floating label {
-  padding-left: 3rem;
+  padding-left: 2.5rem!important;
   color: #6c757d;
   transition: all 0.3s ease;
 }
