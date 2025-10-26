@@ -4,16 +4,19 @@
 
 1. [Architecture Overview](#architecture-overview)
 2. [Microfrontend Implementation](#microfrontend-implementation)
-3. [Performance Optimization](#performance-optimization)
-4. [Security Implementation](#security-implementation)
-5. [UI/UX Enhancements](#uiux-enhancements)
-6. [Development Setup](#development-setup)
-7. [Build & Deployment](#build--deployment)
-8. [API Integration](#api-integration)
-9. [Error Handling](#error-handling)
-10. [Testing Strategy](#testing-strategy)
-11. [Performance Analysis](#performance-analysis)
-12. [Troubleshooting](#troubleshooting)
+3. [Dashboard & Analytics](#dashboard--analytics)
+4. [State Management (Redux)](#state-management-redux)
+5. [Idle Timeout System](#idle-timeout-system)
+6. [Performance Optimization](#performance-optimization)
+7. [Security Implementation](#security-implementation)
+8. [UI/UX Enhancements](#uiux-enhancements)
+9. [Development Setup](#development-setup)
+10. [Build & Deployment](#build--deployment)
+11. [API Integration](#api-integration)
+12. [Error Handling](#error-handling)
+13. [Testing Strategy](#testing-strategy)
+14. [Performance Analysis](#performance-analysis)
+15. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -48,11 +51,15 @@
 ### **Technology Stack**
 
 - **Frontend Framework**: React 18.2.0
+- **State Management**: Redux Toolkit with React Redux
+- **Charts**: Chart.js with react-chartjs-2
+- **UI Framework**: Bootstrap 5.2.0 (locally installed)
 - **Module Federation**: Webpack 5
 - **Routing**: React Router v6
-- **Styling**: Bootstrap 5 + Font Awesome
-- **State Management**: React Hooks (useState, useEffect, useCallback)
 - **Authentication**: JWT with sessionStorage
+- **Idle Timeout**: Configurable with Redux integration
+- **Styling**: Bootstrap 5 + Font Awesome + Custom CSS
+- **Local Storage**: sessionStorage (replaced localStorage for security)
 - **Build Tool**: Webpack 5 with Module Federation
 - **Development Server**: Webpack Dev Server
 
@@ -121,6 +128,134 @@ export { useRateLimit, useGlobalRateLimit } from './hooks/useRateLimit';
 // Utilities
 export * from './utils/security';
 ```
+
+---
+
+## 📊 Dashboard & Analytics
+
+### **Interactive Dashboard**
+The application features a comprehensive dashboard with real-time analytics and data visualization:
+
+#### **Chart Components**
+- **Task Status Distribution**: Pie chart showing completed, pending, and overdue tasks
+- **Task Priority Distribution**: Bar chart with High, Medium, and Low priority breakdown
+- **Task Trends**: Line chart displaying task creation and completion over the last 7 days
+- **System Overview**: Doughnut chart showing users, notifications, and tasks
+
+#### **Recent Activity**
+- **Accordion Layout**: Grouped by task status (Completed, Pending, Overdue)
+- **Interactive Expansion**: Click to view detailed task information
+- **Real-time Updates**: Refreshes with latest data
+- **Status-based Grouping**: Logical organization of recent activities
+
+#### **Summary Cards**
+- **Total Tasks**: Overall task count
+- **Completed Tasks**: With completion percentage
+- **Pending Tasks**: Currently active tasks
+- **Overdue Tasks**: Tasks past due date
+
+### **Chart.js Integration**
+```javascript
+// Chart configuration with responsive design
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'bottom',
+      labels: {
+        padding: 20,
+        usePointStyle: true
+      }
+    }
+  }
+};
+```
+
+---
+
+## 🔄 State Management (Redux)
+
+### **Redux Toolkit Implementation**
+The application uses Redux Toolkit for centralized state management across microfrontends:
+
+#### **Store Structure**
+```javascript
+// Redux store with slices
+const store = configureStore({
+  reducer: {
+    auth: authSlice,
+    tasks: tasksSlice,
+    notifications: notificationsSlice,
+    ui: uiSlice,
+    idleTimeout: idleTimeoutSlice
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']
+      }
+    })
+});
+```
+
+#### **Slices**
+- **Auth Slice**: User authentication and session management
+- **Tasks Slice**: Task data and operations
+- **Notifications Slice**: Notification management
+- **UI Slice**: UI state and preferences
+- **Idle Timeout Slice**: Idle timeout configuration and state
+
+#### **Custom Hooks**
+```javascript
+// Redux hooks for easy state access
+export const useAuth = () => useReduxAuth();
+export const useTasks = () => useReduxTasks();
+export const useNotifications = () => useReduxNotifications();
+export const useUI = () => useReduxUI();
+export const useIdleTimeout = () => useReduxIdleTimeout();
+```
+
+---
+
+## ⏰ Idle Timeout System
+
+### **Configurable Idle Timeout**
+The application includes a sophisticated idle timeout system with Redux integration:
+
+#### **Features**
+- **Environment-based Configuration**: Different timeouts for development/production
+- **Activity Detection**: Comprehensive event monitoring (mouse, keyboard, touch, scroll)
+- **Redux Integration**: Centralized state management
+- **UI Components**: Warning modal and configuration panel
+- **Debug Component**: Real-time monitoring and activity logging
+
+#### **Configuration**
+```javascript
+// Environment-specific timeout configuration
+const IDLE_TIMEOUT_CONFIG = {
+  DEVELOPMENT: {
+    TIMEOUT: 2 * 60 * 1000, // 2 minutes
+    WARNING_TIME: 30 * 1000  // 30 seconds
+  },
+  PRODUCTION: {
+    TIMEOUT: 15 * 60 * 1000, // 15 minutes
+    WARNING_TIME: 2 * 60 * 1000 // 2 minutes
+  }
+};
+```
+
+#### **Activity Detection**
+- **Mouse Events**: mousedown, mousemove, mouseup, click, scroll
+- **Keyboard Events**: keydown, keyup, keypress
+- **Touch Events**: touchstart, touchend, touchmove
+- **Pointer Events**: pointerdown, pointerup, pointermove
+- **Window Events**: focus, blur, visibilitychange
+
+#### **Components**
+- **IdleTimeoutWarning**: Modal warning before logout
+- **IdleTimeoutConfig**: Configuration panel with countdown
+- **IdleTimeoutDebug**: Debug component for monitoring
 
 ---
 

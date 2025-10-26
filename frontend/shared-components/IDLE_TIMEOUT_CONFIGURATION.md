@@ -2,7 +2,7 @@
 
 ## 🎯 **Current Configuration**
 
-The idle timeout is now configured to use **2 minutes** by default, but the actual timeout depends on the detected environment.
+The idle timeout system has been enhanced with improved reliability, better activity detection, and comprehensive debugging capabilities. The timeout is environment-based with intelligent defaults.
 
 ## 🔧 **Environment Detection**
 
@@ -11,17 +11,50 @@ The system automatically detects the environment and applies the appropriate tim
 ### **Development Environment (localhost)**
 - **Timeout**: 2 minutes
 - **Warning**: 30 seconds before timeout
+- **Minimum Session**: 5 minutes (prevents premature logouts)
 - **Detection**: Running on `localhost` or `127.0.0.1`
 
 ### **Production Environment**
 - **Timeout**: 15 minutes
 - **Warning**: 2 minutes before timeout
+- **Minimum Session**: 5 minutes
 - **Detection**: Not running on localhost
 
 ### **Testing Environment (Manual Override)**
 - **Timeout**: 30 seconds
 - **Warning**: 10 seconds before timeout
+- **Minimum Session**: 5 minutes
 - **Activation**: Set `window.IDLE_TIMEOUT_TESTING = 'true'` in browser console
+
+## 🚀 **Recent Improvements**
+
+### **Enhanced Reliability**
+- **Minimum Session Time**: 5-minute protection against premature logouts
+- **Improved Activity Detection**: 2-second throttling to prevent excessive resets
+- **Better Time Calculation**: Accurate countdown using session start time
+- **Warning State Protection**: Prevents resets during warning phase
+
+### **Comprehensive Activity Detection**
+The system now detects a wide range of user activities:
+- **Mouse Events**: mousedown, mousemove, mouseup, click, scroll
+- **Keyboard Events**: keydown, keyup, keypress
+- **Touch Events**: touchstart, touchend, touchmove
+- **Pointer Events**: pointerdown, pointerup, pointermove (touchpad support)
+- **Window Events**: focus, blur, visibilitychange
+- **Wheel Events**: wheel, scroll (touchpad scrolling)
+
+### **Debug Component**
+A new debug component provides real-time monitoring:
+- **Status Display**: Active/Inactive, Warning state
+- **Time Remaining**: Live countdown display
+- **Activity Log**: Last 10 user interactions with timestamps
+- **Toggle Visibility**: Bug icon in bottom-right corner
+
+### **Redux Integration**
+- **Centralized State**: All timeout state managed through Redux
+- **Login-based Activation**: Only starts after successful login
+- **Automatic Cleanup**: Proper state reset on logout
+- **Cross-component Communication**: Shared state across microfrontends
 
 ## 🛠️ **How to Change Timeout Values**
 
