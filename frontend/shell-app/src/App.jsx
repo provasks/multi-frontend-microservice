@@ -4,6 +4,8 @@ import { Provider } from 'react-redux';
 import LoginForm from './components/LoginForm';
 import AuthenticatedApp from './components/AuthenticatedApp';
 import FloatingMessageManager from './components/FloatingMessageManager';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // Import idle timeout components
 let IdleTimeoutWarning, IdleTimeoutConfig;

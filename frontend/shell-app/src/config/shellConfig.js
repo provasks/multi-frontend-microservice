@@ -4,7 +4,7 @@
  */
 
 // Import shared configuration
-const { SHARED_COMPONENTS_CONFIG, FRONTEND_MESSAGES } = require('sharedComponents/frontendConfig');
+import { SHARED_COMPONENTS_CONFIG, FRONTEND_MESSAGES } from 'sharedComponents/frontendConfig';
 
 // ============================================================================
 // SHELL APP SPECIFIC CONFIGURATION
@@ -85,7 +85,7 @@ const SHELL_MESSAGES = {
 // EXPORT CONFIGURATION
 // ============================================================================
 
-module.exports = {
+export default {
   // Shell-specific configuration
   SHELL_CONFIG,
   SHELL_MESSAGES,
