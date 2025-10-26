@@ -57,8 +57,10 @@ export const useTaskManagement = () => {
       }
       setApiStatus('loading');
       
-      // Reset search loading when starting to fetch
-      setSearchLoading(false);
+      // Reset search loading when starting to fetch (only if not currently debouncing)
+      if (searchTerm === debouncedSearchTerm) {
+        setSearchLoading(false);
+      }
       
       if (!isAuthenticated()) {
         setApiStatus('error');
