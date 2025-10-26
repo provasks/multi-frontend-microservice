@@ -372,10 +372,10 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Charts and Visualizations */}
+      {/* First Row: 3 Charts */}
       <div className="row">
         {/* Task Status Distribution - Pie Chart */}
-        <div className="col-md-6 mb-4">
+        <div className="col-lg-4 col-md-6 mb-4">
           <div className="card">
             <div className="card-header">
               <h5 className="card-title mb-0">
@@ -392,7 +392,7 @@ const Dashboard = () => {
         </div>
 
         {/* Task Priority Distribution - Bar Chart */}
-        <div className="col-md-6 mb-4">
+        <div className="col-lg-4 col-md-6 mb-4">
           <div className="card">
             <div className="card-header">
               <h5 className="card-title mb-0">
@@ -407,29 +407,9 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Additional Charts */}
-      <div className="row">
-        {/* System Overview - Doughnut Chart */}
-        <div className="col-md-6 mb-4">
-          <div className="card">
-            <div className="card-header">
-              <h5 className="card-title mb-0">
-                <i className="fas fa-chart-doughnut me-2"></i>
-                System Overview
-              </h5>
-            </div>
-            <div className="card-body">
-              <div className="chart-container">
-                <Doughnut data={getSystemOverviewChartData()} options={chartOptions} />
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Task Trends - Line Chart */}
-        <div className="col-md-6 mb-4">
+        <div className="col-lg-4 col-md-12 mb-4">
           <div className="card">
             <div className="card-header">
               <h5 className="card-title mb-0">
@@ -446,9 +426,27 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Recent Activity */}
+      {/* Second Row: System Overview and Recent Activity */}
       <div className="row">
-        <div className="col-12">
+        {/* System Overview - Doughnut Chart */}
+        <div className="col-lg-6 col-md-6 mb-4">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title mb-0">
+                <i className="fas fa-chart-doughnut me-2"></i>
+                System Overview
+              </h5>
+            </div>
+            <div className="card-body">
+              <div className="chart-container">
+                <Doughnut data={getSystemOverviewChartData()} options={chartOptions} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="col-lg-6 col-md-6 mb-4">
           <div className="card">
             <div className="card-header">
               <h5 className="card-title mb-0">
@@ -490,6 +488,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
     </div>
   );
 };

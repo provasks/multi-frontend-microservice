@@ -44,7 +44,7 @@
   border: 1px solid #e9ecef;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  height: 320px; /* Reduced height for chart cards */
+  height: 320px; /* Fixed height for chart cards */
   display: flex;
   flex-direction: column;
 }
@@ -137,6 +137,16 @@
     height: 40px;
     font-size: 1rem;
   }
+  
+  .card {
+    height: 280px; /* Reduced height for mobile */
+  }
+}
+
+@media (max-width: 992px) {
+  .card {
+    height: 300px; /* Medium height for tablet */
+  }
 }
 
 /* Animation for loading states */
@@ -207,7 +217,7 @@
 /* Recent activity card improvements */
 .card:last-child {
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  min-height: 320px; /* Reduced height to match other cards */
+  min-height: 108px; /* Reduced height to match other cards */
 }
 
 /* Empty state styles */
