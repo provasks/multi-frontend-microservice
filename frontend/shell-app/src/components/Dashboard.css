@@ -116,7 +116,37 @@
 /* Chart container styles */
 .chart-container {
   position: relative;
-  height: 200px;
+  height: 300px;
+  width: 100%;
+}
+
+/* Chart responsive adjustments */
+@media (max-width: 768px) {
+  .chart-container {
+    height: 250px;
+  }
+}
+
+@media (max-width: 576px) {
+  .chart-container {
+    height: 200px;
+  }
+}
+
+/* Chart specific styles */
+.chart-container canvas {
+  border-radius: 8px;
+}
+
+/* Chart card hover effects */
+.card:hover .chart-container {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+
+/* Chart legend styling */
+.chartjs-legend {
+  margin-top: 10px;
 }
 
 /* Empty state styles */
@@ -126,4 +156,18 @@
 
 .text-center.text-muted i {
   opacity: 0.5;
+}
+
+/* Chart loading state */
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #6c757d;
+}
+
+.chart-loading i {
+  font-size: 2rem;
+  margin-right: 10px;
 }

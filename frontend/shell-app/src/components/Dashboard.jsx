@@ -2,7 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from 'sharedComponents/useAuth';
 import { apiHelpers } from 'sharedComponents/unifiedApiClient';
 import LoadingSpinner from 'sharedComponents/LoadingSpinner';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement,
+} from 'chart.js';
+import { Bar, Doughnut, Pie, Line } from 'react-chartjs-2';
 import './Dashboard.css';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
+);
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState({
@@ -130,6 +156,132 @@ const Dashboard = () => {
     </div>
   );
 
+  // Chart data preparation
+  const getTaskStatusChartData = () => ({
+    labels: ['Completed', 'Pending', 'Overdue'],
+    datasets: [{
+      data: [
+        dashboardData.tasks.completed,
+        dashboardData.tasks.pending,
+        dashboardData.tasks.overdue
+      ],
+      backgroundColor: [
+        '#28a745', // Green for completed
+        '#ffc107', // Yellow for pending
+        '#dc3545'  // Red for overdue
+      ],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  });
+
+  const getTaskPriorityChartData = () => ({
+    labels: ['High Priority', 'Medium Priority', 'Low Priority'],
+    datasets: [{
+      label: 'Tasks',
+      data: [
+        dashboardData.tasks.highPriority,
+        dashboardData.tasks.mediumPriority,
+        dashboardData.tasks.lowPriority
+      ],
+      backgroundColor: [
+        '#dc3545', // Red for high
+        '#ffc107', // Yellow for medium
+        '#17a2b8'  // Blue for low
+      ],
+      borderWidth: 1,
+      borderColor: '#fff'
+    }]
+  });
+
+  const getSystemOverviewChartData = () => ({
+    labels: ['Users', 'Notifications', 'Tasks'],
+    datasets: [{
+      label: 'System Overview',
+      data: [
+        dashboardData.users.total,
+        dashboardData.notifications.total,
+        dashboardData.tasks.total
+      ],
+      backgroundColor: [
+        '#6f42c1', // Purple for users
+        '#20c997', // Teal for notifications
+        '#fd7e14'  // Orange for tasks
+      ],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  });
+
+  const getTaskTrendData = () => {
+    // Generate sample trend data (in real app, this would come from API)
+    const last7Days = [];
+    const today = new Date();
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      last7Days.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    }
+    
+    return {
+      labels: last7Days,
+      datasets: [
+        {
+          label: 'Tasks Created',
+          data: [2, 4, 3, 5, 7, 6, 8], // Sample data
+          borderColor: '#007bff',
+          backgroundColor: 'rgba(0, 123, 255, 0.1)',
+          tension: 0.4
+        },
+        {
+          label: 'Tasks Completed',
+          data: [1, 3, 2, 4, 5, 4, 6], // Sample data
+          borderColor: '#28a745',
+          backgroundColor: 'rgba(40, 167, 69, 0.1)',
+          tension: 0.4
+        }
+      ]
+    };
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: {
+          padding: 20,
+          usePointStyle: true
+        }
+      }
+    }
+  };
+
+  const barChartOptions = {
+    ...chartOptions,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1
+        }
+      }
+    }
+  };
+
+  const lineChartOptions = {
+    ...chartOptions,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1
+        }
+      }
+    }
+  };
+
   const ProgressBar = ({ label, value, total, color }) => {
     const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
     return (
@@ -220,67 +372,74 @@ const Dashboard = () => {
         />
       </div>
 
-      {/* Charts and Additional Stats */}
+      {/* Charts and Visualizations */}
       <div className="row">
-        {/* Task Priority Distribution */}
+        {/* Task Status Distribution - Pie Chart */}
         <div className="col-md-6 mb-4">
           <div className="card">
             <div className="card-header">
               <h5 className="card-title mb-0">
                 <i className="fas fa-chart-pie me-2"></i>
-                Task Priority Distribution
+                Task Status Distribution
               </h5>
             </div>
             <div className="card-body">
-              <ProgressBar
-                label="High Priority"
-                value={dashboardData.tasks.highPriority}
-                total={dashboardData.tasks.total}
-                color="danger"
-              />
-              <ProgressBar
-                label="Medium Priority"
-                value={dashboardData.tasks.mediumPriority}
-                total={dashboardData.tasks.total}
-                color="warning"
-              />
-              <ProgressBar
-                label="Low Priority"
-                value={dashboardData.tasks.lowPriority}
-                total={dashboardData.tasks.total}
-                color="info"
-              />
+              <div className="chart-container">
+                <Pie data={getTaskStatusChartData()} options={chartOptions} />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* System Overview */}
+        {/* Task Priority Distribution - Bar Chart */}
         <div className="col-md-6 mb-4">
           <div className="card">
             <div className="card-header">
               <h5 className="card-title mb-0">
                 <i className="fas fa-chart-bar me-2"></i>
+                Task Priority Distribution
+              </h5>
+            </div>
+            <div className="card-body">
+              <div className="chart-container">
+                <Bar data={getTaskPriorityChartData()} options={barChartOptions} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Additional Charts */}
+      <div className="row">
+        {/* System Overview - Doughnut Chart */}
+        <div className="col-md-6 mb-4">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title mb-0">
+                <i className="fas fa-chart-doughnut me-2"></i>
                 System Overview
               </h5>
             </div>
             <div className="card-body">
-              <div className="row text-center">
-                <div className="col-6">
-                  <div className="border-end">
-                    <h3 className="text-primary">{dashboardData.users.total}</h3>
-                    <p className="text-muted mb-0">Total Users</p>
-                    <small className="text-success">
-                      {dashboardData.users.active} active
-                    </small>
-                  </div>
-                </div>
-                <div className="col-6">
-                  <h3 className="text-info">{dashboardData.notifications.total}</h3>
-                  <p className="text-muted mb-0">Notifications</p>
-                  <small className="text-warning">
-                    {dashboardData.notifications.unread} unread
-                  </small>
-                </div>
+              <div className="chart-container">
+                <Doughnut data={getSystemOverviewChartData()} options={chartOptions} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Task Trends - Line Chart */}
+        <div className="col-md-6 mb-4">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title mb-0">
+                <i className="fas fa-chart-line me-2"></i>
+                Task Trends (Last 7 Days)
+              </h5>
+            </div>
+            <div className="card-body">
+              <div className="chart-container">
+                <Line data={getTaskTrendData()} options={lineChartOptions} />
               </div>
             </div>
           </div>
