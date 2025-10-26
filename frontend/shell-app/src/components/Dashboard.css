@@ -174,27 +174,32 @@
 /* Chart container styles */
 .chart-container {
   position: relative;
-  height: 220px; /* Reduced height for better fit */
+  height: 250px !important; /* Updated height for better visibility */
   width: 100%;
   flex: 1;
+  min-height: 250px;
+  max-height: 250px;
 }
 
 /* Chart responsive adjustments */
 @media (max-width: 768px) {
   .chart-container {
-    height: 200px;
+    height: 220px;
   }
 }
 
 @media (max-width: 576px) {
   .chart-container {
-    height: 180px;
+    height: 200px;
   }
 }
 
 /* Chart specific styles */
 .chart-container canvas {
   border-radius: 8px;
+  height: 250px !important;
+  max-height: 250px !important;
+  min-height: 250px !important;
 }
 
 /* Chart card hover effects */

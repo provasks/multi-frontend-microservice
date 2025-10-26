@@ -194,17 +194,20 @@ class SecurityMiddleware {
    * Rate limiting middleware setup
    */
   setupRateLimit(app) {
-    if (this.options.enableRateLimit) {
-      const rateLimit = require('express-rate-limit');
-      
-      // General rate limiting
-      app.use(rateLimit(this.getRateLimitConfig()));
-      
-      // Login-specific rate limiting
-      app.use('/api/auth/login', rateLimit(this.getLoginRateLimitConfig()));
-      app.use('/api/auth/register', rateLimit(this.getLoginRateLimitConfig()));
-    }
+    // Rate limiting DISABLED for now
     return app;
+    
+    // if (this.options.enableRateLimit) {
+    //   const rateLimit = require('express-rate-limit');
+      
+    //   // General rate limiting
+    //   app.use(rateLimit(this.getRateLimitConfig()));
+      
+    //   // Login-specific rate limiting
+    //   app.use('/api/auth/login', rateLimit(this.getLoginRateLimitConfig()));
+    //   app.use('/api/auth/register', rateLimit(this.getLoginRateLimitConfig()));
+    // }
+    // return app;
   }
 
   /**

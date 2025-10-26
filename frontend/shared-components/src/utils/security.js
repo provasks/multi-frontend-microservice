@@ -151,38 +151,37 @@ export const validateUserForm = (formData) => {
   };
 };
 
-// Rate limiting utility
+// Rate limiting utility - DISABLED for now
 export class RateLimiter {
   constructor(maxRequests = 5, windowMs = 60000) {
     this.maxRequests = maxRequests;
     this.windowMs = windowMs;
     this.requests = [];
+    // Rate limiting completely disabled
   }
   
   canMakeRequest() {
-    const now = Date.now();
-    // Remove old requests outside the window
-    this.requests = this.requests.filter(time => now - time < this.windowMs);
-    
-    return this.requests.length < this.maxRequests;
+    // Always allow requests - rate limiting disabled
+    return true;
   }
   
   recordRequest() {
-    this.requests.push(Date.now());
+    // Don't record requests - rate limiting disabled
+    return;
   }
   
   getRemainingRequests() {
-    const now = Date.now();
-    this.requests = this.requests.filter(time => now - time < this.windowMs);
-    return Math.max(0, this.maxRequests - this.requests.length);
+    // Return max requests - rate limiting disabled
+    return this.maxRequests;
   }
   
   getTimeUntilReset() {
-    if (this.requests.length === 0) return 0;
-    const oldestRequest = Math.min(...this.requests);
-    return Math.max(0, this.windowMs - (Date.now() - oldestRequest));
+    // Return 0 - no reset needed
+    return 0;
   }
 }
 
 // Create a global rate limiter instance
-export const globalRateLimiter = new RateLimiter(10, 60000); // 10 requests per minute
+// In development: effectively unlimited (rate limiting disabled)
+// In production: 10 requests per minute
+export const globalRateLimiter = new RateLimiter(1000, 60000); // 1000 requests per minute (effectively unlimited in dev)

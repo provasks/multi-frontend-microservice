@@ -264,6 +264,7 @@ const Dashboard = () => {
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    aspectRatio: 2,
     plugins: {
       legend: {
         position: 'bottom',
@@ -450,7 +451,7 @@ const Dashboard = () => {
               </h5>
             </div>
             <div className="card-body">
-              <div className="chart-container">
+              <div className="chart-container" style={{ height: '250px', minHeight: '250px', maxHeight: '250px' }}>
                 <Pie data={getTaskStatusChartData()} options={chartOptions} />
               </div>
             </div>
@@ -467,7 +468,7 @@ const Dashboard = () => {
               </h5>
             </div>
             <div className="card-body">
-              <div className="chart-container">
+              <div className="chart-container" style={{ height: '250px', minHeight: '250px', maxHeight: '250px' }}>
                 <Bar data={getTaskPriorityChartData()} options={barChartOptions} />
               </div>
             </div>
@@ -484,7 +485,7 @@ const Dashboard = () => {
               </h5>
             </div>
             <div className="card-body">
-              <div className="chart-container">
+              <div className="chart-container" style={{ height: '250px', minHeight: '250px', maxHeight: '250px' }}>
                 <Line data={getTaskTrendData()} options={lineChartOptions} />
               </div>
             </div>
@@ -504,7 +505,7 @@ const Dashboard = () => {
               </h5>
             </div>
             <div className="card-body">
-              <div className="chart-container">
+              <div className="chart-container" style={{ height: '250px', minHeight: '250px', maxHeight: '250px' }}>
                 <Doughnut data={getSystemOverviewChartData()} options={chartOptions} />
               </div>
             </div>

@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
+// const rateLimit = require('express-rate-limit'); // DISABLED for now
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -15,22 +15,20 @@ const PORT = process.env.PORT || 3000;
 // Security middleware
 app.use(helmet());
 
-// Rate limiting - More lenient for development
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'development' ? 10000 : 100, // Very high limit for development
-  message: 'Too many requests from this IP, please try again later.',
-  skip: (req) => {
-    // Skip rate limiting for localhost in development
-    if (process.env.NODE_ENV === 'development') {
-      const ip = req.ip || req.connection.remoteAddress;
-      return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1' || 
-             req.hostname === 'localhost' || req.hostname === '127.0.0.1';
-    }
-    return false;
-  }
-});
-app.use(limiter);
+// Rate limiting - DISABLED for now
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: process.env.NODE_ENV === 'development' ? 10000 : 100, // Very high limit for development
+//   message: 'Too many requests from this IP, please try again later.',
+//   skip: (req) => {
+//     // Completely skip rate limiting in development
+//     if (process.env.NODE_ENV === 'development') {
+//       return true; // Skip ALL rate limiting in development
+//     }
+//     return false;
+//   }
+// });
+// app.use(limiter);
 
 // CORS configuration
 app.use(cors({

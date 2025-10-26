@@ -14,16 +14,12 @@ export const useRateLimit = (maxRequests = 5, windowMs = 60000) => {
   const rateLimiterRef = useRef(new globalRateLimiter.constructor(maxRequests, windowMs));
 
   const checkRateLimit = useCallback(() => {
-    const canMakeRequest = rateLimiterRef.current.canMakeRequest();
-    const remaining = rateLimiterRef.current.getRemainingRequests();
-    const timeUntilReset = rateLimiterRef.current.getTimeUntilReset();
-    
-    setIsRateLimited(!canMakeRequest);
-    setRemainingRequests(remaining);
-    setTimeUntilReset(timeUntilReset);
-    
-    return canMakeRequest;
-  }, []);
+    // Always allow requests - rate limiting disabled
+    setIsRateLimited(false);
+    setRemainingRequests(maxRequests);
+    setTimeUntilReset(0);
+    return true;
+  }, [maxRequests]);
 
   const recordRequest = useCallback(() => {
     rateLimiterRef.current.recordRequest();
@@ -31,19 +27,9 @@ export const useRateLimit = (maxRequests = 5, windowMs = 60000) => {
   }, [checkRateLimit]);
 
   const makeRateLimitedRequest = useCallback(async (requestFn) => {
-    if (!checkRateLimit()) {
-      throw new Error(`Rate limit exceeded. Try again in ${Math.ceil(timeUntilReset / 1000)} seconds.`);
-    }
-    
-    try {
-      const result = await requestFn();
-      recordRequest();
-      return result;
-    } catch (error) {
-      // Don't record failed requests against rate limit
-      throw error;
-    }
-  }, [checkRateLimit, recordRequest, timeUntilReset]);
+    // Rate limiting disabled - always execute request
+    return await requestFn();
+  }, []);
 
   return {
     isRateLimited,
@@ -64,15 +50,11 @@ export const useGlobalRateLimit = () => {
   const [timeUntilReset, setTimeUntilReset] = useState(0);
 
   const checkRateLimit = useCallback(() => {
-    const canMakeRequest = globalRateLimiter.canMakeRequest();
-    const remaining = globalRateLimiter.getRemainingRequests();
-    const timeUntilReset = globalRateLimiter.getTimeUntilReset();
-    
-    setIsRateLimited(!canMakeRequest);
-    setRemainingRequests(remaining);
-    setTimeUntilReset(timeUntilReset);
-    
-    return canMakeRequest;
+    // Always allow requests - rate limiting disabled
+    setIsRateLimited(false);
+    setRemainingRequests(globalRateLimiter.maxRequests);
+    setTimeUntilReset(0);
+    return true;
   }, []);
 
   const recordRequest = useCallback(() => {
@@ -81,19 +63,9 @@ export const useGlobalRateLimit = () => {
   }, [checkRateLimit]);
 
   const makeRateLimitedRequest = useCallback(async (requestFn) => {
-    if (!checkRateLimit()) {
-      throw new Error(`Rate limit exceeded. Try again in ${Math.ceil(timeUntilReset / 1000)} seconds.`);
-    }
-    
-    try {
-      const result = await requestFn();
-      recordRequest();
-      return result;
-    } catch (error) {
-      // Don't record failed requests against rate limit
-      throw error;
-    }
-  }, [checkRateLimit, recordRequest, timeUntilReset]);
+    // Rate limiting disabled - always execute request
+    return await requestFn();
+  }, []);
 
   return {
     isRateLimited,

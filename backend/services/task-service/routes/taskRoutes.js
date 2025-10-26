@@ -108,9 +108,7 @@ router.get('/:id', auth, taskController.getTaskById);
  *             type: object
  *             required:
  *               - title
- *               - description
  *               - priority
- *               - assignedTo
  *             properties:
  *               title:
  *                 type: string
@@ -164,9 +162,9 @@ router.post('/',
   auth,
   [
     body('title').notEmpty().withMessage('Title is required'),
-    body('description').notEmpty().withMessage('Description is required'),
+    body('description').optional().notEmpty().withMessage('Description cannot be empty'),
     body('priority').isIn(['low', 'medium', 'high', 'urgent']).withMessage('Invalid priority'),
-    body('assignedTo').isMongoId().withMessage('Invalid assignedTo user ID'),
+    body('assignedTo').optional().isMongoId().withMessage('Invalid assignedTo user ID'),
     body('dueDate').optional().isISO8601().withMessage('Invalid due date format'),
     body('tags').optional().isArray().withMessage('Tags must be an array')
   ],

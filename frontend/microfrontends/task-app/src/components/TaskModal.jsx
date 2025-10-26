@@ -1,4 +1,5 @@
 import React from 'react';
+import UserAutocomplete from './UserAutocomplete';
 import './TaskModal.css';
 
 const TaskModal = React.memo(({ 
@@ -10,6 +11,7 @@ const TaskModal = React.memo(({
   onInputChange 
 }) => {
   if (!show) return null;
+  
 
   return (
     <div className="modal show d-block task-modal" tabIndex="-1">
@@ -75,15 +77,14 @@ const TaskModal = React.memo(({
                   </select>
                 </div>
                 <div className="col-md-6 mb-3">
-                  <label htmlFor="assignedTo" className="form-label">Assigned To (User ID)</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="assignedTo"
-                    name="assignedTo"
+                  <label htmlFor="assignedTo" className="form-label">Assigned To</label>
+                  <UserAutocomplete
                     value={formData.assignedTo}
-                    onChange={onInputChange}
-                    placeholder="Enter user ID (optional)"
+                    onChange={(userId) => {
+                      onInputChange({ target: { name: 'assignedTo', value: userId } });
+                    }}
+                    placeholder="Search users..."
+                    className="mb-2"
                   />
                   <div className="form-text">Leave empty to assign to yourself (current user)</div>
                 </div>

@@ -202,6 +202,32 @@ export const getApiClient = (service) => {
 };
 
 /**
+ * Global users cache to prevent repeated API calls
+ */
+let usersCache = null;
+let usersCacheTimestamp = null;
+const USERS_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+/**
+ * Check if we have valid cached users data
+ */
+export const hasCachedUsers = () => {
+  const now = Date.now();
+  return usersCache && usersCacheTimestamp && 
+         (now - usersCacheTimestamp) < USERS_CACHE_DURATION;
+};
+
+/**
+ * Get cached users data synchronously
+ */
+export const getCachedUsers = () => {
+  if (hasCachedUsers()) {
+    return usersCache;
+  }
+  return null;
+};
+
+/**
  * Helper function for common API operations
  */
 export const apiHelpers = {
@@ -234,27 +260,51 @@ export const apiHelpers = {
     return response.data;
   },
 
-  // Fetch users
-  fetchUsers: async () => {
+  // Fetch users with caching
+  fetchUsers: async (forceRefresh = false) => {
+    const now = Date.now();
+    
+    // Return cached data if it's still valid and not forcing refresh
+    if (!forceRefresh && usersCache && usersCacheTimestamp && 
+        (now - usersCacheTimestamp) < USERS_CACHE_DURATION) {
+      return usersCache;
+    }
+    
+    // Fetch fresh data
     const response = await userApi.get('/users');
-    return response.data;
+    const usersData = response.data;
+    
+    // Update cache
+    usersCache = usersData;
+    usersCacheTimestamp = now;
+    
+    return usersData;
   },
 
   // Create user
   createUser: async (userData) => {
     const response = await userApi.post('/users', userData);
+    // Clear users cache since we added a new user
+    usersCache = null;
+    usersCacheTimestamp = null;
     return response.data;
   },
 
   // Update user
   updateUser: async (userId, userData) => {
     const response = await userApi.put(`/users/${userId}`, userData);
+    // Clear users cache since we updated a user
+    usersCache = null;
+    usersCacheTimestamp = null;
     return response.data;
   },
 
   // Delete user
   deleteUser: async (userId) => {
     const response = await userApi.delete(`/users/${userId}`);
+    // Clear users cache since we deleted a user
+    usersCache = null;
+    usersCacheTimestamp = null;
     return response.data;
   },
 
