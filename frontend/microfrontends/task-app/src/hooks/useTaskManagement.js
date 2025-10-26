@@ -112,7 +112,18 @@ export const useTaskManagement = () => {
     let formattedDueDate = '';
     if (task.dueDate) {
       const dueDate = new Date(task.dueDate);
-      formattedDueDate = dueDate.toISOString().slice(0, 16);
+      // Convert to local timezone for datetime-local input
+      const year = dueDate.getFullYear();
+      const month = String(dueDate.getMonth() + 1).padStart(2, '0');
+      const day = String(dueDate.getDate()).padStart(2, '0');
+      const hours = String(dueDate.getHours()).padStart(2, '0');
+      const minutes = String(dueDate.getMinutes()).padStart(2, '0');
+      formattedDueDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+      console.log('Formatting due date for edit:', {
+        original: task.dueDate,
+        parsed: dueDate,
+        formatted: formattedDueDate
+      });
     }
     
     // Format tags array as comma-separated string
