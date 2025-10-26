@@ -151,23 +151,44 @@ class TaskService {
         return null;
       }
 
+      // Store old status before updating
+      const oldStatus = task.status;
+      
       // Update task
       Object.assign(task, updateData);
       await task.save();
 
       // Create notification if status changed
-      if (updateData.status && updateData.status !== task.status) {
+      if (updateData.status && updateData.status !== oldStatus) {
+        console.log('Task status changed, creating notification:', {
+          taskId: task._id,
+          taskTitle: task.title,
+          assignedTo: task.assignedTo,
+          oldStatus,
+          newStatus: updateData.status,
+          hasAuthToken: !!authToken
+        });
+        
         try {
           await notificationService.notifyTaskStatusChange(
             task.assignedTo, 
             task._id, 
             task.title, 
-            updateData.status, 
+            oldStatus, // oldStatus
+            updateData.status, // newStatus
             authToken
           );
+          console.log('Notification created successfully');
         } catch (error) {
           console.error('Failed to create status change notification:', error);
         }
+      } else {
+        console.log('No status change detected:', {
+          hasStatusUpdate: !!updateData.status,
+          oldStatus,
+          newStatus: updateData.status,
+          statusChanged: updateData.status !== oldStatus
+        });
       }
 
       // Enrich with user data

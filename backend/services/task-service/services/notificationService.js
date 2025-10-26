@@ -4,7 +4,19 @@ const NOTIFICATION_SERVICE_URL = process.env.NOTIFICATION_SERVICE_URL || 'http:/
 
 const notificationService = {
   // Create notification via notification service
-  async createNotification(userId, taskId, type, title, message, priority = 'medium', metadata = {}) {
+  async createNotification(userId, taskId, type, title, message, priority = 'medium', metadata = {}, authToken) {
+    console.log('createNotification called:', {
+      userId,
+      taskId,
+      type,
+      title,
+      message,
+      priority,
+      metadata,
+      hasAuthToken: !!authToken,
+      notificationServiceUrl: NOTIFICATION_SERVICE_URL
+    });
+    
     try {
       const response = await axios.post(`${NOTIFICATION_SERVICE_URL}/api/notifications`, {
         userId,
@@ -16,15 +28,20 @@ const notificationService = {
         metadata
       }, {
         headers: {
-          'Authorization': `Bearer ${process.env.SERVICE_TOKEN || 'service-token'}`,
+          'Authorization': `Bearer ${authToken}`,
           'Content-Type': 'application/json'
         }
       });
       
-      console.log(`Notification created: ${type} for user ${userId}`);
+      console.log(`Notification created successfully: ${type} for user ${userId}`, response.data);
       return response.data;
     } catch (error) {
-      console.error('Error creating notification:', error.message);
+      console.error('Error creating notification:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data
+      });
       // Don't throw error to avoid breaking task operations
       return null;
     }
@@ -46,6 +63,15 @@ const notificationService = {
 
   // Notify task status change
   async notifyTaskStatusChange(userId, taskId, taskTitle, oldStatus, newStatus, authToken) {
+    console.log('notifyTaskStatusChange called:', {
+      userId,
+      taskId,
+      taskTitle,
+      oldStatus,
+      newStatus,
+      hasAuthToken: !!authToken
+    });
+    
     const statusMessages = {
       'pending': 'Pending',
       'in_progress': 'In Progress',

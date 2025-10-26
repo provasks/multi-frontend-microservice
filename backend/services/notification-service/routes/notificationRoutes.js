@@ -8,6 +8,83 @@ const router = express.Router();
 /**
  * @swagger
  * /api/notifications:
+ *   post:
+ *     summary: Create a new notification
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - type
+ *               - title
+ *               - message
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: User ID
+ *               taskId:
+ *                 type: string
+ *                 description: Task ID (optional)
+ *               type:
+ *                 type: string
+ *                 enum: [task_assigned, task_due_soon, task_overdue, task_completed, task_updated, comment_added, status_changed]
+ *                 description: Notification type
+ *               title:
+ *                 type: string
+ *                 description: Notification title
+ *               message:
+ *                 type: string
+ *                 description: Notification message
+ *               priority:
+ *                 type: string
+ *                 enum: [low, medium, high, urgent]
+ *                 description: Notification priority
+ *               metadata:
+ *                 type: object
+ *                 description: Additional metadata
+ *     responses:
+ *       201:
+ *         description: Notification created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Notification created successfully"
+ *                 notification:
+ *                   $ref: '#/components/schemas/Notification'
+ *       400:
+ *         $ref: '#/components/responses/BadRequestError'
+ *       401:
+ *         $ref: '#/components/responses/UnauthorizedError'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.post('/', 
+  auth,
+  [
+    body('userId').notEmpty().withMessage('User ID is required'),
+    body('type').isIn(['task_assigned', 'task_due_soon', 'task_overdue', 'task_completed', 'task_updated', 'comment_added', 'status_changed']).withMessage('Invalid notification type'),
+    body('title').notEmpty().withMessage('Title is required'),
+    body('message').notEmpty().withMessage('Message is required'),
+    body('priority').optional().isIn(['low', 'medium', 'high', 'urgent']).withMessage('Invalid priority'),
+    body('taskId').optional().isMongoId().withMessage('Invalid task ID'),
+    body('metadata').optional().isObject().withMessage('Metadata must be an object')
+  ],
+  notificationController.createNotification
+);
+
+/**
+ * @swagger
+ * /api/notifications:
  *   get:
  *     summary: Get user notifications
  *     tags: [Notifications]

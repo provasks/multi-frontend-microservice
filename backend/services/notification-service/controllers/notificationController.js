@@ -3,6 +3,58 @@ const { validationResult } = require('express-validator');
 
 class NotificationController {
   /**
+   * Create a new notification
+   */
+  async createNotification(req, res) {
+    try {
+      console.log('Notification controller - createNotification called:', {
+        body: req.body,
+        user: req.user,
+        hasAuthHeader: !!req.header('Authorization')
+      });
+      
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        console.log('Validation errors:', errors.array());
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { userId, taskId, type, title, message, priority = 'medium', metadata = {} } = req.body;
+      
+      console.log('Creating notification with data:', {
+        userId,
+        taskId,
+        type,
+        title,
+        message,
+        priority,
+        metadata
+      });
+      
+      const notification = await notificationService.createNotification({
+        userId,
+        taskId,
+        type,
+        title,
+        message,
+        priority,
+        metadata,
+        isRead: false
+      });
+      
+      console.log('Notification created successfully:', notification);
+      
+      res.status(201).json({
+        message: 'Notification created successfully',
+        notification
+      });
+    } catch (error) {
+      console.error('Create notification error:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  }
+
+  /**
    * Get user notifications
    */
   async getUserNotifications(req, res) {
