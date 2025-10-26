@@ -1,6 +1,5 @@
 import React, { useState, Suspense } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import ErrorTesting from './ErrorTesting';
 import ReduxTest from './ReduxTest';
 import IdleTimeoutTest from './IdleTimeoutTest';
 import Dashboard from './Dashboard';
@@ -278,7 +277,6 @@ const AuthenticatedApp = ({ onLogout }) => {
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/profile" element={<div className="alert alert-info"><h4>Profile Page</h4><p>User profile management coming soon...</p></div>} />
               <Route path="/settings" element={<div className="alert alert-info"><h4>Settings Page</h4><p>Application settings coming soon...</p></div>} />
-              <Route path="/error-testing" element={<ErrorTesting />} />
               <Route path="/redux-test" element={<ReduxTest />} />
               <Route path="/idle-timeout-test" element={<IdleTimeoutTest />} />
               <Route path="*" element={<Navigate to="/" replace />} />
