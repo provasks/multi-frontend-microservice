@@ -49,6 +49,13 @@ const notificationService = {
 
   // Notify task assignment
   async notifyTaskAssignment(userId, taskId, taskTitle, authToken) {
+    console.log('notifyTaskAssignment called:', {
+      userId,
+      taskId,
+      taskTitle,
+      hasAuthToken: !!authToken
+    });
+    
     return this.createNotification(
       userId,
       taskId,

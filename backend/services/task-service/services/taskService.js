@@ -120,12 +120,30 @@ class TaskService {
 
       await task.save();
 
-      // Create notification for task assignment
-      try {
-        await notificationService.notifyTaskAssignment(assignedTo, task._id, title, authToken);
-      } catch (error) {
-        console.error('Failed to create notification:', error);
-        // Don't fail the task creation if notification fails
+      // Create notification for task assignment (only if assigned to someone other than creator)
+      if (assignedTo !== createdBy) {
+        console.log('Task assigned to different user, creating notification:', {
+          taskId: task._id,
+          taskTitle: title,
+          assignedTo,
+          createdBy,
+          isDifferentUser: assignedTo !== createdBy
+        });
+        
+        try {
+          await notificationService.notifyTaskAssignment(assignedTo, task._id, title, authToken);
+          console.log('Task assignment notification created successfully');
+        } catch (error) {
+          console.error('Failed to create task assignment notification:', error);
+          // Don't fail the task creation if notification fails
+        }
+      } else {
+        console.log('Task assigned to creator, no notification needed:', {
+          taskId: task._id,
+          taskTitle: title,
+          assignedTo,
+          createdBy
+        });
       }
 
       // Enrich with user data
