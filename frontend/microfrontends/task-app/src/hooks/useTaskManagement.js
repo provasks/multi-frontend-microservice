@@ -230,16 +230,27 @@ export const useTaskManagement = () => {
         apiData.assignedTo = apiData.assignedTo.trim();
       }
 
-      // Handle dueDate field - set default to 6 hours from assignment time if not provided
+      // Handle dueDate field
       if (apiData.dueDate && apiData.dueDate.trim() !== '') {
         // Convert datetime-local format to ISO string
         const dueDate = new Date(apiData.dueDate);
         apiData.dueDate = dueDate.toISOString();
       } else {
-        // Set default due date to 6 hours from now (assignment time)
-        const defaultDueDate = new Date();
-        defaultDueDate.setHours(defaultDueDate.getHours() + 6);
-        apiData.dueDate = defaultDueDate.toISOString();
+        // Only set default due date for new tasks or if original task had no due date
+        if (modalMode === 'add') {
+          // For new tasks, set default due date to 6 hours from now (assignment time)
+          const defaultDueDate = new Date();
+          defaultDueDate.setHours(defaultDueDate.getHours() + 6);
+          apiData.dueDate = defaultDueDate.toISOString();
+        } else if (modalMode === 'edit' && editingTask && !editingTask.dueDate) {
+          // For existing tasks, only set default if original task had no due date
+          const defaultDueDate = new Date();
+          defaultDueDate.setHours(defaultDueDate.getHours() + 6);
+          apiData.dueDate = defaultDueDate.toISOString();
+        } else {
+          // For existing tasks with due date, don't change it
+          delete apiData.dueDate;
+        }
       }
 
       // Handle tags field - convert string to array if provided
