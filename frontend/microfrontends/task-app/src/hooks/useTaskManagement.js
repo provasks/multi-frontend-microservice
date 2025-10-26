@@ -57,6 +57,9 @@ export const useTaskManagement = () => {
       }
       setApiStatus('loading');
       
+      // Reset search loading when starting to fetch
+      setSearchLoading(false);
+      
       if (!isAuthenticated()) {
         setApiStatus('error');
         setLoading(false);
