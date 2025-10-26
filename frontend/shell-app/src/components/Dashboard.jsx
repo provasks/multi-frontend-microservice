@@ -301,6 +301,7 @@ const Dashboard = () => {
         }
       },
       x: {
+        display: false, // Hide x-axis labels since legend shows the priority levels
         grid: {
           display: false
         }
