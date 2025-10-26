@@ -2,7 +2,7 @@
 .stat-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border-left: 4px solid;
-  height: 120px; /* Fixed height for all stat cards */
+  height: 90px; /* Reduced height for stat cards */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -44,7 +44,7 @@
   border: 1px solid #e9ecef;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  height: 400px; /* Fixed height for chart cards */
+  height: 320px; /* Reduced height for chart cards */
   display: flex;
   flex-direction: column;
 }
@@ -164,7 +164,7 @@
 /* Chart container styles */
 .chart-container {
   position: relative;
-  height: 280px; /* Adjusted for fixed card height */
+  height: 220px; /* Reduced height for better fit */
   width: 100%;
   flex: 1;
 }
@@ -172,13 +172,13 @@
 /* Chart responsive adjustments */
 @media (max-width: 768px) {
   .chart-container {
-    height: 250px;
+    height: 200px;
   }
 }
 
 @media (max-width: 576px) {
   .chart-container {
-    height: 200px;
+    height: 180px;
   }
 }
 
@@ -207,7 +207,7 @@
 /* Recent activity card improvements */
 .card:last-child {
   background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  min-height: 400px;
+  min-height: 320px; /* Reduced height to match other cards */
 }
 
 /* Empty state styles */
@@ -241,7 +241,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 300px;
+  height: 220px; /* Adjusted to match chart container */
   color: #6c757d;
 }
 
