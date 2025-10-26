@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-
 import ErrorTesting from './ErrorTesting';
 import ReduxTest from './ReduxTest';
 import IdleTimeoutTest from './IdleTimeoutTest';
+import Dashboard from './Dashboard';
 import shellConfig from '../config/shellConfig';
 import './TestDropdown.css';
 
@@ -265,8 +266,8 @@ const AuthenticatedApp = ({ onLogout }) => {
         <MicrofrontendErrorBoundary>
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
-              <Route path="/" element={<TaskManagement />} />
-              <Route path="/dashboard" element={<TaskManagement />} />
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/tasks" element={<TaskManagement />} />
               <Route path="/users" element={<UserManagement />} />
               <Route path="/notifications" element={<Notifications />} />
