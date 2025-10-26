@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 3001;
 const securityMiddleware = createSecurityMiddleware({
   enableHelmet: true,
   enableCORS: true,
-  enableRateLimit: true,
+  enableRateLimit: process.env.NODE_ENV !== 'development', // Disable rate limiting in development
   corsOrigins: [
     'http://localhost:3000',
     'http://localhost:4000',
