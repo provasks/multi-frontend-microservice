@@ -152,6 +152,28 @@ const notificationService = {
       { taskTitle },
       authToken
     );
+  },
+
+  // Notify task comment
+  async notifyTaskComment(userId, taskId, taskTitle, comment, authToken) {
+    console.log('notifyTaskComment called:', {
+      userId,
+      taskId,
+      taskTitle,
+      comment: comment.substring(0, 50) + '...',
+      hasAuthToken: !!authToken
+    });
+    
+    return this.createNotification(
+      userId,
+      taskId,
+      'comment_added',
+      'New Comment Added',
+      `A new comment was added to task "${taskTitle}": "${comment.substring(0, 100)}${comment.length > 100 ? '...' : ''}"`,
+      'medium',
+      { taskTitle, comment },
+      authToken
+    );
   }
 };
 
