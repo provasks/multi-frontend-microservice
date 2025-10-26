@@ -209,10 +209,14 @@ export const useTaskManagement = () => {
       // Handle tags field - convert string to array if provided
       if (apiData.tags && typeof apiData.tags === 'string') {
         if (apiData.tags.trim() === '') {
-          apiData.tags = [];
+          // Remove tags field entirely if empty
+          delete apiData.tags;
         } else {
           apiData.tags = apiData.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0);
         }
+      } else if (!apiData.tags || (Array.isArray(apiData.tags) && apiData.tags.length === 0)) {
+        // Remove tags field if it's empty or undefined
+        delete apiData.tags;
       }
 
       // Debug: Log the data being sent

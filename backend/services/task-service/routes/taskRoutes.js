@@ -193,7 +193,12 @@ router.post('/',
     body('priority').isIn(['low', 'medium', 'high', 'urgent']).withMessage('Invalid priority'),
     body('assignedTo').optional().isMongoId().withMessage('Invalid assignedTo user ID'),
     body('dueDate').optional().isISO8601().withMessage('Invalid due date format'),
-    body('tags').optional().isArray().withMessage('Tags must be an array')
+    body('tags').optional().custom((value) => {
+      if (value === undefined || value === null || value === '') {
+        return true; // Allow empty/undefined tags
+      }
+      return Array.isArray(value); // If provided, must be array
+    }).withMessage('Tags must be an array when provided')
   ],
   taskController.createTask
 );
@@ -275,7 +280,12 @@ router.put('/:id',
     body('status').optional().isIn(['pending', 'in_progress', 'completed', 'cancelled']).withMessage('Invalid status'),
     body('assignedTo').optional().isMongoId().withMessage('Invalid assignedTo user ID'),
     body('dueDate').optional().isISO8601().withMessage('Invalid due date format'),
-    body('tags').optional().isArray().withMessage('Tags must be an array')
+    body('tags').optional().custom((value) => {
+      if (value === undefined || value === null || value === '') {
+        return true; // Allow empty/undefined tags
+      }
+      return Array.isArray(value); // If provided, must be array
+    }).withMessage('Tags must be an array when provided')
   ],
   taskController.updateTask
 );
