@@ -177,27 +177,35 @@ const Dashboard = () => {
 
   const getTaskPriorityChartData = () => ({
     labels: ['High Priority', 'Medium Priority', 'Low Priority'],
-    datasets: [{
-      label: 'Number of Tasks',
-      data: [
-        dashboardData.tasks.highPriority,
-        dashboardData.tasks.mediumPriority,
-        dashboardData.tasks.lowPriority
-      ],
-      backgroundColor: [
-        '#dc3545', // Red for high
-        '#ffc107', // Yellow for medium
-        '#17a2b8'  // Blue for low
-      ],
-      borderColor: [
-        '#b02a37', // Darker red border
-        '#d39e00', // Darker yellow border
-        '#138496'  // Darker blue border
-      ],
-      borderWidth: 2,
-      borderRadius: 4,
-      borderSkipped: false
-    }]
+    datasets: [
+      {
+        label: 'High Priority',
+        data: [dashboardData.tasks.highPriority, 0, 0],
+        backgroundColor: '#dc3545',
+        borderColor: '#b02a37',
+        borderWidth: 2,
+        borderRadius: 4,
+        borderSkipped: false
+      },
+      {
+        label: 'Medium Priority',
+        data: [0, dashboardData.tasks.mediumPriority, 0],
+        backgroundColor: '#ffc107',
+        borderColor: '#d39e00',
+        borderWidth: 2,
+        borderRadius: 4,
+        borderSkipped: false
+      },
+      {
+        label: 'Low Priority',
+        data: [0, 0, dashboardData.tasks.lowPriority],
+        backgroundColor: '#17a2b8',
+        borderColor: '#138496',
+        borderWidth: 2,
+        borderRadius: 4,
+        borderSkipped: false
+      }
+    ]
   });
 
   const getSystemOverviewChartData = () => ({
@@ -276,21 +284,6 @@ const Dashboard = () => {
           usePointStyle: true,
           font: {
             size: 12
-          },
-          generateLabels: function(chart) {
-            const data = chart.data;
-            if (data.labels.length && data.datasets.length) {
-              return data.labels.map((label, i) => ({
-                text: label,
-                fillStyle: data.datasets[0].backgroundColor[i],
-                strokeStyle: data.datasets[0].borderColor[i],
-                lineWidth: 2,
-                pointStyle: 'rect',
-                hidden: false,
-                index: i
-              }));
-            }
-            return [];
           }
         }
       }
