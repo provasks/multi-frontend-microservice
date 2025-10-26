@@ -194,13 +194,13 @@ export const useTaskManagement = () => {
         apiData.assignedTo = apiData.assignedTo.trim();
       }
 
-      // Handle dueDate field - set default to 6 hours from now if not provided
+      // Handle dueDate field - set default to 6 hours from assignment time if not provided
       if (apiData.dueDate && apiData.dueDate.trim() !== '') {
         // Convert datetime-local format to ISO string
         const dueDate = new Date(apiData.dueDate);
         apiData.dueDate = dueDate.toISOString();
       } else {
-        // Set default due date to 6 hours from now
+        // Set default due date to 6 hours from now (assignment time)
         const defaultDueDate = new Date();
         defaultDueDate.setHours(defaultDueDate.getHours() + 6);
         apiData.dueDate = defaultDueDate.toISOString();

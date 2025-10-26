@@ -101,7 +101,7 @@ const TaskModal = React.memo(({
                     onChange={onInputChange}
                     min={new Date().toISOString().slice(0, 16)}
                   />
-                  <div className="form-text">Optional - if not specified, due date will be set to 6 hours from now</div>
+                  <div className="form-text">Optional - if not specified, due date will be set to 6 hours from assignment time</div>
                 </div>
                 <div className="col-md-6 mb-3">
                   <label htmlFor="tags" className="form-label">Tags (comma-separated)</label>

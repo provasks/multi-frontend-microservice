@@ -131,15 +131,17 @@ class TaskService {
       }
 
       // Create task
+      const assignmentTime = new Date();
       const task = new Task({
         title,
         description,
         priority,
         assignedTo,
+        assignedAt: assignmentTime,
         createdBy,
         dueDate: dueDate ? new Date(dueDate) : (() => {
-          // Set default due date to 6 hours from now if not provided
-          const defaultDueDate = new Date();
+          // Set default due date to 6 hours from assignment time if not provided
+          const defaultDueDate = new Date(assignmentTime);
           defaultDueDate.setHours(defaultDueDate.getHours() + 6);
           return defaultDueDate;
         })(),
