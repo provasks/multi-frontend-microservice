@@ -127,15 +127,8 @@ class TaskController {
    */
   async updateTask(req, res) {
     try {
-      console.log('Update task request:', {
-        taskId: req.params.id,
-        body: req.body,
-        user: req.user._id
-      });
-
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        console.log('Validation errors:', errors.array());
         return res.status(400).json({ errors: errors.array() });
       }
 

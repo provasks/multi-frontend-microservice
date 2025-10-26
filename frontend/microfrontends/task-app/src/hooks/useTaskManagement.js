@@ -230,12 +230,6 @@ export const useTaskManagement = () => {
         delete apiData.tags;
       }
 
-      // Debug: Log the data being sent
-      console.log('Sending task data:', {
-        mode: modalMode,
-        taskId: editingTask?._id,
-        data: apiData
-      });
 
       // Use unified API client
       if (modalMode === 'add') {
