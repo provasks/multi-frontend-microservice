@@ -8,6 +8,7 @@ export const useTaskManagement = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState('unknown');
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -28,6 +29,15 @@ export const useTaskManagement = () => {
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { isAuthenticated } = useAuth();
+  
+  // Set search loading state when search term changes
+  useEffect(() => {
+    if (searchTerm && searchTerm !== debouncedSearchTerm) {
+      setSearchLoading(true);
+    } else {
+      setSearchLoading(false);
+    }
+  }, [searchTerm, debouncedSearchTerm]);
 
   const fetchTasks = useCallback(async (isRefresh = false, page = currentPage, limit = pageSize) => {
     try {
@@ -363,6 +373,7 @@ export const useTaskManagement = () => {
     tasks,
     loading,
     refreshing,
+    searchLoading,
     apiStatus,
     showModal,
     editingTask,

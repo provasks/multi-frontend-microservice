@@ -31,6 +31,7 @@ const TaskManagement = () => {
     tasks,
     loading,
     refreshing,
+    searchLoading,
     showModal,
     modalMode,
     searchTerm,
@@ -107,6 +108,7 @@ const TaskManagement = () => {
         onClearSearch={handleClearSearch}
         totalCount={pagination.totalTasks || 0}
         filteredCount={tasks.length}
+        searchLoading={searchLoading}
       />
 
       <div className="card">
