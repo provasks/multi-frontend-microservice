@@ -121,6 +121,46 @@ const App = () => {
     window.addEventListener('error', handleGlobalError);
     window.addEventListener('unhandledrejection', handleUnhandledRejection);
     
+    // Add window.onerror for setTimeout errors and other uncaught errors
+    window.onerror = (message, source, lineno, colno, error) => {
+      console.log('window.onerror triggered:', { message, source, lineno, colno, error });
+      
+      // Check if this is a React component error - let ErrorBoundary handle it
+      if (error && error.message && error.message.includes('Component Error')) {
+        return false; // Don't interfere with ErrorBoundary
+      }
+      
+      // Don't handle login form errors - let the form handle them
+      if (error && error.message && error.message.includes('Login')) {
+        return false;
+      }
+      
+      // Handle other types of errors
+      let userMessage = 'An unexpected error occurred. Please try again.';
+      
+      if (error) {
+        if (error.name === 'ChunkLoadError') {
+          userMessage = 'Failed to load application resources. Please refresh the page.';
+        } else if (error.message && error.message.includes('fetch')) {
+          if (!navigator.onLine) {
+            userMessage = 'No internet connection. Please check your network.';
+          } else {
+            userMessage = 'Server is not responding. Please try again later.';
+          }
+        } else if (error.message && error.message.includes('Unauthorized')) {
+          userMessage = 'Your session has expired. Please log in again.';
+        } else if (error.message && error.message.includes('test')) {
+          userMessage = `Test Error: ${error.message}`;
+        }
+      }
+      
+      if (window.showError) {
+        window.showError(userMessage);
+      }
+      
+      return false; // Don't prevent default error handling
+    };
+    
     // Network status listeners
     window.addEventListener('online', () => {
       // Network: Online
@@ -145,6 +185,9 @@ const App = () => {
       window.removeEventListener('online', () => {});
       window.removeEventListener('offline', () => {});
       window.removeEventListener('message', handleIdleTimeoutLogout);
+      
+      // Clean up window.onerror
+      window.onerror = null;
     };
   }, []);
 

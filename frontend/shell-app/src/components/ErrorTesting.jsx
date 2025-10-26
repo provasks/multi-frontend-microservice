@@ -39,6 +39,12 @@ const ErrorTesting = () => {
     Promise.reject(new Error('Promise rejection test')).catch(error => {
       console.log('Promise rejection caught:', error);
     });
+    
+    // Test direct error throwing (should be caught by global handler)
+    setTimeout(() => {
+      console.log('Testing direct error throw...');
+      throw new Error('Direct error test');
+    }, 150);
   };
 
   const testSimpleError = () => {
@@ -208,6 +214,31 @@ const ErrorTesting = () => {
     }
   };
 
+  const testDirectGlobalError = () => {
+    console.log('Testing direct global error handler...');
+    
+    // This should trigger the global error handler directly
+    try {
+      throw new Error('Direct global error test');
+    } catch (error) {
+      // Re-throw to trigger global handler
+      setTimeout(() => {
+        throw error;
+      }, 0);
+    }
+  };
+
+  const testWindowOnError = () => {
+    console.log('Testing window.onerror handler...');
+    console.log('window.onerror available:', typeof window.onerror);
+    
+    // This should trigger window.onerror
+    setTimeout(() => {
+      console.log('Throwing error to test window.onerror...');
+      throw new Error('Window.onerror test error');
+    }, 100);
+  };
+
   const [showErrorComponent, setShowErrorComponent] = React.useState(false);
   const [errorBoundaryKey, setErrorBoundaryKey] = React.useState(0);
   const [errorHandlersStatus, setErrorHandlersStatus] = React.useState({});
@@ -362,6 +393,20 @@ const ErrorTesting = () => {
                     >
                       <i className="fas fa-hand-paper me-2"></i>
                       Test Manual Error Dispatch
+                    </button>
+                    <button 
+                      className="btn btn-outline-primary" 
+                      onClick={testDirectGlobalError}
+                    >
+                      <i className="fas fa-bullseye me-2"></i>
+                      Test Direct Global Error
+                    </button>
+                    <button 
+                      className="btn btn-outline-success" 
+                      onClick={testWindowOnError}
+                    >
+                      <i className="fas fa-window-maximize me-2"></i>
+                      Test Window.onerror
                     </button>
                   </div>
                 </div>
