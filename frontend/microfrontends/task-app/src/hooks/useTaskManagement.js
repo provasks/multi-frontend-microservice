@@ -246,7 +246,11 @@ export const useTaskManagement = () => {
         // Convert datetime-local format to ISO string
         const dueDate = new Date(apiData.dueDate);
         apiData.dueDate = dueDate.toISOString();
-        console.log('Due date provided in form, using it:', apiData.dueDate);
+        console.log('Due date provided in form, using it:', {
+          original: apiData.dueDate,
+          parsed: dueDate,
+          iso: apiData.dueDate
+        });
       } else {
         // Only set default due date for new tasks or if original task had no due date
         if (modalMode === 'add') {
