@@ -34,6 +34,11 @@ const ErrorTesting = () => {
     } catch (error) {
       console.log('Caught error in try-catch:', error);
     }
+    
+    // Also test with a promise rejection
+    Promise.reject(new Error('Promise rejection test')).catch(error => {
+      console.log('Promise rejection caught:', error);
+    });
   };
 
   const testSimpleError = () => {
@@ -72,8 +77,20 @@ const ErrorTesting = () => {
       });
       
       window.dispatchEvent(errorEvent);
+      console.log('Error event dispatched successfully');
     } catch (error) {
       console.log('Error dispatching error event:', error);
+    }
+    
+    // Also test with a custom event
+    try {
+      const customErrorEvent = new CustomEvent('customError', {
+        detail: { error: new Error('Custom error event') }
+      });
+      window.dispatchEvent(customErrorEvent);
+      console.log('Custom error event dispatched');
+    } catch (error) {
+      console.log('Error dispatching custom error event:', error);
     }
   };
 
@@ -109,6 +126,16 @@ const ErrorTesting = () => {
         window.showError(`Network Error: ${error.message}`);
       }
     }
+    
+    // Also test with a timeout
+    try {
+      await axios.get('/api/timeout-test', { timeout: 1000 });
+    } catch (error) {
+      console.log('Timeout error caught:', error);
+      if (window.showError) {
+        window.showError(`Timeout Error: ${error.message}`);
+      }
+    }
   };
 
   const testValidationError = () => {
@@ -127,8 +154,75 @@ const ErrorTesting = () => {
     }
   };
 
+  const testAsyncError = async () => {
+    console.log('Testing async error...');
+    
+    try {
+      // Simulate an async operation that fails
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(new Error('Async operation failed'));
+        }, 100);
+      });
+    } catch (error) {
+      console.log('Async error caught:', error);
+      if (window.showError) {
+        window.showError(`Async Error: ${error.message}`);
+      }
+    }
+  };
+
+  const testUnhandledRejection = () => {
+    console.log('Testing unhandled promise rejection...');
+    
+    // Create an unhandled promise rejection
+    Promise.reject(new Error('Unhandled promise rejection test'));
+  };
+
+  const testTypeError = () => {
+    console.log('Testing type error...');
+    
+    try {
+      // This will cause a TypeError
+      const obj = null;
+      obj.someProperty.nestedProperty;
+    } catch (error) {
+      console.log('Type error caught:', error);
+      if (window.showError) {
+        window.showError(`Type Error: ${error.message}`);
+      }
+    }
+  };
+
+  const testReferenceError = () => {
+    console.log('Testing reference error...');
+    
+    try {
+      // This will cause a ReferenceError
+      console.log(undefinedVariable);
+    } catch (error) {
+      console.log('Reference error caught:', error);
+      if (window.showError) {
+        window.showError(`Reference Error: ${error.message}`);
+      }
+    }
+  };
+
   const [showErrorComponent, setShowErrorComponent] = React.useState(false);
   const [errorBoundaryKey, setErrorBoundaryKey] = React.useState(0);
+  const [errorHandlersStatus, setErrorHandlersStatus] = React.useState({});
+
+  // Check error handler availability
+  React.useEffect(() => {
+    setErrorHandlersStatus({
+      showError: typeof window.showError === 'function',
+      showSuccess: typeof window.showSuccess === 'function',
+      onError: typeof window.onerror === 'function',
+      addEventListener: typeof window.addEventListener === 'function',
+      ErrorEvent: typeof ErrorEvent === 'function',
+      CustomEvent: typeof CustomEvent === 'function'
+    });
+  }, []);
 
   const triggerErrorComponent = () => {
     console.log('Triggering error component...');
@@ -155,6 +249,27 @@ const ErrorTesting = () => {
               <h5 className="mb-0">Error Testing Controls</h5>
             </div>
             <div className="card-body">
+              <div className="alert alert-info">
+                <h6>Error Handler Status:</h6>
+                <div className="row">
+                  <div className="col-md-6">
+                    <small>
+                      <strong>Global Handlers:</strong><br/>
+                      showError: {errorHandlersStatus.showError ? '✅' : '❌'}<br/>
+                      showSuccess: {errorHandlersStatus.showSuccess ? '✅' : '❌'}<br/>
+                      onError: {errorHandlersStatus.onError ? '✅' : '❌'}
+                    </small>
+                  </div>
+                  <div className="col-md-6">
+                    <small>
+                      <strong>Event System:</strong><br/>
+                      addEventListener: {errorHandlersStatus.addEventListener ? '✅' : '❌'}<br/>
+                      ErrorEvent: {errorHandlersStatus.ErrorEvent ? '✅' : '❌'}<br/>
+                      CustomEvent: {errorHandlersStatus.CustomEvent ? '✅' : '❌'}
+                    </small>
+                  </div>
+                </div>
+              </div>
               <div className="row">
                 <div className="col-md-6">
                   <h6>Global Error Handler Tests</h6>
@@ -224,6 +339,38 @@ const ErrorTesting = () => {
                       onClick={testSuccessMessage}
                     >
                       Test Success Message
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="row mt-3">
+                <div className="col-md-6">
+                  <h6>JavaScript Error Types</h6>
+                  <div className="d-grid gap-2">
+                    <button 
+                      className="btn btn-warning" 
+                      onClick={testTypeError}
+                    >
+                      Test TypeError
+                    </button>
+                    <button 
+                      className="btn btn-warning" 
+                      onClick={testReferenceError}
+                    >
+                      Test ReferenceError
+                    </button>
+                    <button 
+                      className="btn btn-info" 
+                      onClick={testAsyncError}
+                    >
+                      Test Async Error
+                    </button>
+                    <button 
+                      className="btn btn-danger" 
+                      onClick={testUnhandledRejection}
+                    >
+                      Test Unhandled Rejection
                     </button>
                   </div>
                 </div>
