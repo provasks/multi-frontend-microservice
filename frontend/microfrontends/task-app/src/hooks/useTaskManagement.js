@@ -7,6 +7,7 @@ import { TASK_CONSTANTS } from 'sharedComponents/constants';
 export const useTaskManagement = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [apiStatus, setApiStatus] = useState('unknown');
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -17,14 +18,19 @@ export const useTaskManagement = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const { isAuthenticated } = useAuth();
 
-  const fetchTasks = useCallback(async () => {
+  const fetchTasks = useCallback(async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       setApiStatus('loading');
       
       if (!isAuthenticated()) {
         setApiStatus('error');
         setLoading(false);
+        setRefreshing(false);
         if (window.showError) {
           window.showError('Please log in to view tasks');
         }
@@ -42,6 +48,7 @@ export const useTaskManagement = () => {
       setTasks([]);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }, [isAuthenticated]);
 
@@ -204,10 +211,16 @@ export const useTaskManagement = () => {
     );
   }, [tasks, debouncedSearchTerm]);
 
+  // Separate refresh function that doesn't cause flickering
+  const refreshTasks = useCallback(() => {
+    fetchTasks(true);
+  }, [fetchTasks]);
+
   return {
     // State
     tasks,
     loading,
+    refreshing,
     apiStatus,
     showModal,
     editingTask,
@@ -219,6 +232,7 @@ export const useTaskManagement = () => {
     
     // Actions
     fetchTasks,
+    refreshTasks,
     handleAddTask,
     handleEditTask,
     handleDeleteTask,

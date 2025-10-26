@@ -29,6 +29,7 @@ const TaskManagement = () => {
     // State
     tasks,
     loading,
+    refreshing,
     showModal,
     modalMode,
     searchTerm,
@@ -38,6 +39,7 @@ const TaskManagement = () => {
     
     // Actions
     fetchTasks,
+    refreshTasks,
     handleAddTask,
     handleEditTask,
     handleDeleteTask,
@@ -78,9 +80,13 @@ const TaskManagement = () => {
             <i className="fas fa-plus me-1"></i>
             Add Task
           </button>
-          <button className="btn btn-outline-primary" onClick={fetchTasks}>
-            <i className="fas fa-sync-alt me-1"></i>
-            Refresh
+          <button 
+            className="btn btn-outline-primary" 
+            onClick={refreshTasks}
+            disabled={refreshing}
+          >
+            <i className={`fas fa-sync-alt me-1 ${refreshing ? 'fa-spin' : ''}`}></i>
+            {refreshing ? 'Refreshing...' : 'Refresh'}
           </button>
         </div>
       </div>
