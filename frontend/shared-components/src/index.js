@@ -1,7 +1,3 @@
-// Import Chart.js to make it available in shared scope
-import 'chart.js';
-import 'react-chartjs-2';
-
 // Export all shared components
 export { default as LoadingSpinner } from './components/LoadingSpinner';
 export { default as LoadingSkeleton, TableSkeleton, CardSkeleton, ListSkeleton } from './components/LoadingSkeleton';
@@ -14,6 +10,7 @@ export { default as Badge } from './components/Badge';
 export { default as Tooltip } from './components/Tooltip';
 export { default as IdleTimeoutWarning } from './components/IdleTimeoutWarning';
 export { default as IdleTimeoutConfig } from './components/IdleTimeoutConfig';
+export { default as IdleTimeoutDebug } from './components/IdleTimeoutDebug';
 
 // Export shared hooks
 export { useAuth as useAuthLocal } from './hooks/useAuth';

@@ -102,16 +102,6 @@ module.exports = {
           requiredVersion: '^5.0.1',
           eager: false,
         },
-        'chart.js': {
-          singleton: true,
-          requiredVersion: '^4.4.0',
-          eager: true,
-        },
-        'react-chartjs-2': {
-          singleton: true,
-          requiredVersion: '^5.2.0',
-          eager: true,
-        },
       },
     }),
   ],

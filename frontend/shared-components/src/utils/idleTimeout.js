@@ -23,6 +23,8 @@ class IdleTimeout {
     this.isActive = false;
     this.isWarning = false;
     this.lastActivity = null;
+    this.startTime = null; // Track when the timer was started
+    this.minimumSessionTime = 5 * 60 * 1000; // 5 minutes minimum session time
     
     this.init();
   }
@@ -47,8 +49,8 @@ class IdleTimeout {
   handleActivity(event) {
     // Throttle activity detection to prevent excessive resets
     const now = Date.now();
-    if (this.lastActivity && (now - this.lastActivity) < 1000) {
-      return; // Skip if activity was detected less than 1 second ago
+    if (this.lastActivity && (now - this.lastActivity) < 2000) {
+      return; // Skip if activity was detected less than 2 seconds ago (increased from 1s)
     }
     
     this.lastActivity = now;
@@ -67,17 +69,18 @@ class IdleTimeout {
       timestamp: new Date().toLocaleTimeString()
     });
     
-    // Always call onReset when user is active
-    this.onReset();
-    
-    // Reset the timers
-    this.reset();
+    // Only reset if we're actually active and not already in warning state
+    if (this.isActive && !this.isWarning) {
+      this.onReset();
+      this.reset();
+    }
   }
 
   reset() {
     this.clearTimers();
     this.isActive = true;
     this.isWarning = false;
+    this.startTime = Date.now(); // Track when the timer was started
     
     console.log('🔄 IdleTimeout reset:', { 
       timeout: this.timeout / 1000, 
@@ -94,6 +97,14 @@ class IdleTimeout {
     
     // Set timeout timer
     this.timer = setTimeout(() => {
+      // Check if minimum session time has passed
+      const sessionTime = Date.now() - (this.startTime || Date.now());
+      if (sessionTime < this.minimumSessionTime) {
+        console.log('⏰ IdleTimeout prevented - minimum session time not reached');
+        this.reset(); // Reset the timer instead of timing out
+        return;
+      }
+      
       console.log('🕐 IdleTimeout timeout triggered');
       this.isActive = false;
       this.onTimeout();
@@ -141,7 +152,13 @@ class IdleTimeout {
   // Getters
   getTimeRemaining() {
     if (!this.isActive) return 0;
-    return this.timeout;
+    
+    // Calculate actual time remaining based on when the timer was started
+    const now = Date.now();
+    const timeElapsed = now - (this.startTime || now);
+    const timeRemaining = Math.max(0, this.timeout - timeElapsed);
+    
+    return timeRemaining;
   }
 
   getIsWarning() {

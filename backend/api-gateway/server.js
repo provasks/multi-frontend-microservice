@@ -15,11 +15,20 @@ const PORT = process.env.PORT || 3000;
 // Security middleware
 app.use(helmet());
 
-// Rate limiting
+// Rate limiting - More lenient for development
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
+  max: process.env.NODE_ENV === 'development' ? 10000 : 100, // Very high limit for development
+  message: 'Too many requests from this IP, please try again later.',
+  skip: (req) => {
+    // Skip rate limiting for localhost in development
+    if (process.env.NODE_ENV === 'development') {
+      const ip = req.ip || req.connection.remoteAddress;
+      return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1' || 
+             req.hostname === 'localhost' || req.hostname === '127.0.0.1';
+    }
+    return false;
+  }
 });
 app.use(limiter);
 
