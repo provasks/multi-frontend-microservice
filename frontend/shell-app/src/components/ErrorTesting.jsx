@@ -103,8 +103,18 @@ const ErrorTesting = () => {
   const testChunkLoadError = () => {
     console.log('Triggering chunk load error...');
     console.log('Throwing chunk load error...');
+    console.log('window.showError available:', typeof window.showError);
     
-    // Simulate a chunk load error
+    // First try to show a custom message
+    if (window.showError) {
+      window.showError('Chunk Load Error: Failed to load application resources. Please refresh the page.');
+      console.log('Custom chunk load error message shown');
+    } else {
+      console.error('window.showError is not available!');
+      alert('Chunk Load Error: Failed to load application resources. Please refresh the page.');
+    }
+    
+    // Then throw the error to test global handler
     const chunkError = new Error('Loading chunk failed');
     chunkError.name = 'ChunkLoadError';
     throw chunkError;
@@ -113,8 +123,18 @@ const ErrorTesting = () => {
   const testAuthError = () => {
     console.log('Triggering auth error...');
     console.log('Throwing auth error...');
+    console.log('window.showError available:', typeof window.showError);
     
-    // Simulate an auth error
+    // First try to show a custom message
+    if (window.showError) {
+      window.showError('Authentication Error: Your session has expired. Please log in again.');
+      console.log('Custom auth error message shown');
+    } else {
+      console.error('window.showError is not available!');
+      alert('Authentication Error: Your session has expired. Please log in again.');
+    }
+    
+    // Then throw the error to test global handler
     const authError = new Error('Unauthorized');
     authError.name = 'AuthError';
     throw authError;
@@ -122,14 +142,20 @@ const ErrorTesting = () => {
 
   const testNetworkError = async () => {
     console.log('Testing network error...');
+    console.log('window.showError available:', typeof window.showError);
     
     try {
       // Try to make a request to a non-existent endpoint
       await axios.get('/api/non-existent-endpoint');
     } catch (error) {
       console.log('Network error caught:', error);
+      console.log('About to call window.showError with:', `Network Error: ${error.message}`);
       if (window.showError) {
         window.showError(`Network Error: ${error.message}`);
+        console.log('window.showError called successfully');
+      } else {
+        console.error('window.showError is not available!');
+        alert(`Network Error: ${error.message}`);
       }
     }
     
@@ -138,8 +164,13 @@ const ErrorTesting = () => {
       await axios.get('/api/timeout-test', { timeout: 1000 });
     } catch (error) {
       console.log('Timeout error caught:', error);
+      console.log('About to call window.showError with:', `Timeout Error: ${error.message}`);
       if (window.showError) {
         window.showError(`Timeout Error: ${error.message}`);
+        console.log('window.showError called successfully');
+      } else {
+        console.error('window.showError is not available!');
+        alert(`Timeout Error: ${error.message}`);
       }
     }
   };

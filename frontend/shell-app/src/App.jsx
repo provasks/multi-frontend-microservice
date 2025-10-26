@@ -52,6 +52,7 @@ const App = () => {
     
     const handleGlobalError = (event) => {
       // Global error handler triggered
+      console.log('addEventListener error triggered:', event);
       
       // Check if this is a React component error - let ErrorBoundary handle it
       if (event.error && event.error.message && event.error.message.includes('Component Error')) {
@@ -70,20 +71,29 @@ const App = () => {
       
       if (event.error) {
         if (event.error.name === 'ChunkLoadError') {
-          userMessage = 'Failed to load application resources. Please refresh the page.';
+          userMessage = 'Chunk Load Error: Failed to load application resources. Please refresh the page.';
+        } else if (event.error.name === 'AuthError') {
+          userMessage = 'Authentication Error: Your session has expired. Please log in again.';
         } else if (event.error.message && event.error.message.includes('fetch')) {
           if (!navigator.onLine) {
-            userMessage = 'No internet connection. Please check your network.';
+            userMessage = 'Network Error: No internet connection. Please check your network.';
           } else {
-            userMessage = 'Server is not responding. Please try again later.';
+            userMessage = 'Network Error: Server is not responding. Please try again later.';
           }
         } else if (event.error.message && event.error.message.includes('Unauthorized')) {
-          userMessage = 'Your session has expired. Please log in again.';
+          userMessage = 'Authentication Error: Your session has expired. Please log in again.';
+        } else if (event.error.message && event.error.message.includes('test')) {
+          userMessage = `Test Error: ${event.error.message}`;
         }
       }
       
+      console.log('About to show error message via addEventListener:', userMessage);
       if (window.showError) {
         window.showError(userMessage);
+        console.log('Error message shown via addEventListener');
+      } else {
+        console.error('window.showError is not available in addEventListener!');
+        alert(userMessage);
       }
     };
 
@@ -140,22 +150,35 @@ const App = () => {
       
       if (error) {
         if (error.name === 'ChunkLoadError') {
-          userMessage = 'Failed to load application resources. Please refresh the page.';
+          userMessage = 'Chunk Load Error: Failed to load application resources. Please refresh the page.';
+        } else if (error.name === 'AuthError') {
+          userMessage = 'Authentication Error: Your session has expired. Please log in again.';
         } else if (error.message && error.message.includes('fetch')) {
           if (!navigator.onLine) {
-            userMessage = 'No internet connection. Please check your network.';
+            userMessage = 'Network Error: No internet connection. Please check your network.';
           } else {
-            userMessage = 'Server is not responding. Please try again later.';
+            userMessage = 'Network Error: Server is not responding. Please try again later.';
           }
         } else if (error.message && error.message.includes('Unauthorized')) {
-          userMessage = 'Your session has expired. Please log in again.';
+          userMessage = 'Authentication Error: Your session has expired. Please log in again.';
         } else if (error.message && error.message.includes('test')) {
           userMessage = `Test Error: ${error.message}`;
+        } else if (error.message && error.message.includes('Simple test error')) {
+          userMessage = 'Simple Error: A basic error occurred in the application.';
+        } else if (error.message && error.message.includes('Direct test error')) {
+          userMessage = 'Direct Error: An error occurred directly in the application.';
+        } else if (error.message && error.message.includes('Window.onerror test error')) {
+          userMessage = 'Window.onerror Test: Testing the global error handler.';
         }
       }
       
+      console.log('About to show error message:', userMessage);
       if (window.showError) {
         window.showError(userMessage);
+        console.log('Error message shown via window.showError');
+      } else {
+        console.error('window.showError is not available in window.onerror!');
+        alert(userMessage);
       }
       
       return false; // Don't prevent default error handling
