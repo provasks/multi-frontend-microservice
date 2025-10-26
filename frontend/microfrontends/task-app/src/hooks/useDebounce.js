@@ -10,11 +10,14 @@ export const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
+    console.log('useDebounce: value changed, setting timeout', { value, delay });
     const handler = setTimeout(() => {
+      console.log('useDebounce: timeout fired, updating debounced value', { value, debouncedValue });
       setDebouncedValue(value);
     }, delay);
 
     return () => {
+      console.log('useDebounce: clearing timeout');
       clearTimeout(handler);
     };
   }, [value, delay]);
