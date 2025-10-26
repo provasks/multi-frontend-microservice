@@ -1,3 +1,7 @@
+// Import Chart.js to make it available in shared scope
+import 'chart.js';
+import 'react-chartjs-2';
+
 // Export all shared components
 export { default as LoadingSpinner } from './components/LoadingSpinner';
 export { default as LoadingSkeleton, TableSkeleton, CardSkeleton, ListSkeleton } from './components/LoadingSkeleton';
