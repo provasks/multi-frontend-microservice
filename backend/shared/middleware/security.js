@@ -77,13 +77,13 @@ class SecurityMiddleware {
     const isDevelopment = process.env.NODE_ENV === 'development';
     
     return {
-      windowMs: isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 5 minutes in dev, 15 minutes in prod
-      max: isDevelopment ? 500 : 100, // 500 requests in dev, 100 in prod
+      windowMs: isDevelopment ? 1 * 60 * 1000 : 15 * 60 * 1000, // 1 minute in dev, 15 minutes in prod
+      max: isDevelopment ? 1000 : 100, // 1000 requests in dev, 100 in prod
       message: {
         error: isDevelopment 
-          ? 'Too many requests from this IP, please try again in 5 minutes.' 
+          ? 'Too many requests from this IP, please try again in 1 minute.' 
           : 'Too many requests from this IP, please try again later.',
-        retryAfter: isDevelopment ? '5 minutes' : '15 minutes'
+        retryAfter: isDevelopment ? '1 minute' : '15 minutes'
       },
       standardHeaders: true,
       legacyHeaders: false,
@@ -96,6 +96,7 @@ class SecurityMiddleware {
         // Skip rate limiting for localhost in development
         if (isDevelopment) {
           const ip = req.ip || req.connection.remoteAddress;
+          console.log('🔍 Rate limit check - IP:', ip, 'Skipping:', ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1');
           return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
         }
         
@@ -111,13 +112,13 @@ class SecurityMiddleware {
     const isDevelopment = process.env.NODE_ENV === 'development';
     
     return {
-      windowMs: isDevelopment ? 5 * 60 * 1000 : 15 * 60 * 1000, // 5 minutes in dev, 15 minutes in prod
-      max: isDevelopment ? 20 : 5, // 20 attempts in dev, 5 in prod
+      windowMs: isDevelopment ? 1 * 60 * 1000 : 15 * 60 * 1000, // 1 minute in dev, 15 minutes in prod
+      max: isDevelopment ? 100 : 5, // 100 attempts in dev, 5 in prod
       message: {
         error: isDevelopment 
-          ? 'Too many login attempts, please try again in 5 minutes.' 
+          ? 'Too many login attempts, please try again in 1 minute.' 
           : 'Too many login attempts, please try again later.',
-        retryAfter: isDevelopment ? '5 minutes' : '15 minutes'
+        retryAfter: isDevelopment ? '1 minute' : '15 minutes'
       },
       standardHeaders: true,
       legacyHeaders: false,
@@ -125,6 +126,7 @@ class SecurityMiddleware {
       // Skip rate limiting for localhost in development
       skip: isDevelopment ? (req) => {
         const ip = req.ip || req.connection.remoteAddress;
+        console.log('🔍 Login rate limit check - IP:', ip, 'Skipping:', ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1');
         return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
       } : undefined
     };
