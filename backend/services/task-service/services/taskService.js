@@ -137,7 +137,12 @@ class TaskService {
         priority,
         assignedTo,
         createdBy,
-        dueDate: dueDate ? new Date(dueDate) : undefined,
+        dueDate: dueDate ? new Date(dueDate) : (() => {
+          // Set default due date to 6 hours from now if not provided
+          const defaultDueDate = new Date();
+          defaultDueDate.setHours(defaultDueDate.getHours() + 6);
+          return defaultDueDate;
+        })(),
         tags: tags || []
       });
 

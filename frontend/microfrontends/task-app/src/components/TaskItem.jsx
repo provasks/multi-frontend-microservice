@@ -91,6 +91,16 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
             {new Date(task.dueDate) < new Date() && task.status !== 'completed' && (
               <div className="text-danger small">Overdue!</div>
             )}
+            {/* Show if this is a default due date (6 hours from creation) */}
+            {(() => {
+              const created = new Date(task.createdAt);
+              const due = new Date(task.dueDate);
+              const sixHoursLater = new Date(created.getTime() + 6 * 60 * 60 * 1000);
+              const isDefaultDueDate = Math.abs(due.getTime() - sixHoursLater.getTime()) < 60000; // Within 1 minute
+              return isDefaultDueDate && (
+                <div className="text-info small">6h default</div>
+              );
+            })()}
           </div>
         ) : (
           <span className="text-muted">No due date</span>
