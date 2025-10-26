@@ -215,6 +215,13 @@ export const useTaskManagement = () => {
         }
       }
 
+      // Debug: Log the data being sent
+      console.log('Sending task data:', {
+        mode: modalMode,
+        taskId: editingTask?._id,
+        data: apiData
+      });
+
       // Use unified API client
       if (modalMode === 'add') {
         await apiHelpers.createTask(apiData);
