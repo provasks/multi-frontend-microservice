@@ -8,10 +8,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 // Import idle timeout components
-let IdleTimeoutWarning, IdleTimeoutConfig;
+let IdleTimeoutWarning, IdleTimeoutConfig, IdleTimeoutDebug;
 try {
   IdleTimeoutWarning = require('sharedComponents/IdleTimeoutWarning').default;
   IdleTimeoutConfig = require('sharedComponents/IdleTimeoutConfig').default;
+  IdleTimeoutDebug = require('sharedComponents/IdleTimeoutDebug').default;
   console.log('✅ Idle timeout components loaded successfully');
 } catch (error) {
   console.warn('Idle timeout components not available:', error.message);
@@ -215,6 +216,7 @@ const App = () => {
       <>
         <IdleTimeoutWarning />
         <IdleTimeoutConfig />
+        {IdleTimeoutDebug && <IdleTimeoutDebug />}
       </>
     );
   };
