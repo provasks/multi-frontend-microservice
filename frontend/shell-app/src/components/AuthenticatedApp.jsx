@@ -2,6 +2,7 @@ import React, { useState, Suspense } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import ReduxTest from './ReduxTest';
 import IdleTimeoutTest from './IdleTimeoutTest';
+import ErrorTesting from './ErrorTesting';
 import Dashboard from './Dashboard';
 import shellConfig from '../config/shellConfig';
 import './TestDropdown.css';
@@ -279,6 +280,7 @@ const AuthenticatedApp = ({ onLogout }) => {
               <Route path="/settings" element={<div className="alert alert-info"><h4>Settings Page</h4><p>Application settings coming soon...</p></div>} />
               <Route path="/redux-test" element={<ReduxTest />} />
               <Route path="/idle-timeout-test" element={<IdleTimeoutTest />} />
+              <Route path="/error-testing" element={<ErrorTesting />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </Suspense>
