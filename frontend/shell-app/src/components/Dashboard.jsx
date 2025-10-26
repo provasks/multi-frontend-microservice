@@ -445,7 +445,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Recent Activity - Accordion Style */}
+        {/* Recent Activity - Grouped by Status */}
         <div className="col-lg-6 col-md-6 mb-4">
           <div className="card">
             <div className="card-header">
@@ -457,83 +457,112 @@ const Dashboard = () => {
             <div className="card-body p-0">
               {dashboardData.recentActivity.length > 0 ? (
                 <div className="accordion" id="recentActivityAccordion">
-                  {dashboardData.recentActivity.map((task, index) => (
-                    <div key={task._id || index} className="accordion-item border-0">
-                      <h2 className="accordion-header" id={`heading${index}`}>
-                        <button 
-                          className={`accordion-button ${index !== 0 ? 'collapsed' : ''}`}
-                          type="button" 
-                          data-bs-toggle="collapse" 
-                          data-bs-target={`#collapse${index}`}
-                          aria-expanded={index === 0 ? 'true' : 'false'}
-                          aria-controls={`collapse${index}`}
+                  {/* Group by Status */}
+                  {['completed', 'pending', 'overdue'].map((status, statusIndex) => {
+                    const statusTasks = dashboardData.recentActivity.filter(task => {
+                      if (status === 'overdue') {
+                        return task.status !== 'completed' && 
+                               task.dueDate && 
+                               new Date(task.dueDate) < new Date();
+                      }
+                      return task.status === status;
+                    });
+
+                    if (statusTasks.length === 0) return null;
+
+                    const statusConfig = {
+                      completed: { 
+                        icon: 'fas fa-check-circle', 
+                        color: 'success', 
+                        label: 'Completed Tasks',
+                        bgColor: 'bg-success'
+                      },
+                      pending: { 
+                        icon: 'fas fa-clock', 
+                        color: 'warning', 
+                        label: 'Pending Tasks',
+                        bgColor: 'bg-warning'
+                      },
+                      overdue: { 
+                        icon: 'fas fa-exclamation-triangle', 
+                        color: 'danger', 
+                        label: 'Overdue Tasks',
+                        bgColor: 'bg-danger'
+                      }
+                    };
+
+                    const config = statusConfig[status];
+
+                    return (
+                      <div key={status} className="accordion-item border-0">
+                        <h2 className="accordion-header" id={`heading${status}`}>
+                          <button 
+                            className={`accordion-button ${statusIndex !== 0 ? 'collapsed' : ''}`}
+                            type="button" 
+                            data-bs-toggle="collapse" 
+                            data-bs-target={`#collapse${status}`}
+                            aria-expanded={statusIndex === 0 ? 'true' : 'false'}
+                            aria-controls={`collapse${status}`}
+                          >
+                            <div className="d-flex align-items-center w-100">
+                              <div className="me-3">
+                                <span className={`badge ${config.bgColor} me-2`}>
+                                  <i className={config.icon}></i>
+                                </span>
+                                <span className="badge bg-light text-dark">
+                                  {statusTasks.length} {statusTasks.length === 1 ? 'task' : 'tasks'}
+                                </span>
+                              </div>
+                              <div className="flex-grow-1 text-start">
+                                <h6 className="mb-0">{config.label}</h6>
+                                <small className="text-muted">
+                                  {statusTasks.length === 1 ? '1 task' : `${statusTasks.length} tasks`} in this category
+                                </small>
+                              </div>
+                              <div className="ms-2">
+                                <i className="fas fa-chevron-down"></i>
+                              </div>
+                            </div>
+                          </button>
+                        </h2>
+                        <div 
+                          id={`collapse${status}`}
+                          className={`accordion-collapse collapse ${statusIndex === 0 ? 'show' : ''}`}
+                          aria-labelledby={`heading${status}`}
+                          data-bs-parent="#recentActivityAccordion"
                         >
-                          <div className="d-flex align-items-center w-100">
-                            <div className="me-3">
-                              <span className={`badge bg-${task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'info'} me-2`}>
-                                {task.priority}
-                              </span>
-                              <span className={`badge bg-${task.status === 'completed' ? 'success' : 'secondary'}`}>
-                                {task.status}
-                              </span>
-                            </div>
-                            <div className="flex-grow-1 text-start">
-                              <h6 className="mb-0">{task.title}</h6>
-                              <small className="text-muted">
-                                {new Date(task.createdAt).toLocaleDateString()} at {new Date(task.createdAt).toLocaleTimeString()}
-                              </small>
-                            </div>
-                            <div className="ms-2">
-                              <i className="fas fa-chevron-down"></i>
-                            </div>
-                          </div>
-                        </button>
-                      </h2>
-                      <div 
-                        id={`collapse${index}`}
-                        className={`accordion-collapse collapse ${index === 0 ? 'show' : ''}`}
-                        aria-labelledby={`heading${index}`}
-                        data-bs-parent="#recentActivityAccordion"
-                      >
-                        <div className="accordion-body">
-                          <div className="row">
-                            <div className="col-12">
-                              <p className="mb-2"><strong>Description:</strong></p>
-                              <p className="text-muted mb-3">{task.description || 'No description provided'}</p>
-                              
-                              <div className="row">
-                                <div className="col-6">
-                                  <p className="mb-1"><strong>Priority:</strong></p>
-                                  <span className={`badge bg-${task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'info'}`}>
-                                    {task.priority?.toUpperCase()}
-                                  </span>
+                          <div className="accordion-body">
+                            <div className="list-group list-group-flush">
+                              {statusTasks.map((task, taskIndex) => (
+                                <div key={task._id || taskIndex} className="list-group-item border-0 px-0">
+                                  <div className="d-flex justify-content-between align-items-start">
+                                    <div className="flex-grow-1">
+                                      <h6 className="mb-1">{task.title}</h6>
+                                      <p className="mb-1 text-muted small">{task.description || 'No description'}</p>
+                                      <div className="d-flex align-items-center">
+                                        <span className={`badge bg-${task.priority === 'high' ? 'danger' : task.priority === 'medium' ? 'warning' : 'info'} me-2`}>
+                                          {task.priority}
+                                        </span>
+                                        <small className="text-muted">
+                                          <i className="fas fa-calendar me-1"></i>
+                                          {new Date(task.createdAt).toLocaleDateString()}
+                                        </small>
+                                      </div>
+                                    </div>
+                                    <div className="text-end">
+                                      <span className={`badge bg-${task.status === 'completed' ? 'success' : 'secondary'}`}>
+                                        {task.status}
+                                      </span>
+                                    </div>
+                                  </div>
                                 </div>
-                                <div className="col-6">
-                                  <p className="mb-1"><strong>Status:</strong></p>
-                                  <span className={`badge bg-${task.status === 'completed' ? 'success' : 'secondary'}`}>
-                                    {task.status?.toUpperCase()}
-                                  </span>
-                                </div>
-                              </div>
-                              
-                              <hr className="my-3" />
-                              
-                              <div className="d-flex justify-content-between align-items-center">
-                                <small className="text-muted">
-                                  <i className="fas fa-calendar me-1"></i>
-                                  Created: {new Date(task.createdAt).toLocaleDateString()}
-                                </small>
-                                <small className="text-muted">
-                                  <i className="fas fa-clock me-1"></i>
-                                  {new Date(task.createdAt).toLocaleTimeString()}
-                                </small>
-                              </div>
+                              ))}
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center text-muted py-4">
