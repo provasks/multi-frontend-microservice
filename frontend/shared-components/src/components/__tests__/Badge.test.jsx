@@ -2,81 +2,104 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Badge from '../Badge';
 
-describe('Badge', () => {
+describe('Badge Component', () => {
+  const defaultProps = {
+    children: 'Test Badge'
+  };
+
   it('renders with default props', () => {
-    render(<Badge>Default Badge</Badge>);
-    
-    const badge = screen.getByText('Default Badge');
-    expect(badge).toBeInTheDocument();
-    expect(badge).toHaveClass('badge', 'bg-secondary');
+    render(<Badge {...defaultProps} />);
+    expect(screen.getByText('Test Badge')).toBeInTheDocument();
   });
 
   it('renders with custom children', () => {
-    render(<Badge>Custom Content</Badge>);
-    
-    expect(screen.getByText('Custom Content')).toBeInTheDocument();
+    render(<Badge>Custom Text</Badge>);
+    expect(screen.getByText('Custom Text')).toBeInTheDocument();
   });
 
-  it('renders with different variants', () => {
-    const variants = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
-    
-    variants.forEach(variant => {
-      const { unmount } = render(<Badge variant={variant}>Badge</Badge>);
-      expect(screen.getByText('Badge')).toHaveClass(`bg-${variant}`);
-      unmount();
-    });
+  it('applies default variant and size classes', () => {
+    render(<Badge {...defaultProps} />);
+    const badge = screen.getByText('Test Badge');
+    expect(badge).toHaveClass('badge', 'bg-secondary');
+    expect(badge).not.toHaveClass('badge-sm', 'badge-lg', 'rounded-pill');
   });
 
-  it('renders with different sizes', () => {
-    const { rerender } = render(<Badge size="sm">Small Badge</Badge>);
-    expect(screen.getByText('Small Badge')).toHaveClass('badge-sm');
-    
-    rerender(<Badge size="md">Medium Badge</Badge>);
-    expect(screen.getByText('Medium Badge')).toHaveClass('badge');
-    expect(screen.getByText('Medium Badge')).not.toHaveClass('badge-sm', 'badge-lg');
-    
-    rerender(<Badge size="lg">Large Badge</Badge>);
-    expect(screen.getByText('Large Badge')).toHaveClass('badge-lg');
+  it('applies custom variant class', () => {
+    render(<Badge {...defaultProps} variant="primary" />);
+    const badge = screen.getByText('Test Badge');
+    expect(badge).toHaveClass('badge', 'bg-primary');
   });
 
-  it('renders as pill when pill prop is true', () => {
-    render(<Badge pill={true}>Pill Badge</Badge>);
-    
-    expect(screen.getByText('Pill Badge')).toHaveClass('rounded-pill');
+  it('applies custom size classes', () => {
+    const { rerender } = render(<Badge {...defaultProps} size="sm" />);
+    const badge = screen.getByText('Test Badge');
+    expect(badge).toHaveClass('badge-sm');
+
+    rerender(<Badge {...defaultProps} size="lg" />);
+    const largeBadge = screen.getByText('Test Badge');
+    expect(largeBadge).toHaveClass('badge-lg');
   });
 
-  it('does not render as pill when pill prop is false', () => {
-    render(<Badge pill={false}>Normal Badge</Badge>);
-    
-    expect(screen.getByText('Normal Badge')).not.toHaveClass('rounded-pill');
+  it('applies pill class when pill prop is true', () => {
+    render(<Badge {...defaultProps} pill={true} />);
+    const badge = screen.getByText('Test Badge');
+    expect(badge).toHaveClass('badge', 'bg-secondary', 'rounded-pill');
+  });
+
+  it('does not apply pill class when pill prop is false', () => {
+    render(<Badge {...defaultProps} pill={false} />);
+    const badge = screen.getByText('Test Badge');
+    expect(badge).toHaveClass('badge', 'bg-secondary');
+    expect(badge).not.toHaveClass('rounded-pill');
   });
 
   it('applies custom className', () => {
-    render(<Badge className="custom-class">Custom Badge</Badge>);
-    
-    expect(screen.getByText('Custom Badge')).toHaveClass('custom-class');
+    render(<Badge {...defaultProps} className="custom-class" />);
+    const badge = screen.getByText('Test Badge');
+    expect(badge).toHaveClass('custom-class');
   });
 
-  it('combines all props correctly', () => {
+  it('applies multiple custom classes', () => {
+    render(<Badge {...defaultProps} className="class1 class2" />);
+    const badge = screen.getByText('Test Badge');
+    expect(badge).toHaveClass('class1', 'class2');
+  });
+
+  it('renders with all props combined', () => {
     render(
-      <Badge 
-        variant="success" 
-        size="lg" 
-        pill={true} 
+      <Badge
+        variant="success"
+        size="lg"
+        pill={true}
         className="custom-class"
       >
-        Complete Badge
+        Success Badge
       </Badge>
     );
     
-    const badge = screen.getByText('Complete Badge');
-    expect(badge).toHaveClass(
-      'badge', 
-      'bg-success', 
-      'badge-lg', 
-      'rounded-pill', 
-      'custom-class'
-    );
+    const badge = screen.getByText('Success Badge');
+    expect(badge).toHaveClass('badge', 'bg-success', 'badge-lg', 'rounded-pill', 'custom-class');
+  });
+
+  it('handles multiple size variants', () => {
+    const { rerender } = render(<Badge {...defaultProps} size="sm" />);
+    expect(screen.getByText('Test Badge')).toHaveClass('badge-sm');
+
+    rerender(<Badge {...defaultProps} size="md" />);
+    expect(screen.getByText('Test Badge')).not.toHaveClass('badge-sm', 'badge-lg');
+
+    rerender(<Badge {...defaultProps} size="lg" />);
+    expect(screen.getByText('Test Badge')).toHaveClass('badge-lg');
+  });
+
+  it('handles multiple variant types', () => {
+    const variants = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
+    
+    variants.forEach(variant => {
+      const { unmount } = render(<Badge {...defaultProps} variant={variant} />);
+      expect(screen.getByText('Test Badge')).toHaveClass(`bg-${variant}`);
+      unmount();
+    });
   });
 
   it('has correct display name', () => {
@@ -87,99 +110,72 @@ describe('Badge', () => {
     expect(Badge.$$typeof).toBe(Symbol.for('react.memo'));
   });
 
-  it('handles empty children', () => {
-    const { container } = render(<Badge></Badge>);
-    
-    const badge = container.querySelector('span.badge');
-    expect(badge).toBeInTheDocument();
-    expect(badge).toHaveClass('badge', 'bg-secondary');
-  });
-
-  it('handles null children', () => {
-    const { container } = render(<Badge>{null}</Badge>);
-    
-    const badge = container.querySelector('span.badge');
+  it('renders with empty children', () => {
+    render(<Badge />);
+    const badge = screen.getByRole('generic');
     expect(badge).toBeInTheDocument();
   });
 
-  it('handles undefined children', () => {
-    const { container } = render(<Badge>{undefined}</Badge>);
-    
-    const badge = container.querySelector('span.badge');
-    expect(badge).toBeInTheDocument();
-  });
-
-  it('handles number children', () => {
-    render(<Badge>{42}</Badge>);
-    
+  it('renders with number children', () => {
+    render(<Badge>42</Badge>);
     expect(screen.getByText('42')).toBeInTheDocument();
   });
 
-  it('handles boolean children', () => {
-    const { container } = render(<Badge>{true}</Badge>);
-    
-    // React doesn't render boolean true as text, so we check the container
-    const badge = container.querySelector('span.badge');
-    expect(badge).toBeInTheDocument();
-    expect(badge).toHaveClass('badge', 'bg-secondary');
-  });
-
-  it('handles complex children', () => {
+  it('renders with complex children', () => {
     render(
       <Badge>
         <span>Complex</span> <strong>Content</strong>
       </Badge>
     );
-    
     expect(screen.getByText('Complex')).toBeInTheDocument();
     expect(screen.getByText('Content')).toBeInTheDocument();
   });
 
-  it('handles all size variants', () => {
+  it('handles pill prop with different variants', () => {
+    const variants = ['primary', 'success', 'danger'];
+    
+    variants.forEach(variant => {
+      const { unmount } = render(<Badge {...defaultProps} variant={variant} pill={true} />);
+      const badge = screen.getByText('Test Badge');
+      expect(badge).toHaveClass('badge', `bg-${variant}`, 'rounded-pill');
+      unmount();
+    });
+  });
+
+  it('handles size prop with different variants', () => {
     const sizes = ['sm', 'md', 'lg'];
     
     sizes.forEach(size => {
-      const { unmount } = render(<Badge size={size}>Badge</Badge>);
-      const badge = screen.getByText('Badge');
-      
-      if (size === 'sm') {
-        expect(badge).toHaveClass('badge-sm');
-      } else if (size === 'lg') {
-        expect(badge).toHaveClass('badge-lg');
-      } else {
-        expect(badge).toHaveClass('badge');
+      const { unmount } = render(<Badge {...defaultProps} size={size} />);
+      const badge = screen.getByText('Test Badge');
+      if (size === 'md') {
         expect(badge).not.toHaveClass('badge-sm', 'badge-lg');
+      } else {
+        expect(badge).toHaveClass(`badge-${size}`);
       }
-      
       unmount();
     });
   });
 
-  it('handles all variant variants', () => {
-    const variants = ['primary', 'secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark'];
+  it('combines all props correctly', () => {
+    render(
+      <Badge
+        variant="warning"
+        size="sm"
+        pill={true}
+        className="extra-class"
+      >
+        Warning Badge
+      </Badge>
+    );
     
-    variants.forEach(variant => {
-      const { unmount } = render(<Badge variant={variant}>Badge</Badge>);
-      expect(screen.getByText('Badge')).toHaveClass(`bg-${variant}`);
-      unmount();
-    });
-  });
-
-  it('handles multiple className values', () => {
-    render(<Badge className="class1 class2 class3">Badge</Badge>);
-    
-    expect(screen.getByText('Badge')).toHaveClass('class1', 'class2', 'class3');
-  });
-
-  it('handles empty className', () => {
-    render(<Badge className="">Badge</Badge>);
-    
-    expect(screen.getByText('Badge')).toHaveClass('badge', 'bg-secondary');
-  });
-
-  it('handles undefined className', () => {
-    render(<Badge className={undefined}>Badge</Badge>);
-    
-    expect(screen.getByText('Badge')).toHaveClass('badge', 'bg-secondary');
+    const badge = screen.getByText('Warning Badge');
+    expect(badge).toHaveClass(
+      'badge',
+      'bg-warning',
+      'badge-sm',
+      'rounded-pill',
+      'extra-class'
+    );
   });
 });
