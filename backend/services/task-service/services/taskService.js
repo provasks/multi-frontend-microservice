@@ -24,7 +24,7 @@ class TaskService {
       console.error('Error in getOverdueTasks:', error);
       throw error;
     }
-  },
+  }
 
   /**
    * Get all tasks with filtering and pagination

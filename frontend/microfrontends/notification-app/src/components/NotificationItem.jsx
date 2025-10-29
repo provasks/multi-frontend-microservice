@@ -13,6 +13,17 @@ const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }
 };
 
 const NotificationItem = React.memo(({ notification, onEdit, onMarkAsRead, onDelete }) => {
+  // Handle null or undefined notification
+  if (!notification) {
+    return (
+      <tr className="align-middle">
+        <td colSpan="6" className="text-center text-muted">
+          Unknown Notification
+        </td>
+      </tr>
+    );
+  }
+
   const getTypeIcon = (type) => {
     switch (type) {
       case 'success': return 'fas fa-check-circle text-success';

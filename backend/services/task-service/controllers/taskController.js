@@ -21,7 +21,7 @@ class TaskController {
       console.error('Get overdue tasks error:', error);
       res.status(500).json({ error: 'Server error' });
     }
-  },
+  }
 
   /**
    * Get all tasks with filtering and pagination

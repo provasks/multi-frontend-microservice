@@ -48,7 +48,7 @@ const FloatingMessageManager = () => {
   };
 
   return (
-    <div className="position-fixed floating-message-container">
+    <div className="position-fixed floating-message-container" data-testid="floating-message-container">
       {messages.map(message => (
         <div
           key={message.id}

@@ -11,11 +11,11 @@ const NotificationModal = React.memo(({
   if (!show) return null;
 
   return (
-    <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal show d-block" tabIndex="-1" role="dialog" aria-labelledby="notificationModalTitle" aria-modal="true" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
       <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">
+            <h5 className="modal-title" id="notificationModalTitle">
               <i className="fas fa-bell me-2"></i>
               {mode === 'add' ? 'Add New Notification' : 'Edit Notification'}
             </h5>
@@ -23,9 +23,10 @@ const NotificationModal = React.memo(({
               type="button" 
               className="btn-close" 
               onClick={onClose}
+              aria-label="Close"
             ></button>
           </div>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={onSubmit} role="form">
             <div className="modal-body">
               <div className="row">
                 <div className="col-md-6 mb-3">
