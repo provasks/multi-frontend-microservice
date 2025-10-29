@@ -27,7 +27,7 @@ export const useTaskManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const { isAuthenticated } = useAuth();
   
   
@@ -89,7 +89,7 @@ export const useTaskManagement = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [isAuthenticated, currentPage, pageSize, debouncedSearchTerm]);
+  }, [isAuthenticated, debouncedSearchTerm, searchTerm]);
 
   useEffect(() => {
     fetchTasks();

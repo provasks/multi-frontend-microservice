@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 
 const SearchBar = React.memo(({ 
   searchTerm, 
@@ -10,6 +10,19 @@ const SearchBar = React.memo(({
   showCount = true,
   searchLoading = false
 }) => {
+  const inputRef = useRef(null);
+
+  const handleInputChange = useCallback((e) => {
+    onSearchChange(e.target.value);
+  }, [onSearchChange]);
+
+  const handleClearClick = useCallback(() => {
+    onClearSearch();
+    // Maintain focus after clearing
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [onClearSearch]);
   return (
     <div className="row mb-3">
       <div className="col-md-6">
@@ -24,16 +37,17 @@ const SearchBar = React.memo(({
             )}
           </span>
           <input
+            ref={inputRef}
             type="text"
             className="form-control"
             placeholder={placeholder}
             value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onChange={handleInputChange}
           />
           {searchTerm && (
             <button 
               className="btn btn-outline-secondary" 
-              onClick={onClearSearch}
+              onClick={handleClearClick}
               title="Clear search"
             >
               <i className="fas fa-times"></i>

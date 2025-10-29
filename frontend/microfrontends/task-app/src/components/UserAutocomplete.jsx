@@ -28,7 +28,7 @@ const UserAutocomplete = ({
   const usersFetchedRef = useRef(false);
 
   // Debounce search term to prevent excessive filtering
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Fetch users on component mount (only once)
   useEffect(() => {

@@ -103,6 +103,7 @@ const TaskManagement = () => {
       </div>
 
       <SearchBar
+        key="task-search-bar"
         searchTerm={searchTerm}
         onSearchChange={handleSearchChange}
         onClearSearch={handleClearSearch}
