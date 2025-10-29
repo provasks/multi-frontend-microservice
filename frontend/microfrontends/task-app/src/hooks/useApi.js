@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 
 /**
@@ -12,23 +12,23 @@ export const useApi = (url, options = {}, enableCache = true, cacheTimeout = 300
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [cache, setCache] = useState(new Map());
+  const cacheRef = useRef(new Map());
 
   const getCachedData = useCallback((key) => {
     if (!enableCache) return null;
-    const cached = cache.get(key);
+    const cached = cacheRef.current.get(key);
     if (cached && Date.now() - cached.timestamp < cacheTimeout) {
       return cached.data;
     }
     return null;
-  }, [cache, enableCache, cacheTimeout]);
+  }, [enableCache, cacheTimeout]);
 
   const setCachedData = useCallback((key, data) => {
     if (!enableCache) return;
-    setCache(prev => new Map(prev).set(key, {
+    cacheRef.current.set(key, {
       data,
       timestamp: Date.now()
-    }));
+    });
   }, [enableCache]);
 
   const fetchData = useCallback(async () => {
@@ -63,7 +63,7 @@ export const useApi = (url, options = {}, enableCache = true, cacheTimeout = 300
     } finally {
       setLoading(false);
     }
-  }, [url, options, getCachedData, setCachedData]);
+  }, [url, JSON.stringify(options), getCachedData, setCachedData]);
 
   useEffect(() => {
     fetchData();
@@ -74,7 +74,7 @@ export const useApi = (url, options = {}, enableCache = true, cacheTimeout = 300
   }, [fetchData]);
 
   const clearCache = useCallback(() => {
-    setCache(new Map());
+    cacheRef.current.clear();
   }, []);
 
   return { 

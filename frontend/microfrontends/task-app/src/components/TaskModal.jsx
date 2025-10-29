@@ -14,11 +14,11 @@ const TaskModal = React.memo(({
   
 
   return (
-    <div className="modal show d-block task-modal" tabIndex="-1">
+    <div className="modal show d-block task-modal" tabIndex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-modal="true">
       <div className="modal-dialog modal-lg">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">
+            <h5 className="modal-title" id="taskModalTitle">
               <i className="fas fa-tasks me-2"></i>
               {mode === 'add' ? 'Add New Task' : 'Edit Task'}
             </h5>
@@ -26,9 +26,10 @@ const TaskModal = React.memo(({
               type="button" 
               className="btn-close" 
               onClick={onClose}
+              aria-label="Close"
             ></button>
           </div>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={onSubmit} role="form">
             <div className="modal-body">
               <div className="row">
                 <div className="col-md-6 mb-3">

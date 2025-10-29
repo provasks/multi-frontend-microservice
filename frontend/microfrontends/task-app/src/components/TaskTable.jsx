@@ -3,7 +3,7 @@ import TaskItem from './TaskItem';
 import './TaskTable.css';
 
 const TaskTable = React.memo(({ tasks, onEdit, onDelete }) => {
-  if (tasks.length === 0) {
+  if (!tasks || tasks.length === 0) {
     return (
       <div className="empty-state">
         <i className="fas fa-tasks fa-3x text-muted mb-3"></i>

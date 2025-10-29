@@ -14,6 +14,42 @@ const SafeTooltip = ({ children, content, position = 'top', maxWidth = '300px' }
 };
 
 const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
+  // Handle null or undefined task
+  if (!task) {
+    return (
+      <tr className="align-middle task-item">
+        <td className="task-title">
+          <span className="title-text">Untitled Task</span>
+        </td>
+        <td>
+          <span className="text-muted">No description</span>
+        </td>
+        <td>
+          <span className="badge bg-secondary">Unknown</span>
+        </td>
+        <td>
+          <span className="badge bg-secondary">Unknown</span>
+        </td>
+        <td>
+          <span className="text-muted">-</span>
+        </td>
+        <td>
+          <span className="text-muted">-</span>
+        </td>
+        <td>
+          <div className="btn-group" role="group">
+            <button className="btn btn-sm btn-outline-primary" disabled>
+              <i className="fas fa-edit"></i>
+            </button>
+            <button className="btn btn-sm btn-outline-danger" disabled>
+              <i className="fas fa-trash"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
   return (
     <tr className="align-middle task-item">
       <td className="task-title">
@@ -40,16 +76,16 @@ const TaskItem = React.memo(({ task, onEdit, onDelete }) => {
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill priority-badge ${
-          TASK_CONSTANTS.PRIORITY_CONFIG[task.priority]?.bgClass || 'priority-low'
+          TASK_CONSTANTS?.PRIORITY_CONFIG?.[task.priority]?.bgClass || 'priority-low'
         }`}>
-          {TASK_CONSTANTS.PRIORITY_CONFIG[task.priority]?.label || task.priority || 'low'}
+          {TASK_CONSTANTS?.PRIORITY_CONFIG?.[task.priority]?.label || task.priority || 'low'}
         </span>
       </td>
       <td className="text-center">
         <span className={`badge rounded-pill status-badge ${
-          TASK_CONSTANTS.STATUS_CONFIG[task.status]?.bgClass || 'status-pending'
+          TASK_CONSTANTS?.STATUS_CONFIG?.[task.status]?.bgClass || 'status-pending'
         }`}>
-          {TASK_CONSTANTS.STATUS_CONFIG[task.status]?.label || task.status || 'pending'}
+          {TASK_CONSTANTS?.STATUS_CONFIG?.[task.status]?.label || task.status || 'pending'}
         </span>
       </td>
       <td>
