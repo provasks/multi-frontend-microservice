@@ -53,18 +53,27 @@ const Dashboard = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading, checkAuth } = useAuth();
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    // Re-check auth when component mounts to ensure we have latest state
+    checkAuth();
+  }, [checkAuth]);
+
+  useEffect(() => {
+    // Wait for auth check to complete before fetching dashboard data
+    if (!authLoading) {
+      fetchDashboardData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, isAuthenticated]);
 
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      if (!isAuthenticated()) {
+      if (!isAuthenticated) {
         setError('Please log in to view dashboard');
         return;
       }
@@ -362,7 +371,8 @@ const Dashboard = () => {
     );
   };
 
-  if (loading) {
+  // Show loading spinner while checking auth or fetching data
+  if (authLoading || loading) {
     return (
       <div className="p-4">
         <div className="d-flex justify-content-center align-items-center" style={{ height: '400px' }}>

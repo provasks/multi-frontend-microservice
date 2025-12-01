@@ -5,6 +5,8 @@ import NotificationModal from './components/NotificationModal';
 import LoadingSpinner from 'sharedComponents/LoadingSpinner';
 
 const Notifications = () => {
+  console.log('=== Notifications component rendering ===');
+  
   const {
     // State
     notifications,
@@ -23,6 +25,8 @@ const Notifications = () => {
     handleCloseModal,
     markAsRead
   } = useNotificationManagement();
+  
+  console.log('Notifications component state:', { notificationsCount: notifications.length, loading });
 
   if (loading) {
     return (

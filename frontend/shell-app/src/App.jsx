@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import LoginForm from './components/LoginForm';
 import AuthenticatedApp from './components/AuthenticatedApp';
 import FloatingMessageManager from './components/FloatingMessageManager';
+import { useAuth } from 'sharedComponents/useAuth';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -32,8 +33,7 @@ try {
 }
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { isAuthenticated, loading, login, logout, checkAuth } = useAuth();
 
   // Global error handling for non-React errors (network, async, etc.)
   useEffect(() => {
@@ -214,25 +214,15 @@ const App = () => {
     };
   }, []);
 
-  useEffect(() => {
-    // Check if user is already logged in
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-    }
-    setLoading(false);
-  }, []);
-
-  const handleLogin = (token) => {
-    // Store token in sessionStorage only for consistency and security
-    sessionStorage.setItem('token', token);
-    setIsAuthenticated(true);
+  const handleLogin = async () => {
+    // Login is handled by LoginForm using the login function from useAuth
+    // This callback is no longer needed but kept for backward compatibility
+    // The LoginForm component handles login directly via the login prop
   };
 
-  const handleLogout = () => {
-    // Clear token from sessionStorage only
-    sessionStorage.removeItem('token');
-    setIsAuthenticated(false);
+  const handleLogout = async () => {
+    // Logout is handled by useAuth hook - cookie is cleared automatically
+    await logout();
   };
 
   if (loading) {
@@ -258,7 +248,7 @@ const App = () => {
             element={
               isAuthenticated ? 
                 <Navigate to="/" replace /> : 
-                <LoginForm onLogin={handleLogin} />
+                <LoginForm login={login} onLogin={handleLogin} />
             } 
           />
           <Route 

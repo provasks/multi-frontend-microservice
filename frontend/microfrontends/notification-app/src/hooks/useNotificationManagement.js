@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from 'sharedComponents/useAuth';
-import axios from 'axios';
+import { notificationApi, apiHelpers } from 'sharedComponents/unifiedApiClient';
 
 export const useNotificationManagement = () => {
   const [notifications, setNotifications] = useState([]);
@@ -16,56 +16,110 @@ export const useNotificationManagement = () => {
     isRead: false
   });
 
-  const { makeAuthenticatedRequest, isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading, checkAuth } = useAuth();
+
+  // Check auth status when component mounts or becomes visible
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
       setApiStatus('loading');
       
-      if (!isAuthenticated()) {
-        setApiStatus('error');
-        setLoading(false);
-        if (window.showError) {
-          window.showError('Please log in to view notifications');
-        }
-        return;
+      // Wait for auth check to complete before proceeding
+      if (authLoading) {
+        // Auth check is still in progress, wait a bit
+        await new Promise(resolve => setTimeout(resolve, 100));
+        // Re-check auth status
+        await checkAuth();
       }
+      
+      // Don't check isAuthenticated here - let the API call handle authentication
+      // If the cookie is valid, the API will work; if not, it will return 401
 
-      const response = await makeAuthenticatedRequest('http://localhost:3003/api/notifications');
+      console.log('Fetching notifications using apiHelpers.fetchNotifications()...');
       
-      // Axios response has data property, not ok/json like fetch
-      const data = response.data;
-      const notificationsData = data.notifications || data || [];
-      const serverNotifications = Array.isArray(notificationsData) ? notificationsData : [];
+      // Use apiHelpers.fetchNotifications() - same as Dashboard uses
+      const data = await apiHelpers.fetchNotifications();
       
+      console.log('Notification API response data:', data);
+      
+      // apiHelpers.fetchNotifications() returns { notifications: [...], pagination: {...} }
+      let notificationsData = [];
+      if (data && data.notifications && Array.isArray(data.notifications)) {
+        notificationsData = data.notifications;
+      } else if (Array.isArray(data)) {
+        notificationsData = data;
+      } else if (data && data.data && Array.isArray(data.data)) {
+        notificationsData = data.data;
+      }
+      
+      console.log('Processed notifications data:', notificationsData);
+      console.log('Number of notifications:', notificationsData.length);
+      
+      // Update notifications state - merge with previous to preserve read status
       setNotifications(prevNotifications => {
-        const merged = serverNotifications.map(serverNotification => {
-          const localNotification = prevNotifications.find(n => n._id === serverNotification._id);
+        // If no notifications from server, return empty array (not previous)
+        if (notificationsData.length === 0) {
+          return [];
+        }
+        
+        // Merge: preserve local read status if it differs from server
+        const merged = notificationsData.map(serverNotification => {
+          const localNotification = prevNotifications.find(n => 
+            (n._id && serverNotification._id && n._id.toString() === serverNotification._id.toString()) ||
+            (n.id && serverNotification.id && n.id.toString() === serverNotification.id.toString())
+          );
           if (localNotification && localNotification.isRead !== serverNotification.isRead) {
             return { ...serverNotification, isRead: localNotification.isRead };
           }
           return serverNotification;
         });
+        
+        console.log('Setting notifications to:', merged);
         return merged;
       });
       
       setApiStatus('connected');
     } catch (error) {
       console.error('Error fetching notifications:', error);
+      console.error('Error response:', error.response);
+      console.error('Error response data:', error.response?.data);
       setApiStatus('error');
       setNotifications([]);
-      if (window.showError) {
-        window.showError('Error fetching notifications. Please check your connection.');
+      
+      // Handle 401 errors gracefully - user might not be authenticated
+      if (error.response?.status === 401) {
+        if (window.showError) {
+          window.showError('Please log in to view notifications');
+        }
+      } else if (error.response?.status === 403) {
+        if (window.showError) {
+          window.showError('Access denied. You do not have permission to view notifications.');
+        }
+      } else {
+        if (window.showError) {
+          window.showError('Failed to load notifications');
+        }
       }
     } finally {
       setLoading(false);
     }
-  }, [makeAuthenticatedRequest, isAuthenticated]);
+  }, [authLoading, checkAuth]);
 
+  // Track if we've already fetched to prevent infinite loops
+  const hasFetchedRef = useRef(false);
+  
   useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
+    // Only fetch once when auth loading completes
+    if (!authLoading && !hasFetchedRef.current) {
+      console.log('Auth loading complete, fetching notifications...');
+      hasFetchedRef.current = true;
+      fetchNotifications();
+    }
+  }, [authLoading]); // Only depend on authLoading, not fetchNotifications or checkAuth
 
   const handleAddNotification = useCallback(() => {
     setModalMode('add');
@@ -97,18 +151,9 @@ export const useNotificationManagement = () => {
     }
 
     try {
-      const token = sessionStorage.getItem('token');
-      if (!token) {
-        setNotifications(notifications.filter(notification => notification._id !== notificationId));
-        if (window.showSuccess) {
-          window.showSuccess('Notification deleted successfully (demo mode)!');
-        }
-        return;
-      }
-
       const response = await axios.delete(`http://localhost:3003/api/notifications/${notificationId}`, {
+        withCredentials: true,  // CRITICAL: Send cookies with requests
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
@@ -133,41 +178,37 @@ export const useNotificationManagement = () => {
     e.preventDefault();
     
     try {
-      const token = sessionStorage.getItem('token');
-      
-      if (!token) {
-        if (modalMode === 'add') {
-          const newNotification = {
-            _id: Date.now().toString(),
-            ...formData,
-            createdAt: new Date()
-          };
-          setNotifications([...notifications, newNotification]);
-          if (window.showSuccess) {
-            window.showSuccess('Notification created successfully (demo mode)!');
-          }
-        } else {
-          setNotifications(notifications.map(notification => 
-            notification._id === editingNotification._id 
-              ? { ...notification, ...formData }
-              : notification
-          ));
-          if (window.showSuccess) {
-            window.showSuccess('Notification updated successfully (demo mode)!');
-          }
+      // Cookie is sent automatically with withCredentials
+      if (modalMode === 'add') {
+        // This is a fallback for demo mode - should use API in production
+        const newNotification = {
+          _id: Date.now().toString(),
+          ...formData,
+          createdAt: new Date()
+        };
+        setNotifications([...notifications, newNotification]);
+        if (window.showSuccess) {
+          window.showSuccess('Notification created successfully (demo mode)!');
+        }
+        setShowModal(false);
+        return;
+      } else {
+        setNotifications(notifications.map(notification => 
+          notification._id === editingNotification._id 
+            ? { ...notification, ...formData }
+            : notification
+        ));
+        if (window.showSuccess) {
+          window.showSuccess('Notification updated successfully (demo mode)!');
         }
         setShowModal(false);
         return;
       }
-
-      if (window.showInfo) {
-        window.showInfo('Notification creation/editing is not supported by the API. Notifications are created automatically by the system. This feature works in demo mode only.');
-      } else {
-        alert('Notification creation/editing is not supported by the API. Notifications are created automatically by the system. This feature works in demo mode only.');
-      }
-      setShowModal(false);
     } catch (error) {
       console.error('Error saving notification:', error);
+      if (window.showError) {
+        window.showError('Failed to save notification');
+      }
     }
   }, [formData, modalMode, editingNotification, notifications]);
 
@@ -195,12 +236,12 @@ export const useNotificationManagement = () => {
         return updated;
       });
 
-      if (!isAuthenticated()) {
+      if (!isAuthenticated) {
         return;
       }
 
-      const response = await makeAuthenticatedRequest(`http://localhost:3003/api/notifications/${notificationId}/read`, {
-        method: 'PATCH'
+      const response = await axios.patch(`http://localhost:3003/api/notifications/${notificationId}/read`, {}, {
+        withCredentials: true  // CRITICAL: Send cookies
       });
       
       // Axios response has data property, not ok/json like fetch
@@ -222,7 +263,7 @@ export const useNotificationManagement = () => {
         )
       );
     }
-  }, [fetchNotifications, isAuthenticated, makeAuthenticatedRequest]);
+  }, [fetchNotifications, isAuthenticated]);
 
   // Memoized calculations
   const notificationStats = useMemo(() => {

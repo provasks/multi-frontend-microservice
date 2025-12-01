@@ -9,9 +9,19 @@ import shellConfig from '../config/shellConfig';
 import './TestDropdown.css';
 
 // Lazy load micro-frontends with error handling
-const UserManagement = React.lazy(() => import('userApp/UserManagement').catch(() => ({ default: () => <div className="alert alert-danger">Failed to load User Management</div> })));
-const TaskManagement = React.lazy(() => import('taskApp/TaskManagement').catch(() => ({ default: () => <div className="alert alert-danger">Failed to load Task Management</div> })));
-const Notifications = React.lazy(() => import('notificationApp/Notifications').catch(() => ({ default: () => <div className="alert alert-danger">Failed to load Notifications</div> })));
+const UserManagement = React.lazy(() => import('userApp/UserManagement').catch((error) => {
+  console.error('Failed to load User Management:', error);
+  return { default: () => <div className="alert alert-danger">Failed to load User Management: {error.message}</div> };
+}));
+const TaskManagement = React.lazy(() => import('taskApp/TaskManagement').catch((error) => {
+  console.error('Failed to load Task Management:', error);
+  return { default: () => <div className="alert alert-danger">Failed to load Task Management: {error.message}</div> };
+}));
+const Notifications = React.lazy(() => import('notificationApp/Notifications').catch((error) => {
+  console.error('Failed to load Notifications microfrontend:', error);
+  console.error('Error stack:', error.stack);
+  return { default: () => <div className="alert alert-danger">Failed to load Notifications: {error.message}</div> };
+}));
 
 // ErrorBoundary for microfrontends
 class MicrofrontendErrorBoundary extends React.Component {

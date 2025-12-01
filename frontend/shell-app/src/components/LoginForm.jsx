@@ -42,7 +42,7 @@ const sanitizeFormData = (formData) => {
   return sanitized;
 };
 
-const LoginForm = ({ onLogin }) => {
+const LoginForm = ({ onLogin, login }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -91,20 +91,33 @@ const LoginForm = ({ onLogin }) => {
 
     try {
       console.log('Making API call...');
-      // Sanitize form data before sending
-      const sanitizedData = sanitizeFormData(formData);
-      console.log('Sanitized data:', sanitizedData);
+      // Don't sanitize form data - API expects raw values
+      // Sanitization is only for display purposes, not for API requests
+      console.log('Form data:', formData);
       
-      const response = await authApi.post('/auth/login', sanitizedData);
-      console.log('API response:', response);
-      
-      const { token } = response.data;
-      
-      if (window.showSuccess) {
-        window.showSuccess('Login successful!');
+      // Use the login function from useAuth if provided, otherwise use authApi directly
+      if (login) {
+        console.log('Calling login function with email:', formData.email);
+        await login(formData.email, formData.password);
+        // Login successful - the login function from useAuth handles state updates
+        // No need to call onLogin - App component will detect authentication state change
+        if (window.showSuccess) {
+          window.showSuccess('Login successful!');
+        }
+      } else {
+        // Fallback: use authApi directly (shouldn't happen if login prop is provided)
+        const response = await authApi.post('/auth/login', formData);
+        console.log('API response:', response);
+        
+        if (window.showSuccess) {
+          window.showSuccess('Login successful!');
+        }
+        
+        // Call onLogin callback if provided (for backward compatibility)
+        if (onLogin) {
+          onLogin();
+        }
       }
-      
-      onLogin(token);
     } catch (err) {
       console.error('Login error:', err);
       console.error('Error details:', err);
@@ -113,8 +126,22 @@ const LoginForm = ({ onLogin }) => {
       
       if (err.response) {
         // Server responded with error status
-        errorMessage = err.response.data?.error || `Server error: ${err.response.status}`;
-        console.log('Server error response:', err.response.data);
+        const errorData = err.response.data;
+        console.log('Server error response:', errorData);
+        console.log('Full error data:', JSON.stringify(errorData, null, 2));
+        
+        // Handle validation errors (400 with errors array)
+        if (err.response.status === 400 && errorData.errors && Array.isArray(errorData.errors)) {
+          console.log('Validation errors array:', errorData.errors);
+          const validationErrors = errorData.errors.map(e => {
+            console.log('Error object:', e);
+            return e.msg || e.message || JSON.stringify(e);
+          }).join(', ');
+          errorMessage = `Validation error: ${validationErrors}`;
+          console.log('Final error message:', errorMessage);
+        } else {
+          errorMessage = errorData?.error || errorData?.message || `Server error: ${err.response.status}`;
+        }
       } else if (err.request) {
         // Request was made but no response received
         errorMessage = 'No response from server. Please check your connection.';

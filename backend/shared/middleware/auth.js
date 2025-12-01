@@ -64,8 +64,9 @@ class AuthMiddleware {
   middleware() {
     return async (req, res, next) => {
       try {
-        const authHeader = req.header('Authorization');
-        const token = authHeader?.replace('Bearer ', '');
+        // Try to get token from cookie first, then from Authorization header (for backward compatibility)
+        const token = req.cookies?.authToken || 
+                     req.header('Authorization')?.replace('Bearer ', '');
         
         if (!token) {
           return res.status(401).json({ error: 'No token, authorization denied' });

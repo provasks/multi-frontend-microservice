@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
 // const rateLimit = require('express-rate-limit'); // DISABLED for now
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const swaggerUi = require('swagger-ui-express');
@@ -14,6 +15,9 @@ const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet());
+
+// Cookie parser middleware (must be before routes)
+app.use(cookieParser());
 
 // Rate limiting - DISABLED for now
 // const limiter = rateLimit({

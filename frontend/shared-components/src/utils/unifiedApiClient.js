@@ -13,6 +13,7 @@ export const API_BASE_URLS = API_CONFIG.BASE_URLS;
 export const authApi = axios.create({
   baseURL: API_BASE_URLS.AUTH,
   timeout: API_CONFIG.TIMEOUTS.DEFAULT,
+  withCredentials: true,  // CRITICAL: Send cookies with requests
   headers: {
     'Content-Type': 'application/json'
   }
@@ -21,6 +22,7 @@ export const authApi = axios.create({
 export const taskApi = axios.create({
   baseURL: API_BASE_URLS.TASKS,
   timeout: API_CONFIG.TIMEOUTS.DEFAULT,
+  withCredentials: true,  // CRITICAL: Send cookies with requests
   headers: {
     'Content-Type': 'application/json'
   }
@@ -29,6 +31,7 @@ export const taskApi = axios.create({
 export const notificationApi = axios.create({
   baseURL: API_BASE_URLS.NOTIFICATIONS,
   timeout: API_CONFIG.TIMEOUTS.DEFAULT,
+  withCredentials: true,  // CRITICAL: Send cookies with requests
   headers: {
     'Content-Type': 'application/json'
   }
@@ -37,6 +40,7 @@ export const notificationApi = axios.create({
 export const userApi = axios.create({
   baseURL: API_BASE_URLS.USERS,
   timeout: API_CONFIG.TIMEOUTS.DEFAULT,
+  withCredentials: true,  // CRITICAL: Send cookies with requests
   headers: {
     'Content-Type': 'application/json'
   }
@@ -47,15 +51,9 @@ export const userApi = axios.create({
  * @param {AxiosInstance} apiInstance - Axios instance to configure
  */
 const configureApiInstance = (apiInstance) => {
-  // Request interceptor - Add auth token and CSRF token
+  // Request interceptor - Add CSRF token (cookies are sent automatically)
   apiInstance.interceptors.request.use(
     (config) => {
-      // Add authentication token
-      const token = sessionStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      
       // Add CSRF token if available
       const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
       if (csrfToken) {
@@ -64,6 +62,8 @@ const configureApiInstance = (apiInstance) => {
       
       // Add request timestamp for debugging
       config.metadata = { startTime: new Date() };
+      
+      // NO TOKEN MANAGEMENT - Browser handles HttpOnly cookies automatically!
       
       return config;
     },
@@ -85,21 +85,34 @@ const configureApiInstance = (apiInstance) => {
       return response;
     },
     (error) => {
-      // Log errors
-      console.error('API Error:', {
-        url: error.config?.url,
-        method: error.config?.method,
-        status: error.response?.status,
-        message: error.message,
-        data: error.response?.data
-      });
+      // Don't log 401 errors for /auth/me (expected when checking auth status)
+      const isAuthCheck = error.config?.url?.includes('/auth/me') && error.response?.status === 401;
+      
+      if (!isAuthCheck) {
+        // Log errors (except expected 401s on auth check)
+        console.error('API Error:', {
+          url: error.config?.url,
+          method: error.config?.method,
+          status: error.response?.status,
+          message: error.message,
+          data: error.response?.data
+        });
+      }
 
       // Handle specific error cases
       if (error.response?.status === 401) {
+        // Don't redirect or log errors for /auth/me endpoint (used for checking auth status)
+        const isAuthCheck = error.config?.url?.includes('/auth/me');
+        
+        if (isAuthCheck) {
+          // This is expected when checking auth status - don't log or redirect
+          // Just return the error silently
+          return Promise.reject(error);
+        }
+        
         // Don't redirect if we're already on the login page
         if (!window.location.pathname.includes('/login')) {
-          // Clear token from sessionStorage
-          sessionStorage.removeItem('token');
+          // Cookie is already cleared by backend, just redirect
           window.location.href = '/login';
         }
       } else if (error.response?.status === 403) {

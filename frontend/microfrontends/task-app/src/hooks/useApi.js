@@ -48,8 +48,8 @@ export const useApi = (url, options = {}, enableCache = true, cacheTimeout = 300
       
       const response = await axios({
         url,
+        withCredentials: true,  // CRITICAL: Send cookies with requests
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
         ...options
@@ -110,8 +110,8 @@ export const useApiMutation = (url, defaultOptions = {}) => {
       const response = await axios({
         url,
         method: 'POST',
+        withCredentials: true,  // CRITICAL: Send cookies with requests
         headers: {
-          'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         },
         data,

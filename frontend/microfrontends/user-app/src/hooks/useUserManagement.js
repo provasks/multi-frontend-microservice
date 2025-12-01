@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from 'sharedComponents/useAuth';
 import { USER_CONSTANTS } from 'sharedComponents/constants';
+import axios from 'axios';
 
 export const useUserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -11,14 +12,14 @@ export const useUserManagement = () => {
   const [modalMode, setModalMode] = useState('add');
   const [formData, setFormData] = useState(USER_CONSTANTS.DEFAULT_FORM);
 
-  const { makeAuthenticatedRequest, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       setApiStatus('loading');
       
-      if (!isAuthenticated()) {
+      if (!isAuthenticated) {
         setApiStatus('error');
         setLoading(false);
         if (window.showError) {
@@ -27,7 +28,9 @@ export const useUserManagement = () => {
         return;
       }
 
-      const response = await makeAuthenticatedRequest('http://localhost:3001/api/users');
+      const response = await axios.get('http://localhost:3001/api/users', {
+        withCredentials: true  // CRITICAL: Send cookies
+      });
       
       // Axios response has data property, not ok/json like fetch
       const data = response.data;
@@ -44,7 +47,7 @@ export const useUserManagement = () => {
     } finally {
       setLoading(false);
     }
-  }, [makeAuthenticatedRequest, isAuthenticated]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     fetchUsers();
@@ -84,7 +87,7 @@ export const useUserManagement = () => {
     e.preventDefault();
     
     try {
-      if (!isAuthenticated()) {
+      if (!isAuthenticated) {
         if (modalMode === 'add') {
           const newUser = {
             _id: Date.now().toString(),
@@ -116,9 +119,11 @@ export const useUserManagement = () => {
       
       const method = modalMode === 'add' ? 'POST' : 'PUT';
 
-      const response = await makeAuthenticatedRequest(url, {
+      const response = await axios({
+        url,
         method,
-        data: formData  // Axios uses 'data' instead of 'body'
+        data: formData,
+        withCredentials: true  // CRITICAL: Send cookies
       });
       
       // Axios response has data property, not ok/json like fetch
@@ -131,7 +136,7 @@ export const useUserManagement = () => {
     } catch (error) {
       console.error('Error saving user:', error);
     }
-  }, [formData, modalMode, editingUser, fetchUsers, users, isAuthenticated, makeAuthenticatedRequest]);
+  }, [formData, modalMode, editingUser, fetchUsers, users, isAuthenticated]);
 
   const handleInputChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;

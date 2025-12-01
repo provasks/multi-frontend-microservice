@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./config/swagger');
 const taskRoutes = require('./routes/taskRoutes');
@@ -10,6 +11,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3002;
+
+// Cookie parser middleware (must be before routes)
+app.use(cookieParser());
 
 // Security Middleware
 const securityMiddleware = createSecurityMiddleware({

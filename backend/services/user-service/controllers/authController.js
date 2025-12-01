@@ -30,10 +30,27 @@ class AuthController {
         { expiresIn: '24h' }
       );
       
+      // Set HttpOnly cookie for registered users (auto-login)
+      const isProduction = process.env.NODE_ENV === 'production';
+      res.cookie('authToken', token, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'strict' : 'lax',
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        path: '/'
+      });
+      
       res.status(201).json({
         message: 'User registered successfully',
-        user,
-        token
+        user: {
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          username: user.username,
+          role: user.role,
+          isActive: user.isActive
+        }
       });
     } catch (error) {
       console.error('Register error:', error);
@@ -49,12 +66,25 @@ class AuthController {
    */
   async login(req, res) {
     try {
+      // Log the incoming request for debugging
+      console.log('Login request received');
+      console.log('Request body:', req.body);
+      console.log('Request headers:', req.headers);
+      console.log('Content-Type:', req.headers['content-type']);
+      
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        console.error('Login validation errors:', JSON.stringify(errors.array(), null, 2));
+        return res.status(400).json({ 
+          error: 'Validation failed',
+          errors: errors.array() 
+        });
       }
 
       const { email, password } = req.body;
+      
+      // Log the received data for debugging
+      console.log('Login attempt for email:', email);
       
       const user = await userService.authenticateUser(email, password);
       
@@ -69,13 +99,65 @@ class AuthController {
         { expiresIn: '24h' }
       );
       
+      // Set HttpOnly cookie instead of returning token in body
+      const isProduction = process.env.NODE_ENV === 'production';
+      res.cookie('authToken', token, {
+        httpOnly: true,        // Prevents JavaScript access
+        secure: isProduction,  // Only sent over HTTPS in production
+        sameSite: isProduction ? 'strict' : 'lax', // CSRF protection
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        path: '/'              // Available to all routes
+      });
+      
+      // Return user data (no token in response)
       res.json({
         message: 'Login successful',
-        user,
-        token
+        user: {
+          id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          username: user.username,
+          role: user.role,
+          isActive: user.isActive
+        }
       });
     } catch (error) {
       console.error('Login error:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  }
+
+  /**
+   * Logout user
+   */
+  async logout(req, res) {
+    try {
+      // Clear the HttpOnly cookie - options must EXACTLY match the cookie settings
+      const isProduction = process.env.NODE_ENV === 'production';
+      
+      // Method 1: Clear cookie with exact same options as when it was set
+      res.clearCookie('authToken', {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'strict' : 'lax',
+        path: '/'
+      });
+      
+      // Method 2: Set cookie to empty with immediate expiration (backup method)
+      // This ensures cookie is cleared even if clearCookie doesn't work
+      res.cookie('authToken', '', {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? 'strict' : 'lax',
+        path: '/',
+        expires: new Date(0),  // Expire immediately (Jan 1, 1970)
+        maxAge: 0  // Also set maxAge to 0
+      });
+      
+      res.json({ message: 'Logout successful' });
+    } catch (error) {
+      console.error('Logout error:', error);
       res.status(500).json({ error: 'Server error' });
     }
   }

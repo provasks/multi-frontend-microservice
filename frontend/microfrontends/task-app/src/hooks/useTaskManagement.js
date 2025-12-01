@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDebounce } from './useDebounce';
 import { useAuth } from 'sharedComponents/useAuth';
 import { apiHelpers } from 'sharedComponents/unifiedApiClient';
@@ -28,7 +28,7 @@ export const useTaskManagement = () => {
   const [pageSize, setPageSize] = useState(10);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading, checkAuth } = useAuth();
   
   
   // Set search loading state when search term changes
@@ -40,38 +40,91 @@ export const useTaskManagement = () => {
     }
   }, [searchTerm, debouncedSearchTerm]);
 
+  // Check auth status when component mounts or becomes visible
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  // Shared request deduplication - prevent multiple simultaneous calls with same params
+  const activeRequestsRef = useRef(new Map());
+  
   const fetchTasks = useCallback(async (isRefresh = false, page = currentPage, limit = pageSize) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setApiStatus('loading');
-      
-      // Reset search loading when starting to fetch (only if not currently debouncing)
-      if (searchTerm === debouncedSearchTerm) {
-        setSearchLoading(false);
-      }
-      
-      if (!isAuthenticated()) {
+    // Create a unique key for this request
+    const requestKey = `${page}-${limit}-${debouncedSearchTerm || ''}`;
+    
+    // Check if there's already an active request with the same parameters
+    if (activeRequestsRef.current.has(requestKey)) {
+      console.log('Duplicate request prevented:', requestKey);
+      return activeRequestsRef.current.get(requestKey);
+    }
+    
+    // Create the request promise
+    const requestPromise = (async () => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setApiStatus('loading');
+        
+        // Reset search loading when starting to fetch (only if not currently debouncing)
+        if (searchTerm === debouncedSearchTerm) {
+          setSearchLoading(false);
+        }
+        
+        // Wait for auth check to complete before proceeding
+        if (authLoading) {
+          // Auth check is still in progress, wait a bit
+          await new Promise(resolve => setTimeout(resolve, 100));
+          // Re-check auth status
+          await checkAuth();
+        }
+        
+        // Don't check isAuthenticated here - let the API call handle authentication
+        // If the cookie is valid, the API will work; if not, it will return 401
+
+        // Prepare filters
+        const filters = {};
+        if (debouncedSearchTerm) {
+          filters.search = debouncedSearchTerm;
+        }
+
+        console.log('Fetching tasks with params:', { page, limit, search: debouncedSearchTerm });
+        
+        // Use unified API client with pagination
+        const data = await apiHelpers.fetchTasks(page, limit, filters);
+        
+        setApiStatus('connected');
+        return data;
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
         setApiStatus('error');
+        setTasks([]);
+        
+        // Handle 401 errors gracefully - user might not be authenticated
+        if (error.response?.status === 401) {
+          if (window.showError) {
+            window.showError('Please log in to view tasks');
+          }
+        }
+        throw error;
+      } finally {
         setLoading(false);
         setRefreshing(false);
-        if (window.showError) {
-          window.showError('Please log in to view tasks');
-        }
-        return;
+        // Remove from active requests
+        activeRequestsRef.current.delete(requestKey);
       }
-
-      // Prepare filters
-      const filters = {};
-      if (debouncedSearchTerm) {
-        filters.search = debouncedSearchTerm;
-      }
-
-      // Use unified API client with pagination
-      const data = await apiHelpers.fetchTasks(page, limit, filters);
+    })();
+    
+    // Store the promise in active requests
+    activeRequestsRef.current.set(requestKey, requestPromise);
+    
+    // Execute the request and handle results
+    try {
+      const data = await requestPromise;
+      
+      // Update state with the fetched data
       const tasksData = data.tasks || data || [];
       setTasks(Array.isArray(tasksData) ? tasksData : []);
       
@@ -80,20 +133,42 @@ export const useTaskManagement = () => {
         setPagination(data.pagination);
       }
       
-      setApiStatus('connected');
+      return data;
     } catch (error) {
-      console.error('Error fetching tasks:', error);
-      setApiStatus('error');
-      setTasks([]);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+      // Error already handled in the promise, just re-throw
+      throw error;
     }
-  }, [isAuthenticated, debouncedSearchTerm, searchTerm]);
+  }, [authLoading, checkAuth, debouncedSearchTerm, searchTerm, currentPage, pageSize]);
 
+  // Track the last fetch parameters to prevent duplicate calls
+  const lastFetchRef = useRef({ page: null, limit: null, search: null });
+  const isFetchingRef = useRef(false);
+  
   useEffect(() => {
-    fetchTasks();
-  }, [currentPage, pageSize, debouncedSearchTerm]);
+    // Only fetch tasks if auth check is complete
+    if (!authLoading) {
+      // Check if we've already fetched with these exact parameters
+      const fetchKey = `${currentPage}-${pageSize}-${debouncedSearchTerm}`;
+      const lastFetchKey = `${lastFetchRef.current.page}-${lastFetchRef.current.limit}-${lastFetchRef.current.search}`;
+      
+      // Only fetch if parameters changed and not already fetching
+      if (fetchKey !== lastFetchKey && !isFetchingRef.current) {
+        isFetchingRef.current = true;
+        
+        // Update last fetch parameters immediately to prevent duplicate calls
+        lastFetchRef.current = {
+          page: currentPage,
+          limit: pageSize,
+          search: debouncedSearchTerm
+        };
+        
+        // Fetch with explicit parameters
+        fetchTasks(false, currentPage, pageSize).finally(() => {
+          isFetchingRef.current = false;
+        });
+      }
+    }
+  }, [currentPage, pageSize, debouncedSearchTerm, authLoading]); // Removed fetchTasks to prevent re-runs
 
   const handleAddTask = useCallback(() => {
     setModalMode('add');
@@ -151,7 +226,7 @@ export const useTaskManagement = () => {
     }
 
     try {
-      if (!isAuthenticated()) {
+      if (!isAuthenticated) {
         setTasks(tasks.filter(task => task._id !== taskId));
         if (window.showSuccess) {
           window.showSuccess('Task deleted successfully (demo mode)!');
@@ -200,7 +275,7 @@ export const useTaskManagement = () => {
     }
     
     try {
-      if (!isAuthenticated()) {
+      if (!isAuthenticated) {
         if (modalMode === 'add') {
           const newTask = {
             _id: Date.now().toString(),
@@ -370,14 +445,14 @@ export const useTaskManagement = () => {
   // Pagination control functions
   const handlePageChange = useCallback((newPage) => {
     setCurrentPage(newPage);
-    fetchTasks(false, newPage, pageSize);
-  }, [fetchTasks, pageSize]);
+    // Don't call fetchTasks here - the useEffect will handle it when currentPage changes
+  }, []);
 
   const handlePageSizeChange = useCallback((newPageSize) => {
     setPageSize(newPageSize);
     setCurrentPage(1); // Reset to first page
-    fetchTasks(false, 1, newPageSize);
-  }, [fetchTasks]);
+    // Don't call fetchTasks here - the useEffect will handle it when pageSize/currentPage changes
+  }, []);
 
   const goToNextPage = useCallback(() => {
     if (pagination.hasNext) {
