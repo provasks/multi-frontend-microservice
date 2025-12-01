@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { authApi } from '../utils/api.js';
+import ForgotPassword from './ForgotPassword.jsx';
 import './LoginForm.css';
 
 // Temporary inline validation until shared components are updated
@@ -50,6 +51,7 @@ const LoginForm = ({ onLogin }) => {
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -135,6 +137,16 @@ const LoginForm = ({ onLogin }) => {
     return false;
   };
 
+  // Show forgot password component
+  if (showForgotPassword) {
+    return (
+      <ForgotPassword
+        onClose={() => setShowForgotPassword(false)}
+        onBackToLogin={() => setShowForgotPassword(false)}
+      />
+    );
+  }
+
   return (
     <div className="login-container">
       
@@ -211,6 +223,21 @@ const LoginForm = ({ onLogin }) => {
                       {validationErrors.password}
                     </div>
                   )}
+                </div>
+                
+                <div className="d-flex justify-content-end mb-3">
+                  <button
+                    type="button"
+                    className="btn btn-link text-decoration-none p-0"
+                    onClick={() => setShowForgotPassword(true)}
+                    style={{ 
+                      color: '#6c757d',
+                      fontSize: '14px'
+                    }}
+                  >
+                    <i className="fas fa-question-circle me-1"></i>
+                    Forgot Password?
+                  </button>
                 </div>
                 
                 <button 

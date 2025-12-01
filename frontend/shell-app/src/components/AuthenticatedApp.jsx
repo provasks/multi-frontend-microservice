@@ -4,6 +4,7 @@ import ReduxTest from './ReduxTest';
 import IdleTimeoutTest from './IdleTimeoutTest';
 import ErrorTesting from './ErrorTesting';
 import Dashboard from './Dashboard';
+import ChangePassword from './ChangePassword';
 import shellConfig from '../config/shellConfig';
 import './TestDropdown.css';
 
@@ -215,11 +216,11 @@ const AuthenticatedApp = ({ onLogout }) => {
             {/* User Menu Dropdown */}
             <div className="dropdown">
               <button
-                className={`nav-link btn btn-link text-light px-3 py-2 rounded dropdown-toggle ${['profile', 'settings'].includes(activeTab) ? 'bg-dark' : ''}`}
+                className={`nav-link btn btn-link text-light px-3 py-2 rounded dropdown-toggle ${['profile', 'change-password', 'settings'].includes(activeTab) ? 'bg-dark' : ''}`}
                 type="button"
                 id="userDropdown"
                 data-bs-toggle="dropdown"
-                data-user-active={['profile', 'settings'].includes(activeTab)}
+                data-user-active={['profile', 'change-password', 'settings'].includes(activeTab)}
                 aria-expanded="false"
                 style={{
                   transition: 'all 0.3s ease',
@@ -227,12 +228,12 @@ const AuthenticatedApp = ({ onLogout }) => {
                   textDecoration: 'none'
                 }}
                 onMouseEnter={(e) => {
-                  if (!['profile', 'settings'].includes(activeTab)) {
+                  if (!['profile', 'change-password', 'settings'].includes(activeTab)) {
                     e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!['profile', 'settings'].includes(activeTab)) {
+                  if (!['profile', 'change-password', 'settings'].includes(activeTab)) {
                     e.target.style.backgroundColor = 'transparent';
                   }
                 }}
@@ -277,6 +278,7 @@ const AuthenticatedApp = ({ onLogout }) => {
               <Route path="/users" element={<UserManagement />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/profile" element={<div className="alert alert-info"><h4>Profile Page</h4><p>User profile management coming soon...</p></div>} />
+              <Route path="/change-password" element={<ChangePassword />} />
               <Route path="/settings" element={<div className="alert alert-info"><h4>Settings Page</h4><p>Application settings coming soon...</p></div>} />
               <Route path="/redux-test" element={<ReduxTest />} />
               <Route path="/idle-timeout-test" element={<IdleTimeoutTest />} />

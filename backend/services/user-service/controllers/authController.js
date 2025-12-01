@@ -118,6 +118,37 @@ class AuthController {
       res.status(500).json({ error: 'Server error' });
     }
   }
+
+  /**
+   * Reset password (forgot password)
+   */
+  async resetPassword(req, res) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { email, newPassword } = req.body;
+      
+      const result = await userService.resetPasswordByEmail(email, newPassword);
+      
+      if (!result.success) {
+        return res.status(400).json({ error: result.error });
+      }
+      
+      // In development, return the new password
+      // In production, you would send an email with reset link instead
+      res.json({
+        message: 'Password reset successfully',
+        newPassword: result.newPassword, // Only for development
+        user: result.user
+      });
+    } catch (error) {
+      console.error('Reset password error:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  }
 }
 
 module.exports = new AuthController();

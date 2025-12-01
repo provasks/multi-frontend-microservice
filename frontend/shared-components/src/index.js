@@ -33,5 +33,11 @@ export * from './utils/storage';
 // Export logout utility
 export * from './utils/logout';
 
+// Export event bus and types
+export { default as eventBus } from './utils/eventBus';
+export { EVENT_TYPES, EVENT_PAYLOADS, validateEventPayload } from './utils/eventTypes';
+export { useEventBus, useEmitEvent, useEmitEventOnce } from './hooks/useEventBus';
+export { showNotification, showError, showValidationError } from './utils/notificationHelper';
+
 // Export constants
 export * from './constants';

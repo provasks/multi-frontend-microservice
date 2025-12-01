@@ -183,4 +183,63 @@ router.get('/me', auth, authController.getMe);
  */
 router.get('/verify', auth, authController.verifyToken);
 
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     summary: Reset user password (forgot password)
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *                 example: "user@example.com"
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 6
+ *                 description: Optional new password (if not provided, a random password will be generated)
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Password reset successfully"
+ *                 newPassword:
+ *                   type: string
+ *                   description: The new password (development only)
+ *                   example: "Abc123Xyz789"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     email:
+ *                       type: string
+ *                     username:
+ *                       type: string
+ *       400:
+ *         $ref: '#/components/responses/BadRequestError'
+ *       500:
+ *         $ref: '#/components/responses/InternalServerError'
+ */
+router.post('/reset-password',
+  [
+    body('email').isEmail().withMessage('Invalid email format'),
+    body('newPassword').optional().isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+  ],
+  authController.resetPassword
+);
+
 module.exports = router;

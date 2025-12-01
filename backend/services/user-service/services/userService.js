@@ -140,12 +140,67 @@ class UserService {
       const saltRounds = 12;
       const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
       
-      user.password = hashedNewPassword;
-      await user.save();
+      // Update password directly using updateOne to bypass pre-save hook
+      // This prevents double hashing since the password is already hashed
+      await User.updateOne(
+        { _id: user._id },
+        { $set: { password: hashedNewPassword } }
+      );
       
       return true;
     } catch (error) {
       console.error('Error in changePassword:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Reset user password by email (for forgot password)
+   * Returns the new password for development purposes
+   * In production, this should send an email with reset link
+   */
+  async resetPasswordByEmail(email, newPassword = null) {
+    try {
+      const user = await User.findOne({ email: email.toLowerCase() });
+      
+      if (!user) {
+        return { success: false, error: 'User not found' };
+      }
+
+      // Generate new password if not provided
+      if (!newPassword) {
+        // Generate a random password
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        newPassword = Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+      }
+
+      // Validate password length
+      if (newPassword.length < 6) {
+        return { success: false, error: 'Password must be at least 6 characters' };
+      }
+
+      // Hash new password
+      const saltRounds = 12;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      
+      // Update password directly (bypass pre-save hook to avoid double hashing)
+      await User.updateOne(
+        { _id: user._id },
+        { $set: { password: hashedPassword } }
+      );
+      
+      return { 
+        success: true, 
+        newPassword, 
+        user: {
+          email: user.email,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      };
+    } catch (error) {
+      console.error('Error in resetPasswordByEmail:', error);
       throw error;
     }
   }

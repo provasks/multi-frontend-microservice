@@ -34,6 +34,7 @@ const SHELL_CONFIG = {
       
       USER_MENU: [
         { id: 'profile', label: 'Profile', icon: 'fas fa-user', route: '/profile' },
+        { id: 'change-password', label: 'Change Password', icon: 'fas fa-key', route: '/change-password' },
         { id: 'settings', label: 'Settings', icon: 'fas fa-cog', route: '/settings' },
         { id: 'logout', label: 'Logout', icon: 'fas fa-sign-out-alt', action: 'logout' }
       ]
