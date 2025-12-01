@@ -1,135 +1,10 @@
 // Import actual validation utilities
-import { validateTaskForm, validateUserForm } from '../validationUtils';
-
-// Helper validation functions for testing
-const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-const validateRequired = (value) => {
-  if (!value) return false;
-  return value.toString().trim().length > 0;
-};
-
-const validateMinLength = (value, minLength) => {
-  if (!value) return false;
-  return value.toString().length >= minLength;
-};
-
-const validateMaxLength = (value, maxLength) => {
-  if (!value) return true; // Empty values are valid for max length
-  return value.toString().length <= maxLength;
-};
-
-const sanitizeInput = (input) => {
-  if (typeof input !== 'string') {
-    return input;
-  }
-
-  // Remove HTML tags
-  let sanitized = input.replace(/<[^>]*>/g, '');
-  
-  // Remove javascript: protocol
-  sanitized = sanitized.replace(/javascript:/gi, '');
-  
-  // Remove event handlers
-  sanitized = sanitized.replace(/on\w+\s*=/gi, '');
-  
-  // Trim whitespace
-  sanitized = sanitized.trim();
-  
-  return sanitized;
-};
-
-const validatePassword = (password) => {
-  const errors = [];
-  
-  if (!password || password.length < 8) {
-    errors.push('Password must be at least 8 characters long');
-  }
-  
-  if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
-  }
-  
-  if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
-  }
-  
-  if (!/\d/.test(password)) {
-    errors.push('Password must contain at least one number');
-  }
-  
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push('Password must contain at least one special character');
-  }
-  
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-};
+import { 
+  validateTaskForm, 
+  validateUserForm
+} from '../validationUtils';
 
 describe('Validation Utilities', () => {
-  describe('validateEmail', () => {
-    it('validates correct email addresses', () => {
-      expect(validateEmail('test@example.com')).toBe(true);
-      expect(validateEmail('user.name@domain.co.uk')).toBe(true);
-      expect(validateEmail('user+tag@example.org')).toBe(true);
-    });
-
-    it('rejects invalid email addresses', () => {
-      expect(validateEmail('invalid-email')).toBe(false);
-      expect(validateEmail('@example.com')).toBe(false);
-      expect(validateEmail('test@')).toBe(false);
-      expect(validateEmail('')).toBe(false);
-      expect(validateEmail(null)).toBe(false);
-    });
-  });
-
-  describe('validateRequired', () => {
-    it('validates required fields', () => {
-      expect(validateRequired('valid string')).toBe(true);
-      expect(validateRequired('a')).toBe(true);
-      expect(validateRequired(123)).toBe(true);
-    });
-
-    it('rejects empty or whitespace-only values', () => {
-      expect(validateRequired('')).toBe(false);
-      expect(validateRequired('   ')).toBe(false);
-      expect(validateRequired(null)).toBe(false);
-      expect(validateRequired(undefined)).toBe(false);
-    });
-  });
-
-  describe('validateMinLength', () => {
-    it('validates minimum length', () => {
-      expect(validateMinLength('hello', 3)).toBe(true);
-      expect(validateMinLength('hello', 5)).toBe(true);
-      expect(validateMinLength('hello', 1)).toBe(true);
-    });
-
-    it('rejects strings shorter than minimum length', () => {
-      expect(validateMinLength('hi', 3)).toBe(false);
-      expect(validateMinLength('', 1)).toBe(false);
-      expect(validateMinLength(null, 1)).toBe(false);
-    });
-  });
-
-  describe('validateMaxLength', () => {
-    it('validates maximum length', () => {
-      expect(validateMaxLength('hello', 10)).toBe(true);
-      expect(validateMaxLength('hello', 5)).toBe(true);
-      expect(validateMaxLength('', 5)).toBe(true);
-    });
-
-    it('rejects strings longer than maximum length', () => {
-      expect(validateMaxLength('hello world', 5)).toBe(false);
-      expect(validateMaxLength('very long string', 10)).toBe(false);
-    });
-  });
-
   describe('validateTaskForm', () => {
     const validFormData = {
       title: 'Test Task',
@@ -153,12 +28,6 @@ describe('Validation Utilities', () => {
       expect(result.errors.title).toBe('Title is required');
     });
 
-    it('validates title minimum length', () => {
-      const result = validateTaskForm({ ...validFormData, title: 'ab' });
-      expect(result.isValid).toBe(true); // The actual function doesn't have min length validation
-      expect(result.errors.title).toBeUndefined();
-    });
-
     it('validates title maximum length', () => {
       const longTitle = 'a'.repeat(101);
       const result = validateTaskForm({ ...validFormData, title: longTitle });
@@ -170,6 +39,13 @@ describe('Validation Utilities', () => {
       const result = validateTaskForm({ ...validFormData, description: '' });
       expect(result.isValid).toBe(false);
       expect(result.errors.description).toBe('Description is required');
+    });
+
+    it('validates description maximum length', () => {
+      const longDescription = 'a'.repeat(501);
+      const result = validateTaskForm({ ...validFormData, description: longDescription });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.description).toBe('Description must be less than 500 characters');
     });
 
     it('validates priority values', () => {
@@ -190,77 +66,436 @@ describe('Validation Utilities', () => {
       expect(result.errors.assignedTo).toBe('Assigned To must be a valid email address');
     });
 
-    it('validates due date is in the future', () => {
+    it('allows empty assignedTo', () => {
+      const result = validateTaskForm({ ...validFormData, assignedTo: '' });
+      expect(result.isValid).toBe(true);
+      expect(result.errors.assignedTo).toBeUndefined();
+    });
+
+    it('validates due date format', () => {
       const result = validateTaskForm({ ...validFormData, dueDate: 'invalid-date' });
       expect(result.isValid).toBe(false);
       expect(result.errors.dueDate).toBe('Due Date must be a valid date');
     });
-  });
 
-  describe('sanitizeInput', () => {
-    it('sanitizes HTML tags', () => {
-      expect(sanitizeInput('<script>alert("xss")</script>')).toBe('alert("xss")');
-      expect(sanitizeInput('<div>Hello</div>')).toBe('Hello');
-      expect(sanitizeInput('<p>Text</p>')).toBe('Text');
-    });
-
-    it('sanitizes javascript protocol', () => {
-      expect(sanitizeInput('javascript:alert("xss")')).toBe('alert("xss")');
-      expect(sanitizeInput('JAVASCRIPT:alert("xss")')).toBe('alert("xss")');
-    });
-
-    it('sanitizes event handlers', () => {
-      expect(sanitizeInput('<div onclick="alert(\'xss\')">Click me</div>')).toBe('Click me');
-      expect(sanitizeInput('<img onload="alert(\'xss\')" src="test.jpg">')).toBe('');
-    });
-
-    it('trims whitespace', () => {
-      expect(sanitizeInput('  hello world  ')).toBe('hello world');
-      expect(sanitizeInput('\n\t  test  \t\n')).toBe('test');
-    });
-
-    it('handles non-string input', () => {
-      expect(sanitizeInput(123)).toBe(123);
-      expect(sanitizeInput(null)).toBe(null);
-      expect(sanitizeInput(undefined)).toBe(undefined);
-    });
-  });
-
-  describe('validatePassword', () => {
-    it('validates strong passwords', () => {
-      const result = validatePassword('StrongPass123!');
+    it('allows empty due date', () => {
+      const result = validateTaskForm({ ...validFormData, dueDate: '' });
       expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
+      expect(result.errors.dueDate).toBeUndefined();
     });
 
-    it('validates minimum length', () => {
-      const result = validatePassword('Short1!');
+    it('validates tags format', () => {
+      const result = validateTaskForm({ ...validFormData, tags: 'tag1,,tag2' });
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Password must be at least 8 characters long');
+      expect(result.errors.tags).toBe('Tags cannot contain empty values');
     });
 
-    it('validates uppercase requirement', () => {
-      const result = validatePassword('lowercase123!');
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Password must contain at least one uppercase letter');
+    it('allows empty tags', () => {
+      const result = validateTaskForm({ ...validFormData, tags: '' });
+      expect(result.isValid).toBe(true);
+      expect(result.errors.tags).toBeUndefined();
     });
 
-    it('validates lowercase requirement', () => {
-      const result = validatePassword('UPPERCASE123!');
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Password must contain at least one lowercase letter');
+    it('validates all priority values', () => {
+      const priorities = ['low', 'medium', 'high', 'urgent'];
+      priorities.forEach(priority => {
+        const result = validateTaskForm({ ...validFormData, priority });
+        expect(result.isValid).toBe(true);
+        expect(result.errors.priority).toBeUndefined();
+      });
     });
 
-    it('validates number requirement', () => {
-      const result = validatePassword('NoNumbers!');
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Password must contain at least one number');
+    it('validates all status values', () => {
+      const statuses = ['pending', 'in_progress', 'completed', 'cancelled'];
+      statuses.forEach(status => {
+        const result = validateTaskForm({ ...validFormData, status });
+        expect(result.isValid).toBe(true);
+        expect(result.errors.status).toBeUndefined();
+      });
     });
 
-    it('validates special character requirement', () => {
-      const result = validatePassword('NoSpecial123');
+    it('validates multiple errors at once', () => {
+      const invalidData = {
+        title: '',
+        description: '',
+        priority: 'invalid',
+        status: 'invalid',
+        assignedTo: 'invalid-email',
+        dueDate: 'invalid-date',
+        tags: 'tag1,,tag2'
+      };
+      const result = validateTaskForm(invalidData);
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Password must contain at least one special character');
+      expect(Object.keys(result.errors)).toHaveLength(7);
+    });
+
+    it('handles missing fields', () => {
+      const result = validateTaskForm({});
+      expect(result.isValid).toBe(false);
+      expect(result.errors.title).toBe('Title is required');
+      expect(result.errors.description).toBe('Description is required');
+      expect(result.errors.priority).toBe('Priority must be one of: low, medium, high, urgent');
+      expect(result.errors.status).toBe('Status must be one of: pending, in_progress, completed, cancelled');
+    });
+
+    it('handles whitespace-only values', () => {
+      const result = validateTaskForm({
+        title: '   ',
+        description: '   ',
+        priority: 'high',
+        status: 'pending'
+      });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.title).toBe('Title is required');
+      expect(result.errors.description).toBe('Description is required');
+    });
+
+    it('handles null and undefined values', () => {
+      const result = validateTaskForm({
+        title: null,
+        description: undefined,
+        priority: 'high',
+        status: 'pending'
+      });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.title).toBe('Title is required');
+      expect(result.errors.description).toBe('Description is required');
+    });
+  });
+
+  describe('validateUserForm', () => {
+    const validUserData = {
+      username: 'johndoe',
+      email: 'john.doe@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      isNewUser: true,
+      password: 'password123'
+    };
+
+    it('validates correct user form data', () => {
+      const result = validateUserForm(validUserData);
+      expect(result.isValid).toBe(true);
+      expect(Object.keys(result.errors)).toHaveLength(0);
+    });
+
+    it('validates username requirements', () => {
+      const result = validateUserForm({ ...validUserData, username: '' });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.username).toBe('Username is required');
+    });
+
+    it('validates username minimum length', () => {
+      const result = validateUserForm({ ...validUserData, username: 'ab' });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.username).toBe('Username must be at least 3 characters');
+    });
+
+    it('validates email requirements', () => {
+      const result = validateUserForm({ ...validUserData, email: '' });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.email).toBe('Email is required');
+    });
+
+    it('validates email format', () => {
+      const result = validateUserForm({ ...validUserData, email: 'invalid-email' });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.email).toBe('Email must be a valid email address');
+    });
+
+    it('validates password requirements for new users', () => {
+      const result = validateUserForm({ ...validUserData, password: '' });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.password).toBe('Password is required');
+    });
+
+    it('validates password minimum length for new users', () => {
+      const result = validateUserForm({ ...validUserData, password: '12345' });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.password).toBe('Password must be at least 6 characters');
+    });
+
+    it('does not require password for existing users', () => {
+      const result = validateUserForm({ ...validUserData, isNewUser: false, password: '' });
+      expect(result.isValid).toBe(true);
+      expect(result.errors.password).toBeUndefined();
+    });
+
+    it('validates firstName requirements', () => {
+      const result = validateUserForm({ ...validUserData, firstName: '' });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.firstName).toBe('First name is required');
+    });
+
+    it('validates lastName requirements', () => {
+      const result = validateUserForm({ ...validUserData, lastName: '' });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.lastName).toBe('Last name is required');
+    });
+
+    it('validates multiple errors at once', () => {
+      const invalidData = {
+        username: '',
+        email: 'invalid',
+        firstName: '',
+        lastName: '',
+        isNewUser: true,
+        password: '123'
+      };
+      const result = validateUserForm(invalidData);
+      expect(result.isValid).toBe(false);
+      expect(Object.keys(result.errors)).toHaveLength(5);
+    });
+
+    it('handles missing fields', () => {
+      const result = validateUserForm({});
+      expect(result.isValid).toBe(false);
+      expect(result.errors.username).toBe('Username is required');
+      expect(result.errors.email).toBe('Email is required');
+      expect(result.errors.firstName).toBe('First name is required');
+      expect(result.errors.lastName).toBe('Last name is required');
+    });
+
+    it('handles whitespace-only values', () => {
+      const result = validateUserForm({
+        username: '   ',
+        email: '   ',
+        firstName: '   ',
+        lastName: '   ',
+        isNewUser: true,
+        password: '   '
+      });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.username).toBe('Username is required');
+      expect(result.errors.email).toBe('Email is required');
+      expect(result.errors.firstName).toBe('First name is required');
+      expect(result.errors.lastName).toBe('Last name is required');
+      expect(result.errors.password).toBe('Password is required');
+    });
+
+    it('handles null and undefined values', () => {
+      const result = validateUserForm({
+        username: null,
+        email: undefined,
+        firstName: null,
+        lastName: undefined,
+        isNewUser: true,
+        password: null
+      });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.username).toBe('Username is required');
+      expect(result.errors.email).toBe('Email is required');
+      expect(result.errors.firstName).toBe('First name is required');
+      expect(result.errors.lastName).toBe('Last name is required');
+      expect(result.errors.password).toBe('Password is required');
+    });
+
+    it('validates various email formats', () => {
+      const validEmails = [
+        'test@example.com',
+        'user.name@domain.co.uk',
+        'user+tag@example.org',
+        'test123@test-domain.com'
+      ];
+      
+      validEmails.forEach(email => {
+        const result = validateUserForm({ ...validUserData, email });
+        expect(result.isValid).toBe(true);
+        expect(result.errors.email).toBeUndefined();
+      });
+    });
+
+    it('rejects invalid email formats', () => {
+      const invalidEmails = [
+        'invalid-email',
+        '@example.com',
+        'test@',
+        'test@.com',
+        'test.example.com'
+      ];
+      
+      invalidEmails.forEach(email => {
+        const result = validateUserForm({ ...validUserData, email });
+        expect(result.isValid).toBe(false);
+        expect(result.errors.email).toBe('Email must be a valid email address');
+      });
+    });
+
+    it('rejects empty email', () => {
+      const result = validateUserForm({ ...validUserData, email: '' });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.email).toBe('Email is required');
+    });
+
+    it('validates username edge cases', () => {
+      const result = validateUserForm({ ...validUserData, username: 'abc' }); // exactly 3 characters
+      expect(result.isValid).toBe(true);
+      expect(result.errors.username).toBeUndefined();
+    });
+
+    it('validates password edge cases', () => {
+      const result = validateUserForm({ ...validUserData, password: '123456' }); // exactly 6 characters
+      expect(result.isValid).toBe(true);
+      expect(result.errors.password).toBeUndefined();
+    });
+  });
+
+  describe('Edge cases and error handling', () => {
+    it('validateTaskForm handles missing optional fields', () => {
+      const minimalData = {
+        title: 'Test Task',
+        description: 'Test Description',
+        priority: 'medium',
+        status: 'pending'
+      };
+      const result = validateTaskForm(minimalData);
+      expect(result.isValid).toBe(true);
+    });
+
+    it('validateTaskForm handles all fields with valid data', () => {
+      const completeData = {
+        title: 'Complete Task',
+        description: 'Complete description',
+        priority: 'urgent',
+        status: 'in_progress',
+        assignedTo: 'user@example.com',
+        dueDate: '2024-12-31',
+        tags: 'urgent, important, test'
+      };
+      const result = validateTaskForm(completeData);
+      expect(result.isValid).toBe(true);
+    });
+
+    it('validateUserForm handles existing user without password', () => {
+      const existingUserData = {
+        username: 'existinguser',
+        email: 'existing@example.com',
+        firstName: 'Existing',
+        lastName: 'User',
+        isNewUser: false
+      };
+      const result = validateUserForm(existingUserData);
+      expect(result.isValid).toBe(true);
+    });
+
+    it('validateUserForm handles new user with password', () => {
+      const newUserData = {
+        username: 'newuser',
+        email: 'new@example.com',
+        firstName: 'New',
+        lastName: 'User',
+        isNewUser: true,
+        password: 'newpassword123'
+      };
+      const result = validateUserForm(newUserData);
+      expect(result.isValid).toBe(true);
+    });
+
+    it('validateTaskForm handles valid date formats', () => {
+      const validDates = [
+        '2024-12-31',
+        '2024-12-31T10:30:00',
+        '2024-12-31T10:30:00Z',
+        '2024-12-31T10:30:00.000Z'
+      ];
+      
+      validDates.forEach(date => {
+        const result = validateTaskForm({
+          title: 'Test Task',
+          description: 'Test Description',
+          priority: 'medium',
+          status: 'pending',
+          dueDate: date
+        });
+        expect(result.isValid).toBe(true);
+        expect(result.errors.dueDate).toBeUndefined();
+      });
+    });
+
+    it('validateTaskForm handles invalid date formats', () => {
+      const invalidDates = [
+        'invalid-date',
+        'not-a-date',
+        'completely-invalid'
+      ];
+      
+      invalidDates.forEach(date => {
+        const result = validateTaskForm({
+          title: 'Test Task',
+          description: 'Test Description',
+          priority: 'medium',
+          status: 'pending',
+          dueDate: date
+        });
+        expect(result.isValid).toBe(false);
+        expect(result.errors.dueDate).toBe('Due Date must be a valid date');
+      });
+    });
+
+    it('validateTaskForm handles edge case date formats', () => {
+      // These dates might be valid in some contexts but should be tested
+      const edgeCaseDates = [
+        '2024-13-31', // Invalid month
+        '2024-12-32', // Invalid day
+        '2024/12/31' // Different format
+      ];
+      
+      edgeCaseDates.forEach(date => {
+        const result = validateTaskForm({
+          title: 'Test Task',
+          description: 'Test Description',
+          priority: 'medium',
+          status: 'pending',
+          dueDate: date
+        });
+        // These might be valid or invalid depending on JavaScript's Date parsing
+        // We just test that the function doesn't crash
+        expect(typeof result.isValid).toBe('boolean');
+      });
+    });
+
+    it('validateTaskForm handles valid tag formats', () => {
+      const validTagFormats = [
+        'tag1',
+        'tag1, tag2',
+        'tag1,tag2,tag3',
+        'urgent, important, test',
+        'single-tag'
+      ];
+      
+      validTagFormats.forEach(tags => {
+        const result = validateTaskForm({
+          title: 'Test Task',
+          description: 'Test Description',
+          priority: 'medium',
+          status: 'pending',
+          tags
+        });
+        expect(result.isValid).toBe(true);
+        expect(result.errors.tags).toBeUndefined();
+      });
+    });
+
+    it('validateTaskForm handles invalid tag formats', () => {
+      const invalidTagFormats = [
+        'tag1,,tag2', // Empty tag
+        'tag1, ,tag2', // Whitespace-only tag
+        'tag1,,,tag2', // Multiple empty tags
+        ',tag1,tag2', // Leading comma
+        'tag1,tag2,' // Trailing comma
+      ];
+      
+      invalidTagFormats.forEach(tags => {
+        const result = validateTaskForm({
+          title: 'Test Task',
+          description: 'Test Description',
+          priority: 'medium',
+          status: 'pending',
+          tags
+        });
+        expect(result.isValid).toBe(false);
+        expect(result.errors.tags).toBe('Tags cannot contain empty values');
+      });
     });
   });
 });

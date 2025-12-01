@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>13/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>10/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/12</span>
+                <span class='fraction'>12/12</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -234,7 +234,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -242,10 +242,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">25x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -314,7 +314,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -333,13 +333,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -394,14 +394,14 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
 import UserAutocomplete from './UserAutocomplete';
 import './TaskModal.css';
 &nbsp;
-const TaskModal = <span class="cstat-no" title="statement not covered" >React.memo(<span class="fstat-no" title="function not covered" >({ </span></span>
+const TaskModal = React.memo(({ 
   show, 
   mode, 
   formData, 
@@ -409,10 +409,10 @@ const TaskModal = <span class="cstat-no" title="statement not covered" >React.me
   onSubmit, 
   onInputChange 
 }) =&gt; {
-<span class="cstat-no" title="statement not covered" >  if (!show) <span class="cstat-no" title="statement not covered" >return null;</span></span>
+  if (!show) return null;
   
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;div className="modal show d-block task-modal" tabIndex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-modal="true"&gt;
       &lt;div className="modal-dialog modal-lg"&gt;
         &lt;div className="modal-content"&gt;
@@ -480,8 +480,8 @@ const TaskModal = <span class="cstat-no" title="statement not covered" >React.me
                   &lt;label htmlFor="assignedTo" className="form-label"&gt;Assigned To&lt;/label&gt;
                   &lt;UserAutocomplete
                     value={formData.assignedTo}
-                    onChange={<span class="fstat-no" title="function not covered" >(u</span>serId) =&gt; {
-<span class="cstat-no" title="statement not covered" >                      onInputChange({ target: { name: 'assignedTo', value: userId } });</span>
+                    onChange={(userId) =&gt; {
+                      onInputChange({ target: { name: 'assignedTo', value: userId } });
                     }}
                     placeholder="Search users..."
                     className="mb-2"
@@ -499,14 +499,14 @@ const TaskModal = <span class="cstat-no" title="statement not covered" >React.me
                     name="dueDate"
                     value={formData.dueDate || ''}
                     onChange={onInputChange}
-                    min={(<span class="fstat-no" title="function not covered" >()</span> =&gt; {
-                      const now = <span class="cstat-no" title="statement not covered" >new Date();</span>
-                      const year = <span class="cstat-no" title="statement not covered" >now.getFullYear();</span>
-                      const month = <span class="cstat-no" title="statement not covered" >String(now.getMonth() + 1).padStart(2, '0');</span>
-                      const day = <span class="cstat-no" title="statement not covered" >String(now.getDate()).padStart(2, '0');</span>
-                      const hours = <span class="cstat-no" title="statement not covered" >String(now.getHours()).padStart(2, '0');</span>
-                      const minutes = <span class="cstat-no" title="statement not covered" >String(now.getMinutes()).padStart(2, '0');</span>
-<span class="cstat-no" title="statement not covered" >                      return `${year}-${month}-${day}T${hours}:${minutes}`;</span>
+                    min={(() =&gt; {
+                      const now = new Date();
+                      const year = now.getFullYear();
+                      const month = String(now.getMonth() + 1).padStart(2, '0');
+                      const day = String(now.getDate()).padStart(2, '0');
+                      const hours = String(now.getHours()).padStart(2, '0');
+                      const minutes = String(now.getMinutes()).padStart(2, '0');
+                      return `${year}-${month}-${day}T${hours}:${minutes}`;
                     })()}
                   /&gt;
                   &lt;div className="form-text"&gt;Optional - if not specified, due date will be set to 6 hours from assignment time&lt;/div&gt;
@@ -561,7 +561,7 @@ const TaskModal = <span class="cstat-no" title="statement not covered" >React.me
   );
 });
 &nbsp;
-<span class="cstat-no" title="statement not covered" >TaskModal.displayName = 'TaskModal';</span>
+TaskModal.displayName = 'TaskModal';
 &nbsp;
 export default TaskModal;
 &nbsp;</pre></td></tr></table></pre>
@@ -571,7 +571,7 @@ export default TaskModal;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-10-29T07:39:06.149Z
+                at 2025-10-29T12:40:55.756Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

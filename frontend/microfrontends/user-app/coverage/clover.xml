@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1761716144730" clover="3.2.0">
-  <project timestamp="1761716144731" name="All files">
-    <metrics statements="114" coveredstatements="77" conditionals="110" coveredconditionals="76" methods="27" coveredmethods="21" elements="251" coveredelements="174" complexity="0" loc="114" ncloc="114" packages="4" files="7" classes="7"/>
+<coverage generated="1761726748742" clover="3.2.0">
+  <project timestamp="1761726748742" name="All files">
+    <metrics statements="114" coveredstatements="21" conditionals="110" coveredconditionals="22" methods="27" coveredmethods="8" elements="251" coveredelements="51" complexity="0" loc="114" ncloc="114" packages="4" files="7" classes="7"/>
     <package name="src">
-      <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+      <metrics statements="5" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
       <file name="UserManagement.jsx" path="C:\Projects\learning\nodejs\Task Management System\frontend\microfrontends\user-app\src\UserManagement.jsx">
-        <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
-        <line num="7" count="1" type="stmt"/>
-        <line num="23" count="18" type="stmt"/>
-        <line num="25" count="18" type="cond" truecount="2" falsecount="0"/>
-        <line num="26" count="2" type="stmt"/>
-        <line num="36" count="16" type="stmt"/>
+        <metrics statements="5" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.components">
-      <metrics statements="27" coveredstatements="27" conditionals="65" coveredconditionals="63" methods="11" coveredmethods="11"/>
+      <metrics statements="27" coveredstatements="21" conditionals="65" coveredconditionals="22" methods="11" coveredmethods="8"/>
       <file name="ErrorBoundary.jsx" path="C:\Projects\learning\nodejs\Task Management System\frontend\microfrontends\user-app\src\components\ErrorBoundary.jsx">
         <metrics statements="11" coveredstatements="11" conditionals="4" coveredconditionals="4" methods="5" coveredmethods="5"/>
         <line num="5" count="16" type="stmt"/>
@@ -30,13 +30,13 @@
         <line num="38" count="17" type="stmt"/>
       </file>
       <file name="UserItem.jsx" path="C:\Projects\learning\nodejs\Task Management System\frontend\microfrontends\user-app\src\components\UserItem.jsx">
-        <metrics statements="6" coveredstatements="6" conditionals="43" coveredconditionals="41" methods="3" coveredmethods="3"/>
-        <line num="5" count="1" type="cond" truecount="0" falsecount="2"/>
-        <line num="8" count="36" type="stmt"/>
-        <line num="15" count="1" type="stmt"/>
-        <line num="16" count="12" type="stmt"/>
-        <line num="82" count="1" type="stmt"/>
-        <line num="94" count="1" type="stmt"/>
+        <metrics statements="6" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="5" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
       </file>
       <file name="UserModal.jsx" path="C:\Projects\learning\nodejs\Task Management System\frontend\microfrontends\user-app\src\components\UserModal.jsx">
         <metrics statements="4" coveredstatements="4" conditionals="14" coveredconditionals="14" methods="1" coveredmethods="1"/>
@@ -56,62 +56,62 @@
       </file>
     </package>
     <package name="src.config">
-      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="userAppConfig.js" path="C:\Projects\learning\nodejs\Task Management System\frontend\microfrontends\user-app\src\config\userAppConfig.js">
-        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-        <line num="7" count="1" type="stmt"/>
-        <line num="13" count="1" type="stmt"/>
-        <line num="86" count="1" type="stmt"/>
-        <line num="110" count="1" type="stmt"/>
+        <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
       </file>
     </package>
     <package name="src.hooks">
-      <metrics statements="78" coveredstatements="41" conditionals="43" coveredconditionals="11" methods="15" coveredmethods="9"/>
+      <metrics statements="78" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="15" coveredmethods="0"/>
       <file name="useUserManagement.js" path="C:\Projects\learning\nodejs\Task Management System\frontend\microfrontends\user-app\src\hooks\useUserManagement.js">
-        <metrics statements="78" coveredstatements="41" conditionals="43" coveredconditionals="11" methods="15" coveredmethods="9"/>
-        <line num="5" count="2" type="stmt"/>
-        <line num="6" count="67" type="stmt"/>
-        <line num="7" count="67" type="stmt"/>
-        <line num="8" count="67" type="stmt"/>
-        <line num="9" count="67" type="stmt"/>
-        <line num="10" count="67" type="stmt"/>
-        <line num="11" count="67" type="stmt"/>
-        <line num="12" count="67" type="stmt"/>
-        <line num="14" count="67" type="stmt"/>
-        <line num="16" count="67" type="stmt"/>
-        <line num="17" count="40" type="stmt"/>
-        <line num="18" count="40" type="stmt"/>
-        <line num="19" count="40" type="stmt"/>
-        <line num="21" count="40" type="cond" truecount="1" falsecount="1"/>
+        <metrics statements="78" coveredstatements="0" conditionals="43" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <line num="5" count="0" type="stmt"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="22" count="0" type="stmt"/>
         <line num="23" count="0" type="stmt"/>
         <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="25" count="0" type="stmt"/>
         <line num="27" count="0" type="stmt"/>
-        <line num="30" count="40" type="stmt"/>
-        <line num="33" count="40" type="stmt"/>
-        <line num="34" count="40" type="cond" truecount="1" falsecount="2"/>
-        <line num="35" count="40" type="cond" truecount="1" falsecount="1"/>
-        <line num="36" count="40" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="3"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="stmt"/>
         <line num="38" count="0" type="stmt"/>
         <line num="39" count="0" type="stmt"/>
         <line num="40" count="0" type="stmt"/>
         <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="42" count="0" type="stmt"/>
-        <line num="45" count="40" type="stmt"/>
-        <line num="49" count="67" type="stmt"/>
-        <line num="50" count="40" type="stmt"/>
-        <line num="53" count="67" type="stmt"/>
-        <line num="54" count="4" type="stmt"/>
-        <line num="55" count="4" type="stmt"/>
-        <line num="56" count="4" type="stmt"/>
-        <line num="65" count="4" type="stmt"/>
-        <line num="68" count="67" type="stmt"/>
-        <line num="69" count="2" type="stmt"/>
-        <line num="70" count="2" type="stmt"/>
-        <line num="71" count="2" type="stmt"/>
-        <line num="80" count="2" type="stmt"/>
-        <line num="83" count="67" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
         <line num="84" count="0" type="stmt"/>
         <line num="86" count="0" type="stmt"/>
         <line num="87" count="0" type="cond" truecount="0" falsecount="2"/>
@@ -135,18 +135,18 @@
         <line num="129" count="0" type="stmt"/>
         <line num="130" count="0" type="stmt"/>
         <line num="132" count="0" type="stmt"/>
-        <line num="136" count="67" type="stmt"/>
-        <line num="137" count="6" type="stmt"/>
-        <line num="138" count="6" type="stmt"/>
-        <line num="144" count="67" type="stmt"/>
-        <line num="145" count="2" type="stmt"/>
-        <line num="149" count="67" type="stmt"/>
-        <line num="150" count="13" type="stmt"/>
+        <line num="136" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="150" count="0" type="stmt"/>
         <line num="152" count="0" type="stmt"/>
         <line num="153" count="0" type="stmt"/>
         <line num="154" count="0" type="stmt"/>
         <line num="155" count="0" type="stmt"/>
-        <line num="159" count="67" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
       </file>
     </package>
   </project>

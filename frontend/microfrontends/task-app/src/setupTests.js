@@ -81,8 +81,8 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn(),
 }));
 
-// Mock TASK_CONSTANTS for shared components
-jest.mock('sharedComponents/constants', () => ({
+// Mock shared components globally
+global.mockSharedComponents = {
   TASK_CONSTANTS: {
     PRIORITY_CONFIG: {
       low: { bgClass: 'priority-low', label: 'Low' },
@@ -96,5 +96,26 @@ jest.mock('sharedComponents/constants', () => ({
       completed: { bgClass: 'status-completed', label: 'Completed' },
       cancelled: { bgClass: 'status-cancelled', label: 'Cancelled' }
     }
-  }
-}));
+  },
+  USER_CONSTANTS: {
+    ROLE_CONFIG: {
+      admin: { label: 'Admin', bgClass: 'role-admin' },
+      user: { label: 'User', bgClass: 'role-user' },
+      manager: { label: 'Manager', bgClass: 'role-manager' }
+    }
+  },
+  NOTIFICATION_CONSTANTS: {
+    TYPE_CONFIG: {
+      info: { label: 'Info', bgClass: 'type-info' },
+      success: { label: 'Success', bgClass: 'type-success' },
+      warning: { label: 'Warning', bgClass: 'type-warning' },
+      error: { label: 'Error', bgClass: 'type-error' }
+    }
+  },
+  useAuth: jest.fn(() => ({
+    user: { id: '1', name: 'Test User', role: 'user' },
+    isAuthenticated: true,
+    login: jest.fn(),
+    logout: jest.fn()
+  }))
+};

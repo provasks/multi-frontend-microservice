@@ -1,5 +1,24 @@
-// Skip this test for now due to module resolution issues
-describe.skip('shellConfig', () => {
+// Mock shared components config
+jest.mock('sharedComponents/frontendConfig', () => ({
+  SHARED_COMPONENTS_CONFIG: {
+    API_ENDPOINTS: {
+      AUTH: 'http://localhost:3001/api',
+      USERS: 'http://localhost:3001/api',
+      TASKS: 'http://localhost:3002/api',
+      NOTIFICATIONS: 'http://localhost:3003/api',
+      API_GATEWAY: 'http://localhost:3000/api'
+    }
+  },
+  FRONTEND_MESSAGES: {
+    ERROR: {
+      NETWORK_ERROR: 'Network error occurred'
+    }
+  }
+}));
+
+import shellConfig from '../shellConfig';
+
+describe('shellConfig', () => {
   it('exports the correct structure', () => {
     expect(shellConfig).toHaveProperty('SHELL_CONFIG');
     expect(shellConfig).toHaveProperty('SHELL_MESSAGES');

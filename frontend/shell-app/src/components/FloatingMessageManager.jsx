@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import './FloatingMessageManager.css';
 
+// Try to import event bus (may not be available in all environments)
+let eventBus, EVENT_TYPES;
+try {
+  const eventBusModule = require('sharedComponents/utils/eventBus');
+  const eventTypesModule = require('sharedComponents/utils/eventTypes');
+  eventBus = eventBusModule.default || eventBusModule;
+  EVENT_TYPES = eventTypesModule.EVENT_TYPES;
+} catch (error) {
+  // Event bus not available, will use window functions only
+  // This is fine - we'll use window functions as fallback
+}
+
 const FloatingMessageManager = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    // Create global functions for showing messages
+    // Create global functions for showing messages (backward compatibility)
     window.showSuccess = (message) => {
       addMessage(message, 'success');
     };
@@ -21,6 +33,42 @@ const FloatingMessageManager = () => {
     window.showInfo = (message) => {
       addMessage(message, 'info');
     };
+
+    // Listen to event bus for event-based communication (new approach)
+    if (eventBus && EVENT_TYPES) {
+      const unsubscribeNotification = eventBus.on(EVENT_TYPES.NOTIFICATION_RECEIVED, (payload) => {
+        const { type, message } = payload;
+        
+        // Map event types to message types
+        const typeMap = {
+          'success': 'success',
+          'error': 'danger',
+          'warning': 'warning',
+          'info': 'info',
+        };
+        
+        const messageType = typeMap[type] || 'info';
+        addMessage(message, messageType);
+      });
+
+      const unsubscribeError = eventBus.on(EVENT_TYPES.ERROR_OCCURRED, (payload) => {
+        const { message, type } = payload;
+        const errorMessage = message || 'An error occurred';
+        addMessage(errorMessage, 'danger');
+      });
+
+      return () => {
+        // Cleanup global functions
+        delete window.showSuccess;
+        delete window.showError;
+        delete window.showWarning;
+        delete window.showInfo;
+        
+        // Cleanup event listeners
+        if (unsubscribeNotification) unsubscribeNotification();
+        if (unsubscribeError) unsubscribeError();
+      };
+    }
 
     return () => {
       // Cleanup global functions

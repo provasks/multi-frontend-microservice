@@ -7,7 +7,7 @@ module.exports = {
   
   // Module name mapping for microfrontend architecture
   moduleNameMapper: {
-    '^sharedComponents/(.*)$': '<rootDir>/../../shared-components/src/$1',
+    '^sharedComponents/(.*)$': '<rootDir>/src/__mocks__/sharedComponents.js',
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': 'jest-transform-stub'
@@ -23,15 +23,18 @@ module.exports = {
   ],
   
   // Coverage configuration
+  collectCoverage: true,
   collectCoverageFrom: [
     'src/**/*.{js,jsx}',
     '!src/index.js',
-    '!src/reportWebVitals.js',
+    '!src/bootstrap.jsx',
+    '!src/setupTests.js',
     '!src/**/*.test.{js,jsx}',
     '!src/**/*.spec.{js,jsx}',
     '!src/**/__tests__/**',
     '!src/**/__mocks__/**'
   ],
+  coverageDirectory: '<rootDir>/coverage',
   
   // Coverage thresholds
   coverageThreshold: {

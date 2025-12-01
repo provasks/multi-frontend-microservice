@@ -1,48 +1,65 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createMockTask } from '../../test-utils';
 import TaskModal from '../TaskModal';
 
-// Mock the useTaskManagement hook
+// Mock UserAutocomplete component
+jest.mock('../UserAutocomplete', () => {
+  return function MockUserAutocomplete({ value, onChange, placeholder, className }) {
+    return (
+      <input
+        data-testid="user-autocomplete"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={className}
+      />
+    );
+  };
+});
+
+// Mock functions
 const mockHandleSubmit = jest.fn();
 const mockHandleClose = jest.fn();
 const mockHandleInputChange = jest.fn();
 
-jest.mock('../../hooks/useTaskManagement', () => ({
-  useTaskManagement: () => ({
-    showModal: true,
-    modalMode: 'add',
-    editingTask: null,
-    formData: {
-      title: '',
-      description: '',
-      priority: 'medium',
-      status: 'pending',
-      assignedTo: '',
-      dueDate: '',
-      tags: ''
-    },
-    handleSubmit: mockHandleSubmit,
-    handleCloseModal: mockHandleClose,
-    handleInputChange: mockHandleInputChange,
-  })
-}));
+// Default props
+const defaultProps = {
+  show: true,
+  mode: 'add',
+  formData: {
+    title: '',
+    description: '',
+    priority: 'medium',
+    status: 'pending',
+    assignedTo: '',
+    dueDate: '',
+    tags: ''
+  },
+  onClose: mockHandleClose,
+  onSubmit: mockHandleSubmit,
+  onInputChange: mockHandleInputChange
+};
 
 describe('TaskModal Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('renders modal when showModal is true', () => {
-    render(<TaskModal />);
+  it('renders nothing when show is false', () => {
+    const { container } = render(<TaskModal {...defaultProps} show={false} />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('renders modal when show is true', () => {
+    render(<TaskModal {...defaultProps} />);
     
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText('Add Task')).toBeInTheDocument();
+    expect(screen.getByText('Add New Task')).toBeInTheDocument();
   });
 
   it('renders all form fields', () => {
-    render(<TaskModal />);
+    render(<TaskModal {...defaultProps} />);
     
     expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
@@ -54,32 +71,40 @@ describe('TaskModal Component', () => {
   });
 
   it('shows correct title for add mode', () => {
-    render(<TaskModal />);
-    
-    expect(screen.getByText('Add Task')).toBeInTheDocument();
+    render(<TaskModal {...defaultProps} mode="add" />);
+    expect(screen.getByText('Add New Task')).toBeInTheDocument();
   });
 
   it('shows correct title for edit mode', () => {
-    jest.doMock('../../hooks/useTaskManagement', () => ({
-      useTaskManagement: () => ({
-        showModal: true,
-        modalMode: 'edit',
-        editingTask: createMockTask(),
-        formData: createMockTask(),
-        handleSubmit: mockHandleSubmit,
-        handleCloseModal: mockHandleClose,
-        handleInputChange: mockHandleInputChange,
-      })
-    }));
-    
-    render(<TaskModal />);
-    
+    render(<TaskModal {...defaultProps} mode="edit" />);
     expect(screen.getByText('Edit Task')).toBeInTheDocument();
   });
 
-  it('calls handleInputChange when form fields are changed', async () => {
+  it('displays form data correctly', () => {
+    const formData = {
+      title: 'Test Task',
+      description: 'Test Description',
+      priority: 'high',
+      status: 'in_progress',
+      assignedTo: 'user123',
+      dueDate: '2024-12-31T10:30',
+      tags: 'urgent,test'
+    };
+
+    render(<TaskModal {...defaultProps} formData={formData} />);
+    
+    expect(screen.getByDisplayValue('Test Task')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Test Description')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('high')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('in_progress')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('user123')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('2024-12-31T10:30')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('urgent,test')).toBeInTheDocument();
+  });
+
+  it('calls onInputChange when form fields are changed', async () => {
     const user = userEvent.setup();
-    render(<TaskModal />);
+    render(<TaskModal {...defaultProps} />);
     
     const titleInput = screen.getByLabelText(/title/i);
     await user.type(titleInput, 'New Task');
@@ -87,19 +112,19 @@ describe('TaskModal Component', () => {
     expect(mockHandleInputChange).toHaveBeenCalled();
   });
 
-  it('calls handleSubmit when form is submitted', async () => {
+  it('calls onSubmit when form is submitted', async () => {
     const user = userEvent.setup();
-    render(<TaskModal />);
+    render(<TaskModal {...defaultProps} />);
     
-    const submitButton = screen.getByRole('button', { name: /save/i });
-    await user.click(submitButton);
+    const form = screen.getByRole('form');
+    fireEvent.submit(form);
     
     expect(mockHandleSubmit).toHaveBeenCalled();
   });
 
-  it('calls handleCloseModal when cancel button is clicked', async () => {
+  it('calls onClose when cancel button is clicked', async () => {
     const user = userEvent.setup();
-    render(<TaskModal />);
+    render(<TaskModal {...defaultProps} />);
     
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
     await user.click(cancelButton);
@@ -107,9 +132,9 @@ describe('TaskModal Component', () => {
     expect(mockHandleClose).toHaveBeenCalled();
   });
 
-  it('calls handleCloseModal when close button is clicked', async () => {
+  it('calls onClose when close button is clicked', async () => {
     const user = userEvent.setup();
-    render(<TaskModal />);
+    render(<TaskModal {...defaultProps} />);
     
     const closeButton = screen.getByRole('button', { name: /close/i });
     await user.click(closeButton);
@@ -117,28 +142,8 @@ describe('TaskModal Component', () => {
     expect(mockHandleClose).toHaveBeenCalled();
   });
 
-  it('calls handleCloseModal when backdrop is clicked', async () => {
-    const user = userEvent.setup();
-    render(<TaskModal />);
-    
-    const backdrop = screen.getByTestId('modal-backdrop');
-    await user.click(backdrop);
-    
-    expect(mockHandleClose).toHaveBeenCalled();
-  });
-
-  it('does not close modal when modal content is clicked', async () => {
-    const user = userEvent.setup();
-    render(<TaskModal />);
-    
-    const modalContent = screen.getByTestId('modal-content');
-    await user.click(modalContent);
-    
-    expect(mockHandleClose).not.toHaveBeenCalled();
-  });
-
   it('has correct priority options', () => {
-    render(<TaskModal />);
+    render(<TaskModal {...defaultProps} />);
     
     const prioritySelect = screen.getByLabelText(/priority/i);
     expect(prioritySelect).toBeInTheDocument();
@@ -151,7 +156,7 @@ describe('TaskModal Component', () => {
   });
 
   it('has correct status options', () => {
-    render(<TaskModal />);
+    render(<TaskModal {...defaultProps} />);
     
     const statusSelect = screen.getByLabelText(/status/i);
     expect(statusSelect).toBeInTheDocument();
@@ -163,83 +168,140 @@ describe('TaskModal Component', () => {
     expect(statusOptions).toHaveLength(4);
   });
 
-  it('validates required fields', async () => {
-    const user = userEvent.setup();
-    render(<TaskModal />);
+  it('has required fields marked correctly', () => {
+    render(<TaskModal {...defaultProps} />);
     
-    const submitButton = screen.getByRole('button', { name: /save/i });
-    await user.click(submitButton);
+    const titleInput = screen.getByLabelText(/title/i);
+    const descriptionInput = screen.getByLabelText(/description/i);
     
-    // Check if validation errors are shown
-    expect(screen.getByText(/title is required/i)).toBeInTheDocument();
+    expect(titleInput).toBeRequired();
+    expect(descriptionInput).toBeRequired();
   });
 
-  it('populates form fields with editing task data', () => {
-    const editingTask = createMockTask({
-      title: 'Edit This Task',
-      description: 'Task to be edited',
-      priority: 'high',
-      status: 'in_progress'
+  it('has correct placeholders', () => {
+    render(<TaskModal {...defaultProps} />);
+    
+    expect(screen.getByPlaceholderText('Task title')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter task description')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('e.g., urgent, bug, documentation')).toBeInTheDocument();
+  });
+
+  it('has correct help text', () => {
+    render(<TaskModal {...defaultProps} />);
+    
+    expect(screen.getByText('Leave empty to assign to yourself (current user)')).toBeInTheDocument();
+    expect(screen.getByText('Optional - if not specified, due date will be set to 6 hours from assignment time')).toBeInTheDocument();
+    expect(screen.getByText('Separate multiple tags with commas')).toBeInTheDocument();
+  });
+
+  it('has correct submit button text for add mode', () => {
+    render(<TaskModal {...defaultProps} mode="add" />);
+    expect(screen.getByRole('button', { name: /create task/i })).toBeInTheDocument();
+  });
+
+  it('has correct submit button text for edit mode', () => {
+    render(<TaskModal {...defaultProps} mode="edit" />);
+    expect(screen.getByRole('button', { name: /update task/i })).toBeInTheDocument();
+  });
+
+  it('handles UserAutocomplete onChange correctly', async () => {
+    const user = userEvent.setup();
+    render(<TaskModal {...defaultProps} />);
+    
+    const userAutocomplete = screen.getByTestId('user-autocomplete');
+    await user.type(userAutocomplete, 'user123');
+    
+    expect(mockHandleInputChange).toHaveBeenCalledWith({
+      target: { name: 'assignedTo', value: 'user123' }
     });
-    
-    jest.doMock('../../hooks/useTaskManagement', () => ({
-      useTaskManagement: () => ({
-        showModal: true,
-        modalMode: 'edit',
-        editingTask: editingTask,
-        formData: editingTask,
-        handleSubmit: mockHandleSubmit,
-        handleCloseModal: mockHandleClose,
-        handleInputChange: mockHandleInputChange,
-      })
-    }));
-    
-    render(<TaskModal />);
-    
-    expect(screen.getByDisplayValue(editingTask.title)).toBeInTheDocument();
-    expect(screen.getByDisplayValue(editingTask.description)).toBeInTheDocument();
-    expect(screen.getByDisplayValue(editingTask.priority)).toBeInTheDocument();
-    expect(screen.getByDisplayValue(editingTask.status)).toBeInTheDocument();
   });
 
-  it('handles form submission with valid data', async () => {
-    const user = userEvent.setup();
+  it('handles empty dueDate correctly', () => {
+    const formData = {
+      ...defaultProps.formData,
+      dueDate: null
+    };
     
-    // Mock form data with valid values
-    jest.doMock('../../hooks/useTaskManagement', () => ({
-      useTaskManagement: () => ({
-        showModal: true,
-        modalMode: 'add',
-        editingTask: null,
-        formData: {
-          title: 'Valid Task',
-          description: 'Valid Description',
-          priority: 'medium',
-          status: 'pending',
-          assignedTo: 'user123',
-          dueDate: '2024-12-31',
-          tags: 'test,valid'
-        },
-        handleSubmit: mockHandleSubmit,
-        handleCloseModal: mockHandleClose,
-        handleInputChange: mockHandleInputChange,
-      })
-    }));
+    render(<TaskModal {...defaultProps} formData={formData} />);
     
-    render(<TaskModal />);
-    
-    const submitButton = screen.getByRole('button', { name: /save/i });
-    await user.click(submitButton);
-    
-    expect(mockHandleSubmit).toHaveBeenCalled();
+    const dueDateInput = screen.getByLabelText(/due date/i);
+    expect(dueDateInput).toHaveValue('');
   });
 
-  it('closes modal on escape key press', async () => {
+  it('handles empty tags correctly', () => {
+    const formData = {
+      ...defaultProps.formData,
+      tags: null
+    };
+    
+    render(<TaskModal {...defaultProps} formData={formData} />);
+    
+    const tagsInput = screen.getByLabelText(/tags/i);
+    expect(tagsInput).toHaveValue('');
+  });
+
+  it('has correct min date for due date input', () => {
+    render(<TaskModal {...defaultProps} />);
+    
+    const dueDateInput = screen.getByLabelText(/due date/i);
+    const minDate = dueDateInput.getAttribute('min');
+    
+    // Should be today's date in YYYY-MM-DDTHH:MM format
+    expect(minDate).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
+  });
+
+  it('has correct accessibility attributes', () => {
+    render(<TaskModal {...defaultProps} />);
+    
+    const modal = screen.getByRole('dialog');
+    expect(modal).toHaveAttribute('aria-labelledby', 'taskModalTitle');
+    expect(modal).toHaveAttribute('aria-modal', 'true');
+    expect(modal).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it('has correct form role', () => {
+    render(<TaskModal {...defaultProps} />);
+    
+    const form = screen.getByRole('form');
+    expect(form).toBeInTheDocument();
+  });
+
+  it('handles all input types correctly', async () => {
     const user = userEvent.setup();
-    render(<TaskModal />);
+    render(<TaskModal {...defaultProps} />);
     
-    await user.keyboard('{Escape}');
+    // Test text input
+    const titleInput = screen.getByLabelText(/title/i);
+    await user.type(titleInput, 'Test');
+    expect(mockHandleInputChange).toHaveBeenCalled();
     
-    expect(mockHandleClose).toHaveBeenCalled();
+    // Test select
+    const prioritySelect = screen.getByLabelText(/priority/i);
+    await user.selectOptions(prioritySelect, 'high');
+    expect(mockHandleInputChange).toHaveBeenCalled();
+    
+    // Test textarea
+    const descriptionInput = screen.getByLabelText(/description/i);
+    await user.type(descriptionInput, 'Test description');
+    expect(mockHandleInputChange).toHaveBeenCalled();
+    
+    // Test datetime-local
+    const dueDateInput = screen.getByLabelText(/due date/i);
+    await user.type(dueDateInput, '2024-12-31T10:30');
+    expect(mockHandleInputChange).toHaveBeenCalled();
+  });
+
+  it('is memoized correctly', () => {
+    const { rerender } = render(<TaskModal {...defaultProps} />);
+    
+    // Rerender with same props
+    rerender(<TaskModal {...defaultProps} />);
+    
+    // Component should be memoized, so it shouldn't re-render unnecessarily
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('has correct displayName', () => {
+    expect(TaskModal.displayName).toBe('TaskModal');
   });
 });

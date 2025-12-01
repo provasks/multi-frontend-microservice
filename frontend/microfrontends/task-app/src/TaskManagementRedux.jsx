@@ -3,7 +3,7 @@ import TaskTable from './components/TaskTable';
 import TaskModal from './components/TaskModal';
 import SearchBar from 'sharedComponents/SearchBar';
 import LoadingSpinner from 'sharedComponents/LoadingSpinner';
-import './components/TableSkeleton.css';
+import './TaskManagement.css';
 
 // Temporary inline skeleton component
 const TableSkeleton = ({ rows = 5, columns = 4 }) => (
@@ -30,7 +30,7 @@ const TaskManagementRedux = () => {
   let taskActions, authActions, uiActions;
   
   try {
-    const ReduxHooks = require('sharedComponents/ReduxHooks');
+    const ReduxHooks = require('sharedComponents/store/hooks');
     useTasks = ReduxHooks.useTasks;
     useAuth = ReduxHooks.useAuth;
     useUI = ReduxHooks.useUI;

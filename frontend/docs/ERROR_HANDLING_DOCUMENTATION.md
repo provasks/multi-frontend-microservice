@@ -41,7 +41,7 @@ Our Task Management System implements a comprehensive, multi-layered error handl
 ├─────────────────────────────────────────────────────────────┤
 │  🛡️ Error Boundaries (React Component Errors)               │
 ├─────────────────────────────────────────────────────────────┤
-│  🌐 Global Error Handlers (JavaScript Runtime Errors)     │
+│  🌐 Global Error Handlers (JavaScript Runtime Errors)      │
 ├─────────────────────────────────────────────────────────────┤
 │  🔌 API Error Handling (Network & Server Errors)          │
 ├─────────────────────────────────────────────────────────────┤

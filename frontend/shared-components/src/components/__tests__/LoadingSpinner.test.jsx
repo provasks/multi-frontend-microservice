@@ -2,119 +2,145 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import LoadingSpinner from '../LoadingSpinner';
 
-// Mock CSS import
-jest.mock('../LoadingSpinner.css', () => ({}));
-
-describe('LoadingSpinner', () => {
+describe('LoadingSpinner Component', () => {
   it('renders with default props', () => {
     render(<LoadingSpinner />);
-    
     expect(screen.getByText('Loading...')).toBeInTheDocument();
     expect(screen.getByText('Loading...').closest('.loading-container')).toBeInTheDocument();
   });
 
   it('renders with custom text', () => {
     render(<LoadingSpinner text="Please wait..." />);
-    
     expect(screen.getByText('Please wait...')).toBeInTheDocument();
   });
 
   it('renders without text when text is empty', () => {
     render(<LoadingSpinner text="" />);
-    
     expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
+    expect(screen.queryByText('')).not.toBeInTheDocument();
   });
 
   it('renders without text when text is null', () => {
     render(<LoadingSpinner text={null} />);
-    
     expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
   });
 
-  it('renders without text when text is undefined', () => {
-    render(<LoadingSpinner text={undefined} />);
-    
-    // The component still renders "Loading..." as default when text is undefined
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  it('applies default size and variant classes', () => {
+    render(<LoadingSpinner />);
+    const spinner = screen.getByText('Loading...').closest('.loading-spinner').querySelector('.spinner');
+    expect(spinner).toHaveClass('spinner-md', 'spinner-primary');
   });
 
-  it('applies correct size classes', () => {
-    const { rerender } = render(<LoadingSpinner size="small" />);
-    expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass('spinner-sm');
-    
-    rerender(<LoadingSpinner size="default" />);
-    expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass('spinner-md');
-    
-    rerender(<LoadingSpinner size="large" />);
-    expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass('spinner-lg');
+  it('applies custom size classes', () => {
+    render(<LoadingSpinner size="small" />);
+    const spinner = screen.getByText('Loading...').closest('.loading-spinner').querySelector('.spinner');
+    expect(spinner).toHaveClass('spinner-sm');
+
+    render(<LoadingSpinner size="large" />);
+    const largeSpinner = screen.getByText('Loading...').closest('.loading-spinner').querySelector('.spinner');
+    expect(largeSpinner).toHaveClass('spinner-lg');
   });
 
-  it('applies correct variant classes', () => {
-    const { rerender } = render(<LoadingSpinner variant="primary" />);
-    expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass('spinner-primary');
-    
-    rerender(<LoadingSpinner variant="secondary" />);
-    expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass('spinner-secondary');
-    
-    rerender(<LoadingSpinner variant="success" />);
-    expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass('spinner-success');
-    
-    rerender(<LoadingSpinner variant="warning" />);
-    expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass('spinner-warning');
-    
-    rerender(<LoadingSpinner variant="danger" />);
-    expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass('spinner-danger');
-    
-    rerender(<LoadingSpinner variant="info" />);
-    expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass('spinner-info');
-  });
+  it('applies custom variant classes', () => {
+    render(<LoadingSpinner variant="success" />);
+    const spinner = screen.getByText('Loading...').closest('.loading-spinner').querySelector('.spinner');
+    expect(spinner).toHaveClass('spinner-success');
 
-  it('applies fullScreen class when fullScreen is true', () => {
-    render(<LoadingSpinner fullScreen={true} />);
-    
-    expect(screen.getByText('Loading...').closest('.loading-fullscreen')).toBeInTheDocument();
-  });
-
-  it('applies container class when fullScreen is false', () => {
-    render(<LoadingSpinner fullScreen={false} />);
-    
-    expect(screen.getByText('Loading...').closest('.loading-container')).toBeInTheDocument();
+    render(<LoadingSpinner variant="danger" />);
+    const dangerSpinner = screen.getByText('Loading...').closest('.loading-spinner').querySelector('.spinner');
+    expect(dangerSpinner).toHaveClass('spinner-danger');
   });
 
   it('shows dots when showDots is true', () => {
-    render(<LoadingSpinner showDots={true} text="Loading..." />);
-    
+    render(<LoadingSpinner showDots={true} />);
     const dotsContainer = screen.getByText('Loading...').closest('.loading-text').querySelector('.loading-dots');
     expect(dotsContainer).toBeInTheDocument();
+    expect(dotsContainer.children).toHaveLength(3);
   });
 
   it('hides dots when showDots is false', () => {
-    render(<LoadingSpinner showDots={false} text="Loading..." />);
-    
+    render(<LoadingSpinner showDots={false} />);
     const dotsContainer = screen.getByText('Loading...').closest('.loading-text').querySelector('.loading-dots');
     expect(dotsContainer).not.toBeInTheDocument();
   });
 
-  it('renders loading dots with three spans', () => {
-    render(<LoadingSpinner showDots={true} text="Loading..." />);
-    
-    const dotsContainer = screen.getByText('Loading...').closest('.loading-text').querySelector('.loading-dots');
-    const spans = dotsContainer.querySelectorAll('span');
-    expect(spans).toHaveLength(3); // 3 for dots
+  it('uses fullscreen container when fullScreen is true', () => {
+    render(<LoadingSpinner fullScreen={true} />);
+    expect(screen.getByText('Loading...').closest('.loading-fullscreen')).toBeInTheDocument();
   });
 
-  it('applies size classes to text when text is present', () => {
-    render(<LoadingSpinner size="large" text="Loading..." />);
+  it('uses regular container when fullScreen is false', () => {
+    render(<LoadingSpinner fullScreen={false} />);
+    expect(screen.getByText('Loading...').closest('.loading-container')).toBeInTheDocument();
+  });
+
+  it('renders with all props combined', () => {
+    render(
+      <LoadingSpinner
+        size="large"
+        text="Processing..."
+        variant="warning"
+        showDots={false}
+        fullScreen={true}
+      />
+    );
     
-    const textContainer = screen.getByText('Loading...').parentElement;
-    expect(textContainer).toHaveClass('loading-text', 'spinner-lg');
+    expect(screen.getByText('Processing...')).toBeInTheDocument();
+    expect(screen.getByText('Processing...').closest('.loading-fullscreen')).toBeInTheDocument();
+    
+    const spinner = screen.getByText('Processing...').closest('.loading-spinner').querySelector('.spinner');
+    expect(spinner).toHaveClass('spinner-lg', 'spinner-warning');
+    
+    const dotsContainer = screen.getByText('Processing...').closest('.loading-text').querySelector('.loading-dots');
+    expect(dotsContainer).not.toBeInTheDocument();
+  });
+
+  it('handles multiple size variants', () => {
+    const sizes = ['small', 'default', 'large'];
+    
+    sizes.forEach(size => {
+      const { unmount } = render(<LoadingSpinner size={size} />);
+      const spinner = screen.getByText('Loading...').closest('.loading-spinner').querySelector('.spinner');
+      if (size === 'default') {
+        expect(spinner).toHaveClass('spinner-md');
+      } else {
+        expect(spinner).toHaveClass(`spinner-${size === 'small' ? 'sm' : 'lg'}`);
+      }
+      unmount();
+    });
+  });
+
+  it('handles multiple variant types', () => {
+    const variants = ['primary', 'secondary', 'success', 'warning', 'danger', 'info'];
+    
+    variants.forEach(variant => {
+      const { unmount } = render(<LoadingSpinner variant={variant} />);
+      const spinner = screen.getByText('Loading...').closest('.loading-spinner').querySelector('.spinner');
+      expect(spinner).toHaveClass(`spinner-${variant}`);
+      unmount();
+    });
+  });
+
+  it('applies size classes to text element', () => {
+    render(<LoadingSpinner size="small" />);
+    const textElement = screen.getByText('Loading...').closest('.loading-text');
+    expect(textElement).toHaveClass('spinner-sm');
+
+    render(<LoadingSpinner size="large" />);
+    const largeTextElement = screen.getByText('Loading...').closest('.loading-text');
+    expect(largeTextElement).toHaveClass('spinner-lg');
   });
 
   it('renders spinner ring element', () => {
     render(<LoadingSpinner />);
-    
-    const spinnerRing = screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner-ring');
+    const spinnerRing = screen.getByText('Loading...').closest('.loading-spinner').querySelector('.spinner-ring');
     expect(spinnerRing).toBeInTheDocument();
+  });
+
+  it('renders loading text content', () => {
+    render(<LoadingSpinner text="Custom text" />);
+    const textContent = screen.getByText('Custom text');
+    expect(textContent).toHaveClass('loading-text-content');
   });
 
   it('has correct display name', () => {
@@ -125,46 +151,24 @@ describe('LoadingSpinner', () => {
     expect(LoadingSpinner.$$typeof).toBe(Symbol.for('react.memo'));
   });
 
-  it('handles all size variants correctly', () => {
-    const sizes = ['small', 'default', 'large'];
-    
-    sizes.forEach(size => {
-      const { unmount } = render(<LoadingSpinner size={size} />);
-      const expectedClass = size === 'default' ? 'spinner-md' : size === 'small' ? 'spinner-sm' : 'spinner-lg';
-      expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass(expectedClass);
-      unmount();
-    });
+  it('renders with empty text and no dots', () => {
+    render(<LoadingSpinner text="" showDots={false} />);
+    const container = screen.getByText('').closest('.loading-container');
+    expect(container).toBeInTheDocument();
+    expect(container.querySelector('.loading-text')).not.toBeInTheDocument();
   });
 
-  it('handles all variant variants correctly', () => {
-    const variants = ['primary', 'secondary', 'success', 'warning', 'danger', 'info'];
-    
-    variants.forEach(variant => {
-      const { unmount } = render(<LoadingSpinner variant={variant} />);
-      expect(screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner')).toHaveClass(`spinner-${variant}`);
-      unmount();
-    });
+  it('renders with text but no dots', () => {
+    render(<LoadingSpinner text="Loading" showDots={false} />);
+    expect(screen.getByText('Loading')).toBeInTheDocument();
+    const dotsContainer = screen.getByText('Loading').closest('.loading-text').querySelector('.loading-dots');
+    expect(dotsContainer).not.toBeInTheDocument();
   });
 
-  it('combines size and variant classes correctly', () => {
-    render(<LoadingSpinner size="large" variant="success" />);
-    
-    const spinner = screen.getByText('Loading...').closest('.loading-container').querySelector('.spinner');
-    expect(spinner).toHaveClass('spinner-lg', 'spinner-success');
-  });
-
-  it('renders with complex text content', () => {
-    const complexText = 'Loading data from server...';
-    render(<LoadingSpinner text={complexText} />);
-    
-    expect(screen.getByText(complexText)).toBeInTheDocument();
-  });
-
-  it('handles boolean props correctly', () => {
-    const { rerender } = render(<LoadingSpinner showDots={true} fullScreen={true} />);
-    expect(screen.getByText('Loading...').closest('.loading-fullscreen')).toBeInTheDocument();
-    
-    rerender(<LoadingSpinner showDots={false} fullScreen={false} />);
-    expect(screen.getByText('Loading...').closest('.loading-container')).toBeInTheDocument();
+  it('renders with dots but no text', () => {
+    render(<LoadingSpinner text="" showDots={true} />);
+    const container = screen.getByText('').closest('.loading-container');
+    expect(container).toBeInTheDocument();
+    expect(container.querySelector('.loading-text')).not.toBeInTheDocument();
   });
 });

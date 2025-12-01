@@ -44,3 +44,22 @@ global.console = {
   warn: jest.fn(),
   error: jest.fn(),
 };
+
+// Mock shared components globally
+global.mockSharedComponents = {
+  API_CONFIG: {
+    BASE_URLS: {
+      AUTH: 'http://localhost:3001/api',
+      USERS: 'http://localhost:3001/api',
+      TASKS: 'http://localhost:3002/api',
+      NOTIFICATIONS: 'http://localhost:3003/api',
+      API_GATEWAY: 'http://localhost:3000/api'
+    }
+  },
+  useAuth: jest.fn(() => ({
+    user: { id: '1', name: 'Test User', role: 'user' },
+    isAuthenticated: true,
+    login: jest.fn(),
+    logout: jest.fn()
+  }))
+};

@@ -32,6 +32,10 @@ global.ResizeObserver = class ResizeObserver {
   unobserve() {}
 };
 
+// Mock TextEncoder and TextDecoder for Node.js environment
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 // Mock console methods to reduce noise in tests
 const originalError = console.error;
 const originalWarn = console.warn;

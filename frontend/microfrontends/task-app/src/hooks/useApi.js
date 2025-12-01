@@ -63,7 +63,14 @@ export const useApi = (url, options = {}, enableCache = true, cacheTimeout = 300
     } finally {
       setLoading(false);
     }
-  }, [url, JSON.stringify(options), getCachedData, setCachedData]);
+  }, [url, (() => {
+    try {
+      return JSON.stringify(options);
+    } catch (error) {
+      // Handle circular references by returning a stable string
+      return 'circular-reference';
+    }
+  })(), getCachedData, setCachedData]);
 
   useEffect(() => {
     fetchData();

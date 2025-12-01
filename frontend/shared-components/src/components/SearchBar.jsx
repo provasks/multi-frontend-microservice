@@ -27,15 +27,15 @@ const SearchBar = React.memo(({
     <div className="row mb-3">
       <div className="col-md-6">
         <div className="input-group">
-          <span className="input-group-text">
-            {searchLoading ? (
-              <div className="spinner-border spinner-border-sm" role="status">
-                <span className="visually-hidden">Searching...</span>
-              </div>
-            ) : (
-              <i className="fas fa-search"></i>
-            )}
-          </span>
+                 <span className="input-group-text">
+                   {searchLoading ? (
+                     <div className="spinner-border spinner-border-sm" role="status">
+                       <span className="visually-hidden">Searching...</span>
+                     </div>
+                   ) : (
+                     <i className="fas fa-search" data-testid="search-icon"></i>
+                   )}
+                 </span>
           <input
             ref={inputRef}
             type="text"

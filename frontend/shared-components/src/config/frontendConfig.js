@@ -353,7 +353,7 @@ const SHARED_COMPONENTS_CONFIG = {
     },
     
     DEVELOPMENT: {
-      TIMEOUT: 20 * 60 * 1000, // 2 minutes (same as default)
+      TIMEOUT: 5 * 60 * 1000, // 2 minutes (same as default)
       WARNING_TIME: 30 * 1000 // 30 seconds (same as default)
     },
     

@@ -40,51 +40,8 @@ module.exports = {
     '<rootDir>/microfrontends/notification-app/src/**/*.{test,spec}.{js,jsx}'
   ],
   
-  // Coverage configuration - collect from all frontend components
-  collectCoverageFrom: [
-    // Shell app
-    'shell-app/src/**/*.{js,jsx}',
-    '!shell-app/src/index.jsx',
-    '!shell-app/src/bootstrap.jsx',
-    '!shell-app/src/**/*.test.{js,jsx}',
-    '!shell-app/src/**/*.spec.{js,jsx}',
-    '!shell-app/src/**/__tests__/**',
-    
-    // Shared components
-    'shared-components/src/**/*.{js,jsx}',
-    '!shared-components/src/index.js',
-    '!shared-components/src/**/*.test.{js,jsx}',
-    '!shared-components/src/**/*.spec.{js,jsx}',
-    '!shared-components/src/**/__tests__/**',
-    
-    // Task app
-    'microfrontends/task-app/src/**/*.{js,jsx}',
-    '!microfrontends/task-app/src/index.jsx',
-    '!microfrontends/task-app/src/bootstrap.jsx',
-    '!microfrontends/task-app/src/setupTests.js',
-    '!microfrontends/task-app/src/**/*.test.{js,jsx}',
-    '!microfrontends/task-app/src/**/*.spec.{js,jsx}',
-    '!microfrontends/task-app/src/**/__tests__/**',
-    '!microfrontends/task-app/src/**/__mocks__/**',
-    
-    // User app
-    'microfrontends/user-app/src/**/*.{js,jsx}',
-    '!microfrontends/user-app/src/index.jsx',
-    '!microfrontends/user-app/src/bootstrap.jsx',
-    '!microfrontends/user-app/src/setupTests.js',
-    '!microfrontends/user-app/src/**/*.test.{js,jsx}',
-    '!microfrontends/user-app/src/**/*.spec.{js,jsx}',
-    '!microfrontends/user-app/src/**/__tests__/**',
-    
-    // Notification app
-    'microfrontends/notification-app/src/**/*.{js,jsx}',
-    '!microfrontends/notification-app/src/index.jsx',
-    '!microfrontends/notification-app/src/bootstrap.jsx',
-    '!microfrontends/notification-app/src/setupTests.js',
-    '!microfrontends/notification-app/src/**/*.test.{js,jsx}',
-    '!microfrontends/notification-app/src/**/*.spec.{js,jsx}',
-    '!microfrontends/notification-app/src/**/__tests__/**'
-  ],
+  // Coverage configuration - DISABLED at root level to prevent duplication
+  collectCoverage: false,
   
   // Coverage thresholds for the entire frontend
   coverageThreshold: {
@@ -98,9 +55,6 @@ module.exports = {
   
   // Coverage reporters
   coverageReporters: ['text', 'lcov', 'html', 'json', 'clover'],
-  
-  // Coverage directory
-  coverageDirectory: '<rootDir>/coverage',
   
   // Transform configuration
   transform: {
@@ -143,7 +97,8 @@ module.exports = {
         '!shell-app/src/**/*.test.{js,jsx}',
         '!shell-app/src/**/*.spec.{js,jsx}',
         '!shell-app/src/**/__tests__/**'
-      ]
+      ],
+      coverageDirectory: '<rootDir>/shell-app/coverage'
     },
     {
       displayName: 'shared-components',
@@ -163,7 +118,8 @@ module.exports = {
         '!shared-components/src/**/*.test.{js,jsx}',
         '!shared-components/src/**/*.spec.{js,jsx}',
         '!shared-components/src/**/__tests__/**'
-      ]
+      ],
+      coverageDirectory: '<rootDir>/shared-components/coverage'
     },
     {
       displayName: 'task-app',
@@ -186,7 +142,8 @@ module.exports = {
         '!microfrontends/task-app/src/**/*.spec.{js,jsx}',
         '!microfrontends/task-app/src/**/__tests__/**',
         '!microfrontends/task-app/src/**/__mocks__/**'
-      ]
+      ],
+      coverageDirectory: '<rootDir>/microfrontends/task-app/coverage'
     },
     {
       displayName: 'user-app',
@@ -208,7 +165,8 @@ module.exports = {
         '!microfrontends/user-app/src/**/*.test.{js,jsx}',
         '!microfrontends/user-app/src/**/*.spec.{js,jsx}',
         '!microfrontends/user-app/src/**/__tests__/**'
-      ]
+      ],
+      coverageDirectory: '<rootDir>/microfrontends/user-app/coverage'
     },
     {
       displayName: 'notification-app',
@@ -230,7 +188,8 @@ module.exports = {
         '!microfrontends/notification-app/src/**/*.test.{js,jsx}',
         '!microfrontends/notification-app/src/**/*.spec.{js,jsx}',
         '!microfrontends/notification-app/src/**/__tests__/**'
-      ]
+      ],
+      coverageDirectory: '<rootDir>/microfrontends/notification-app/coverage'
     }
   ]
 };

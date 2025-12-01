@@ -3,17 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import NotificationItem from '../NotificationItem';
 
-// Mock the constants
-jest.mock('sharedComponents/constants', () => ({
-  NOTIFICATION_CONSTANTS: {
-    TYPE_CONFIG: {
-      info: { label: 'Info', bgClass: 'type-info' },
-      warning: { label: 'Warning', bgClass: 'type-warning' },
-      error: { label: 'Error', bgClass: 'type-error' },
-      success: { label: 'Success', bgClass: 'type-success' }
-    }
-  }
-}));
+// Mock the constants - now handled in setupTests.js
 
 describe('NotificationItem Component', () => {
   const mockNotification = {

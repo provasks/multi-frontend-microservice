@@ -3,16 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UserItem from '../UserItem';
 
-// Mock the constants
-jest.mock('sharedComponents/constants', () => ({
-  USER_CONSTANTS: {
-    ROLE_CONFIG: {
-      admin: { label: 'Admin', bgClass: 'role-admin' },
-      user: { label: 'User', bgClass: 'role-user' },
-      manager: { label: 'Manager', bgClass: 'role-manager' }
-    }
-  }
-}));
+// Mock the constants - now handled in setupTests.js
 
 describe('UserItem Component', () => {
   const mockUser = {

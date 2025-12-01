@@ -15,7 +15,8 @@ class ErrorBoundary extends React.Component {
     console.error('Error Info:', errorInfo);
     
     if (window.showError) {
-      window.showError(`Task Management error: ${error.message}`);
+      const errorMessage = error?.message || (error === null ? 'null' : error) || 'Unknown error';
+      window.showError(`Task Management error: ${errorMessage}`);
     }
   }
 

@@ -18,7 +18,7 @@ const Modal = React.memo(({
   };
 
   return (
-    <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+    <div className="modal show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
       <div className={`modal-dialog ${sizeClasses[size]}`}>
         <div className="modal-content">
           <div className="modal-header">
@@ -27,6 +27,7 @@ const Modal = React.memo(({
               type="button" 
               className="btn-close" 
               onClick={onClose}
+              aria-label="Close"
             ></button>
           </div>
           <div className="modal-body">

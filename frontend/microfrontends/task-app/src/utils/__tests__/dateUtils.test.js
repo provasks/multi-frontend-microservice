@@ -1,59 +1,17 @@
-// Mock date utilities for testing
-const formatDate = (date) => {
-  if (!date) return '';
-  const d = new Date(date);
-  return d.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  });
-};
-
-const formatDateTime = (date) => {
-  if (!date) return '';
-  const d = new Date(date);
-  return d.toLocaleString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
-
-const isDateInPast = (date) => {
-  if (!date) return false;
-  return new Date(date) < new Date();
-};
-
-const isDateToday = (date) => {
-  if (!date) return false;
-  const today = new Date();
-  const targetDate = new Date(date);
-  return today.toDateString() === targetDate.toDateString();
-};
-
-const addDays = (date, days) => {
-  const result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-};
-
-const getDaysUntilDue = (dueDate) => {
-  if (!dueDate) return null;
-  const today = new Date();
-  const due = new Date(dueDate);
-  const diffTime = due - today;
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays;
-};
+import {
+  formatDate,
+  formatDateTime,
+  isDateInPast,
+  isDateToday,
+  addDays,
+  getDaysUntilDue
+} from '../dateUtils';
 
 describe('Date Utilities', () => {
   describe('formatDate', () => {
     it('formats date correctly', () => {
       const date = '2024-12-31T23:59:59.000Z';
       const formatted = formatDate(date);
-      // The date might be formatted differently based on timezone
       expect(formatted).toMatch(/\d{2}\/\d{2}\/\d{4}/);
     });
 
@@ -68,6 +26,11 @@ describe('Date Utilities', () => {
     it('handles empty string', () => {
       expect(formatDate('')).toBe('');
     });
+
+    it('handles invalid date string', () => {
+      const formatted = formatDate('invalid-date');
+      expect(formatted).toBe('Invalid Date');
+    });
   });
 
   describe('formatDateTime', () => {
@@ -80,44 +43,70 @@ describe('Date Utilities', () => {
     it('handles null input', () => {
       expect(formatDateTime(null)).toBe('');
     });
+
+    it('handles undefined input', () => {
+      expect(formatDateTime(undefined)).toBe('');
+    });
+
+    it('handles empty string', () => {
+      expect(formatDateTime('')).toBe('');
+    });
   });
 
   describe('isDateInPast', () => {
     it('returns true for past dates', () => {
-      const pastDate = '2020-01-01T00:00:00.000Z';
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 1);
       expect(isDateInPast(pastDate)).toBe(true);
     });
 
     it('returns false for future dates', () => {
-      const futureDate = '2030-01-01T00:00:00.000Z';
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 1);
       expect(isDateInPast(futureDate)).toBe(false);
     });
 
-    it('handles null input', () => {
+    it('returns false for null input', () => {
       expect(isDateInPast(null)).toBe(false);
+    });
+
+    it('returns false for undefined input', () => {
+      expect(isDateInPast(undefined)).toBe(false);
+    });
+
+    it('returns false for empty string', () => {
+      expect(isDateInPast('')).toBe(false);
     });
   });
 
   describe('isDateToday', () => {
     it('returns true for today', () => {
-      const today = new Date().toISOString();
+      const today = new Date();
       expect(isDateToday(today)).toBe(true);
     });
 
     it('returns false for yesterday', () => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      expect(isDateToday(yesterday.toISOString())).toBe(false);
+      expect(isDateToday(yesterday)).toBe(false);
     });
 
     it('returns false for tomorrow', () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      expect(isDateToday(tomorrow.toISOString())).toBe(false);
+      expect(isDateToday(tomorrow)).toBe(false);
     });
 
-    it('handles null input', () => {
+    it('returns false for null input', () => {
       expect(isDateToday(null)).toBe(false);
+    });
+
+    it('returns false for undefined input', () => {
+      expect(isDateToday(undefined)).toBe(false);
+    });
+
+    it('returns false for empty string', () => {
+      expect(isDateToday('')).toBe(false);
     });
   });
 
@@ -142,30 +131,39 @@ describe('Date Utilities', () => {
   });
 
   describe('getDaysUntilDue', () => {
-    it('calculates days until due correctly', () => {
-      const today = new Date();
-      const dueDate = new Date(today);
-      dueDate.setDate(dueDate.getDate() + 5);
-      
-      const days = getDaysUntilDue(dueDate.toISOString());
+    it('calculates days correctly for future dates', () => {
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 5);
+      const days = getDaysUntilDue(futureDate);
       expect(days).toBe(5);
     });
 
-    it('returns negative number for past dates', () => {
-      const today = new Date();
-      const dueDate = new Date(today);
-      dueDate.setDate(dueDate.getDate() - 3);
-      
-      const days = getDaysUntilDue(dueDate.toISOString());
+    it('calculates negative days for past dates', () => {
+      const pastDate = new Date();
+      pastDate.setDate(pastDate.getDate() - 3);
+      const days = getDaysUntilDue(pastDate);
       expect(days).toBe(-3);
     });
 
-    it('handles null input', () => {
+    it('returns null for null input', () => {
       expect(getDaysUntilDue(null)).toBe(null);
     });
 
-    it('handles undefined input', () => {
+    it('returns null for undefined input', () => {
       expect(getDaysUntilDue(undefined)).toBe(null);
+    });
+
+    it('returns null for empty string', () => {
+      expect(getDaysUntilDue('')).toBe(null);
+    });
+
+    it('calculates zero days for today', () => {
+      const today = new Date();
+      const dueDate = new Date(today);
+      dueDate.setHours(23, 59, 59, 999);
+      const days = getDaysUntilDue(dueDate.toISOString());
+      expect(days).toBeGreaterThanOrEqual(0);
+      expect(days).toBeLessThanOrEqual(1);
     });
   });
 });

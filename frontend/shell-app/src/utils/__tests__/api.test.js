@@ -56,7 +56,7 @@ window.location = {
   href: 'http://localhost:4000/dashboard'
 };
 
-describe.skip('API Utils', () => {
+describe('API Utils', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSessionStorage.clear();

@@ -71,7 +71,7 @@ const DATABASE_CONFIG = {
 const AUTH_CONFIG = {
   // JWT Configuration
   JWT: {
-    SECRET: process.env.JWT_SECRET || 'your-secret-key',
+    SECRET: process.env.JWT_SECRET,
     EXPIRES_IN: '24h',
     REFRESH_EXPIRES_IN: '7d',
     ALGORITHM: 'HS256'

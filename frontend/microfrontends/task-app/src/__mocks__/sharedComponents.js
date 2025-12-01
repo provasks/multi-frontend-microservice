@@ -1,4 +1,4 @@
-// Mock for sharedComponents module
+// Simplified mock for sharedComponents module
 const React = require('react');
 
 // Mock constants
@@ -87,12 +87,6 @@ const useUI = jest.fn(() => ({
   showNotification: jest.fn(),
 }));
 
-const ReduxHooks = {
-  useTasks,
-  useAuth,
-  useUI,
-};
-
 // Mock components
 const SearchBar = jest.fn(({ searchTerm, onSearchChange, onClearSearch, totalCount, filteredCount, searchLoading, showCount = true }) => 
   React.createElement('div', { 'data-testid': 'search-bar' },
@@ -107,14 +101,6 @@ const SearchBar = jest.fn(({ searchTerm, onSearchChange, onClearSearch, totalCou
 );
 
 const LoadingSpinner = jest.fn(() => React.createElement('div', { 'data-testid': 'loading-spinner' }, 'Loading...'));
-
-const ErrorState = jest.fn(() => React.createElement('div', { 'data-testid': 'error-state' }, 'Error'));
-
-const Modal = jest.fn(() => React.createElement('div', { 'data-testid': 'modal' }, 'Modal'));
-
-const Button = jest.fn(() => React.createElement('button', { 'data-testid': 'button' }, 'Button'));
-
-const Badge = jest.fn(() => React.createElement('span', { 'data-testid': 'badge' }, 'Badge'));
 
 // Export all mocks
 module.exports = {
@@ -134,53 +120,8 @@ module.exports = {
   // Redux Hooks
   useTasks,
   useUI,
-  ReduxHooks,
   
   // Components
   SearchBar,
   LoadingSpinner,
-  ErrorState,
-  Modal,
-  Button,
-  Badge,
 };
-
-// Handle specific imports
-if (module.parent && module.parent.filename) {
-  const filename = module.parent.filename;
-  
-  // If importing constants specifically
-  if (filename.includes('constants') || filename.includes('taskAppConfig') || filename.includes('userAppConfig')) {
-    module.exports = {
-      TASK_CONSTANTS,
-      USER_CONSTANTS,
-      NOTIFICATION_CONSTANTS,
-      FRONTEND_MESSAGES,
-    };
-  }
-  
-  // If importing useAuth specifically
-  if (filename.includes('useAuth')) {
-    module.exports = { useAuth };
-  }
-  
-  // If importing unifiedApiClient specifically
-  if (filename.includes('unifiedApiClient')) {
-    module.exports = { apiHelpers, unifiedApiClient };
-  }
-  
-  // If importing ReduxHooks specifically
-  if (filename.includes('ReduxHooks')) {
-    module.exports = ReduxHooks;
-  }
-  
-  // If importing SearchBar specifically
-  if (filename.includes('SearchBar')) {
-    module.exports = SearchBar;
-  }
-  
-  // If importing LoadingSpinner specifically
-  if (filename.includes('LoadingSpinner')) {
-    module.exports = LoadingSpinner;
-  }
-}

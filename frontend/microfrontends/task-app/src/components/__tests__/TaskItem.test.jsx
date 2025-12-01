@@ -3,23 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TaskItem from '../TaskItem';
 
-// Mock the shared constants
-jest.mock('sharedComponents/constants', () => ({
-  TASK_CONSTANTS: {
-    PRIORITY: {
-      LOW: 'low',
-      MEDIUM: 'medium',
-      HIGH: 'high',
-      URGENT: 'urgent'
-    },
-    STATUS: {
-      PENDING: 'pending',
-      IN_PROGRESS: 'in_progress',
-      COMPLETED: 'completed',
-      CANCELLED: 'cancelled'
-    }
-  }
-}));
+// Mock the shared constants - now handled in setupTests.js
 
 describe('TaskItem Component', () => {
   const mockOnEdit = jest.fn();
@@ -348,5 +332,229 @@ describe('TaskItem Component', () => {
     expect(screen.getByText(specialCharTask.title)).toBeInTheDocument();
     expect(screen.getByText(specialCharTask.description)).toBeInTheDocument();
     expect(screen.getByText('Unknown User')).toBeInTheDocument();
+  });
+
+  it('handles task with missing _id', () => {
+    const taskWithoutId = { ...mockTask };
+    delete taskWithoutId._id;
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithoutId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with empty string _id', () => {
+    const taskWithEmptyId = { ...mockTask, _id: '' };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithEmptyId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with null _id', () => {
+    const taskWithNullId = { ...mockTask, _id: null };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithNullId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with undefined _id', () => {
+    const taskWithUndefinedId = { ...mockTask, _id: undefined };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithUndefinedId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with numeric _id', () => {
+    const taskWithNumericId = { ...mockTask, _id: 123 };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithNumericId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with boolean _id', () => {
+    const taskWithBooleanId = { ...mockTask, _id: true };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithBooleanId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with object _id', () => {
+    const taskWithObjectId = { ...mockTask, _id: { id: '123' } };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithObjectId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with array _id', () => {
+    const taskWithArrayId = { ...mockTask, _id: ['123'] };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithArrayId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with function _id', () => {
+    const taskWithFunctionId = { ...mockTask, _id: () => '123' };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithFunctionId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with symbol _id', () => {
+    const taskWithSymbolId = { ...mockTask, _id: Symbol('id') };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithSymbolId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with circular reference _id', () => {
+    const circularId = {};
+    circularId.self = circularId;
+    const taskWithCircularId = { ...mockTask, _id: circularId };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithCircularId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with getter _id', () => {
+    const taskWithGetterId = { 
+      ...mockTask, 
+      get _id() { return '123'; } 
+    };
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithGetterId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with non-enumerable _id', () => {
+    const taskWithNonEnumerableId = { ...mockTask };
+    Object.defineProperty(taskWithNonEnumerableId, '_id', {
+      value: '123',
+      enumerable: false
+    });
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithNonEnumerableId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with prototype _id', () => {
+    const taskWithPrototypeId = Object.create({ _id: '123' });
+    Object.assign(taskWithPrototypeId, mockTask);
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithPrototypeId} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
+  });
+
+  it('handles task with symbol _id property', () => {
+    const idSymbol = Symbol('id');
+    const taskWithSymbolIdProperty = { ...mockTask };
+    taskWithSymbolIdProperty[idSymbol] = '123';
+    delete taskWithSymbolIdProperty._id;
+    
+    render(
+      <table>
+        <tbody>
+          <TaskItem task={taskWithSymbolIdProperty} onEdit={mockOnEdit} onDelete={mockOnDelete} />
+        </tbody>
+      </table>
+    );
+
+    expect(screen.getByText('Test Task')).toBeInTheDocument();
   });
 });
