@@ -251,9 +251,7 @@ const AuthenticatedApp = ({ onLogout }) => {
                 <i className="fas fa-user me-2"></i>
                 User
               </button>
-              <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="userDropdown">
-                <li><h6 className="dropdown-header text-light"><i className="fas fa-user me-2"></i>User Menu</h6></li>
-                <li><hr className="dropdown-divider" /></li>
+              <ul className="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="userDropdown" style={{ right: 0, left: 'auto' }}>
                 {shellConfig.SHELL_CONFIG.SHELL.NAVIGATION.USER_MENU.map((menuItem) => (
                   <li key={menuItem.id}>
                     <button

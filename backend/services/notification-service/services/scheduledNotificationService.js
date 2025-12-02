@@ -9,8 +9,6 @@ const scheduledNotificationService = {
   // Check for tasks due soon (within 24 hours)
   async checkTasksDueSoon() {
     try {
-      console.log('Checking for tasks due soon...');
-      
       // This would typically query the task service for tasks due soon
       // For now, we'll create a placeholder implementation
       
@@ -18,8 +16,6 @@ const scheduledNotificationService = {
       // 1. Query the task service for tasks due within 24 hours
       // 2. Create notifications for each task's assigned user
       // 3. Handle errors gracefully
-      
-      console.log('Due soon check completed');
     } catch (error) {
       console.error('Error checking tasks due soon:', error);
     }
@@ -28,8 +24,6 @@ const scheduledNotificationService = {
   // Check for overdue tasks
   async checkOverdueTasks() {
     try {
-      console.log('Checking for overdue tasks...');
-      
       // Query task service for overdue tasks
       const response = await axios.get(`${TASK_SERVICE_URL}/api/tasks/overdue`, {
         headers: {
@@ -38,7 +32,6 @@ const scheduledNotificationService = {
       });
       
       const overdueTasks = response.data.tasks || [];
-      console.log(`Found ${overdueTasks.length} overdue tasks`);
       
       // Create notifications for each overdue task
       for (const task of overdueTasks) {
@@ -63,17 +56,11 @@ const scheduledNotificationService = {
               metadata: { taskTitle: task.title },
               isRead: false
             });
-            
-            console.log(`Created overdue notification for task: ${task.title} (${task._id})`);
-          } else {
-            console.log(`Overdue notification already exists for task: ${task.title} (${task._id})`);
           }
         } catch (taskError) {
           console.error(`Error creating notification for task ${task._id}:`, taskError);
         }
       }
-      
-      console.log('Overdue check completed');
     } catch (error) {
       console.error('Error checking overdue tasks:', error);
     }
@@ -90,14 +77,11 @@ const scheduledNotificationService = {
     cron.schedule('0 */6 * * *', () => {
       this.checkOverdueTasks();
     });
-
-    console.log('Scheduled notifications started');
   },
 
   // Stop scheduled notifications
   stopScheduledNotifications() {
     cron.destroy();
-    console.log('Scheduled notifications stopped');
   }
 };
 

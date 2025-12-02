@@ -51,18 +51,13 @@ const App = () => {
     window.addEventListener('message', handleIdleTimeoutLogout);
     
     const handleGlobalError = (event) => {
-      // Global error handler triggered
-      console.log('addEventListener error triggered:', event);
-      
       // Check if this is a React component error - let ErrorBoundary handle it
       if (event.error && event.error.message && event.error.message.includes('Component Error')) {
-        // Ignoring React component error - ErrorBoundary should handle this
         return; // Don't interfere with ErrorBoundary
       }
       
       // Don't handle login form errors - let the form handle them
       if (event.error && event.error.message && event.error.message.includes('Login')) {
-        // Ignoring login form error - form should handle this
         return;
       }
       
@@ -87,12 +82,9 @@ const App = () => {
         }
       }
       
-      console.log('About to show error message via addEventListener:', userMessage);
       if (window.showError) {
         window.showError(userMessage);
-        console.log('Error message shown via addEventListener');
       } else {
-        console.error('window.showError is not available in addEventListener!');
         alert(userMessage);
       }
     };
@@ -172,12 +164,9 @@ const App = () => {
         }
       }
       
-      console.log('About to show error message:', userMessage);
       if (window.showError) {
         window.showError(userMessage);
-        console.log('Error message shown via window.showError');
       } else {
-        console.error('window.showError is not available in window.onerror!');
         alert(userMessage);
       }
       

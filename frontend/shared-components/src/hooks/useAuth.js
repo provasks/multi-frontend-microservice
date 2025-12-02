@@ -130,20 +130,8 @@ export const useAuth = () => {
   }, [checkAuth]);
 
   const login = useCallback(async (emailParam, passwordParam) => {
-    // Use different parameter names to avoid any potential conflicts
-    console.log('login function called with:', { 
-      emailParam: typeof emailParam, 
-      passwordParam: typeof passwordParam,
-      emailValue: emailParam,
-      passwordExists: !!passwordParam
-    });
-    
     // Validate parameters before proceeding
     if (!emailParam || !passwordParam) {
-      console.error('Login called with missing parameters:', { 
-        email: !!emailParam, 
-        password: !!passwordParam 
-      });
       throw new Error('Email and password are required');
     }
     
@@ -164,21 +152,12 @@ export const useAuth = () => {
         password: passwordToSend
       };
       
-      console.log('Login payload created:', { 
-        email: loginPayload.email, 
-        passwordLength: loginPayload.password?.length 
-      });
-      
       // Make login request - cookie is set automatically by backend
-      console.log('Making login API call...');
       const response = await authApi.post('/auth/login', loginPayload, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
-      
-      console.log('Login API response:', response);
-      console.log('Login response data:', response.data);
       
       const result = {
         isAuthenticated: true,
@@ -197,16 +176,9 @@ export const useAuth = () => {
       
       setIsAuthenticated(true);
       setUser(response.data.user);
-      console.log('Login successful, user set:', response.data.user);
       return response.data;
     } catch (error) {
-      console.error('Login error in useAuth:', error);
-      if (error.response?.data) {
-        console.error('Error response data:', JSON.stringify(error.response.data, null, 2));
-        if (error.response.data.errors) {
-          console.error('Validation errors:', error.response.data.errors);
-        }
-      }
+      console.error('Login error:', error.response?.data || error.message);
       setIsAuthenticated(false);
       setUser(null);
       throw error;

@@ -8,8 +8,6 @@ class TaskService {
    */
   async getOverdueTasks() {
     try {
-      console.log('Querying overdue tasks...');
-      
       const now = new Date();
       const overdueTasks = await Task.find({
         dueDate: { $lt: now },
@@ -18,7 +16,6 @@ class TaskService {
         .populate('createdBy', 'firstName lastName username email')
         .sort({ dueDate: 1 }); // Sort by due date (oldest first)
       
-      console.log(`Found ${overdueTasks.length} overdue tasks`);
       return overdueTasks;
     } catch (error) {
       console.error('Error in getOverdueTasks:', error);
@@ -152,28 +149,12 @@ class TaskService {
 
       // Create notification for task assignment (only if assigned to someone other than creator)
       if (assignedTo !== createdBy) {
-        console.log('Task assigned to different user, creating notification:', {
-          taskId: task._id,
-          taskTitle: title,
-          assignedTo,
-          createdBy,
-          isDifferentUser: assignedTo !== createdBy
-        });
-        
         try {
           await notificationService.notifyTaskAssignment(assignedTo, task._id, title, authToken);
-          console.log('Task assignment notification created successfully');
         } catch (error) {
           console.error('Failed to create task assignment notification:', error);
           // Don't fail the task creation if notification fails
         }
-      } else {
-        console.log('Task assigned to creator, no notification needed:', {
-          taskId: task._id,
-          taskTitle: title,
-          assignedTo,
-          createdBy
-        });
       }
 
       // Enrich with user data
@@ -208,35 +189,18 @@ class TaskService {
 
       // Create notification if status changed
       if (updateData.status && updateData.status !== oldStatus) {
-        console.log('Task status changed, creating notification:', {
-          taskId: task._id,
-          taskTitle: task.title,
-          assignedTo: task.assignedTo,
-          oldStatus,
-          newStatus: updateData.status,
-          hasAuthToken: !!authToken
-        });
-        
         try {
           await notificationService.notifyTaskStatusChange(
             task.assignedTo, 
             task._id, 
             task.title, 
-            oldStatus, // oldStatus
-            updateData.status, // newStatus
+            oldStatus,
+            updateData.status,
             authToken
           );
-          console.log('Notification created successfully');
         } catch (error) {
           console.error('Failed to create status change notification:', error);
         }
-      } else {
-        console.log('No status change detected:', {
-          hasStatusUpdate: !!updateData.status,
-          oldStatus,
-          newStatus: updateData.status,
-          statusChanged: updateData.status !== oldStatus
-        });
       }
 
       // Enrich with user data

@@ -54,7 +54,6 @@ export const useTaskManagement = () => {
     
     // Check if there's already an active request with the same parameters
     if (activeRequestsRef.current.has(requestKey)) {
-      console.log('Duplicate request prevented:', requestKey);
       return activeRequestsRef.current.get(requestKey);
     }
     
@@ -90,8 +89,6 @@ export const useTaskManagement = () => {
           filters.search = debouncedSearchTerm;
         }
 
-        console.log('Fetching tasks with params:', { page, limit, search: debouncedSearchTerm });
-        
         // Use unified API client with pagination
         const data = await apiHelpers.fetchTasks(page, limit, filters);
         

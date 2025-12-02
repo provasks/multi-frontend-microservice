@@ -7,11 +7,7 @@ class TaskController {
    */
   async getOverdueTasks(req, res) {
     try {
-      console.log('Getting overdue tasks...');
-      
       const overdueTasks = await taskService.getOverdueTasks();
-      
-      console.log(`Found ${overdueTasks.length} overdue tasks`);
       
       res.json({
         tasks: overdueTasks,

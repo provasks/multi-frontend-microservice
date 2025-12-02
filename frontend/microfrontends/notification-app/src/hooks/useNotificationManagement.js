@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useAuth } from 'sharedComponents/useAuth';
-import { notificationApi, apiHelpers } from 'sharedComponents/unifiedApiClient';
+import { apiHelpers } from 'sharedComponents/unifiedApiClient';
 
 export const useNotificationManagement = () => {
   const [notifications, setNotifications] = useState([]);
@@ -39,12 +39,8 @@ export const useNotificationManagement = () => {
       // Don't check isAuthenticated here - let the API call handle authentication
       // If the cookie is valid, the API will work; if not, it will return 401
 
-      console.log('Fetching notifications using apiHelpers.fetchNotifications()...');
-      
       // Use apiHelpers.fetchNotifications() - same as Dashboard uses
       const data = await apiHelpers.fetchNotifications();
-      
-      console.log('Notification API response data:', data);
       
       // apiHelpers.fetchNotifications() returns { notifications: [...], pagination: {...} }
       let notificationsData = [];
@@ -55,9 +51,6 @@ export const useNotificationManagement = () => {
       } else if (data && data.data && Array.isArray(data.data)) {
         notificationsData = data.data;
       }
-      
-      console.log('Processed notifications data:', notificationsData);
-      console.log('Number of notifications:', notificationsData.length);
       
       // Update notifications state - merge with previous to preserve read status
       setNotifications(prevNotifications => {
@@ -78,15 +71,12 @@ export const useNotificationManagement = () => {
           return serverNotification;
         });
         
-        console.log('Setting notifications to:', merged);
         return merged;
       });
       
       setApiStatus('connected');
     } catch (error) {
-      console.error('Error fetching notifications:', error);
-      console.error('Error response:', error.response);
-      console.error('Error response data:', error.response?.data);
+      console.error('Error fetching notifications:', error.response?.data || error.message);
       setApiStatus('error');
       setNotifications([]);
       
@@ -115,7 +105,6 @@ export const useNotificationManagement = () => {
   useEffect(() => {
     // Only fetch once when auth loading completes
     if (!authLoading && !hasFetchedRef.current) {
-      console.log('Auth loading complete, fetching notifications...');
       hasFetchedRef.current = true;
       fetchNotifications();
     }
@@ -151,28 +140,18 @@ export const useNotificationManagement = () => {
     }
 
     try {
-      const response = await axios.delete(`http://localhost:3003/api/notifications/${notificationId}`, {
-        withCredentials: true,  // CRITICAL: Send cookies with requests
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (response.status === 200) {
-        if (window.showSuccess) {
-          window.showSuccess('Notification deleted successfully!');
-        }
-        fetchNotifications();
-      } else {
-        console.error('Failed to delete notification');
-        if (window.showError) {
-          window.showError('Failed to delete notification');
-        }
+      await apiHelpers.deleteNotification(notificationId);
+      if (window.showSuccess) {
+        window.showSuccess('Notification deleted successfully!');
       }
+      fetchNotifications();
     } catch (error) {
-      console.error('Error deleting notification:', error);
+      console.error('Error deleting notification:', error.response?.data || error.message);
+      if (window.showError) {
+        window.showError('Failed to delete notification');
+      }
     }
-  }, [notifications, fetchNotifications]);
+  }, [fetchNotifications]);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
@@ -240,12 +219,7 @@ export const useNotificationManagement = () => {
         return;
       }
 
-      const response = await axios.patch(`http://localhost:3003/api/notifications/${notificationId}/read`, {}, {
-        withCredentials: true  // CRITICAL: Send cookies
-      });
-      
-      // Axios response has data property, not ok/json like fetch
-      const result = response.data;
+      const result = await apiHelpers.markNotificationAsRead(notificationId);
       if (result.notification && result.notification.isRead === true) {
         if (window.showSuccess) {
           window.showSuccess('Notification marked as read!');

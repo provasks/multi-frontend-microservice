@@ -5,18 +5,6 @@ const NOTIFICATION_SERVICE_URL = process.env.NOTIFICATION_SERVICE_URL || 'http:/
 const notificationService = {
   // Create notification via notification service
   async createNotification(userId, taskId, type, title, message, priority = 'medium', metadata = {}, authToken) {
-    console.log('createNotification called:', {
-      userId,
-      taskId,
-      type,
-      title,
-      message,
-      priority,
-      metadata,
-      hasAuthToken: !!authToken,
-      notificationServiceUrl: NOTIFICATION_SERVICE_URL
-    });
-    
     try {
       const response = await axios.post(`${NOTIFICATION_SERVICE_URL}/api/notifications`, {
         userId,
@@ -33,7 +21,6 @@ const notificationService = {
         }
       });
       
-      console.log(`Notification created successfully: ${type} for user ${userId}`, response.data);
       return response.data;
     } catch (error) {
       console.error('Error creating notification:', {
@@ -49,13 +36,6 @@ const notificationService = {
 
   // Notify task assignment
   async notifyTaskAssignment(userId, taskId, taskTitle, authToken) {
-    console.log('notifyTaskAssignment called:', {
-      userId,
-      taskId,
-      taskTitle,
-      hasAuthToken: !!authToken
-    });
-    
     return this.createNotification(
       userId,
       taskId,
@@ -70,14 +50,6 @@ const notificationService = {
 
   // Notify task status change
   async notifyTaskStatusChange(userId, taskId, taskTitle, oldStatus, newStatus, authToken) {
-    console.log('notifyTaskStatusChange called:', {
-      userId,
-      taskId,
-      taskTitle,
-      oldStatus,
-      newStatus,
-      hasAuthToken: !!authToken
-    });
     
     const statusMessages = {
       'pending': 'Pending',
@@ -156,14 +128,6 @@ const notificationService = {
 
   // Notify task comment
   async notifyTaskComment(userId, taskId, taskTitle, comment, authToken) {
-    console.log('notifyTaskComment called:', {
-      userId,
-      taskId,
-      taskTitle,
-      comment: comment.substring(0, 50) + '...',
-      hasAuthToken: !!authToken
-    });
-    
     return this.createNotification(
       userId,
       taskId,

@@ -76,26 +76,18 @@ const configureApiInstance = (apiInstance) => {
   // Response interceptor - Handle errors and logging
   apiInstance.interceptors.response.use(
     (response) => {
-      // Log successful requests in development
-      if (process.env.NODE_ENV === 'development') {
-        const duration = new Date() - response.config.metadata.startTime;
-        // API request completed successfully
-      }
-      
       return response;
     },
     (error) => {
       // Don't log 401 errors for /auth/me (expected when checking auth status)
       const isAuthCheck = error.config?.url?.includes('/auth/me') && error.response?.status === 401;
       
-      if (!isAuthCheck) {
-        // Log errors (except expected 401s on auth check)
-        console.error('API Error:', {
+      if (!isAuthCheck && error.response?.status >= 500) {
+        // Only log server errors (500+)
+        console.error('API Server Error:', {
           url: error.config?.url,
           method: error.config?.method,
-          status: error.response?.status,
-          message: error.message,
-          data: error.response?.data
+          status: error.response?.status
         });
       }
 

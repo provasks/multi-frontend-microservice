@@ -63,6 +63,18 @@
   background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
+/* Right-align user dropdown menu and prevent overflow */
+.navbar-nav:last-child .dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+  transform-origin: top right;
+}
+
+.navbar-nav:last-child .dropdown-menu.dropdown-menu-end {
+  right: 0 !important;
+  left: auto !important;
+}
+
 /* Smooth transitions for dropdown */
 .dropdown-menu {
   transition: opacity 0.15s linear, transform 0.15s ease-in-out;

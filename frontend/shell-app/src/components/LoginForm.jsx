@@ -76,28 +76,18 @@ const LoginForm = ({ onLogin, login }) => {
     setError('');
     setValidationErrors({});
 
-    console.log('Form data:', formData);
-
     // Validate form data
     const validation = validateLoginForm(formData);
-    console.log('Validation result:', validation);
     
     if (!validation.isValid) {
-      console.log('Validation failed:', validation.errors);
       setValidationErrors(validation.errors);
       setLoading(false);
       return;
     }
 
     try {
-      console.log('Making API call...');
-      // Don't sanitize form data - API expects raw values
-      // Sanitization is only for display purposes, not for API requests
-      console.log('Form data:', formData);
-      
       // Use the login function from useAuth if provided, otherwise use authApi directly
       if (login) {
-        console.log('Calling login function with email:', formData.email);
         await login(formData.email, formData.password);
         // Login successful - the login function from useAuth handles state updates
         // No need to call onLogin - App component will detect authentication state change
@@ -106,8 +96,7 @@ const LoginForm = ({ onLogin, login }) => {
         }
       } else {
         // Fallback: use authApi directly (shouldn't happen if login prop is provided)
-        const response = await authApi.post('/auth/login', formData);
-        console.log('API response:', response);
+        await authApi.post('/auth/login', formData);
         
         if (window.showSuccess) {
           window.showSuccess('Login successful!');
@@ -119,37 +108,25 @@ const LoginForm = ({ onLogin, login }) => {
         }
       }
     } catch (err) {
-      console.error('Login error:', err);
-      console.error('Error details:', err);
-      
       let errorMessage = 'Login failed';
       
       if (err.response) {
         // Server responded with error status
         const errorData = err.response.data;
-        console.log('Server error response:', errorData);
-        console.log('Full error data:', JSON.stringify(errorData, null, 2));
         
         // Handle validation errors (400 with errors array)
         if (err.response.status === 400 && errorData.errors && Array.isArray(errorData.errors)) {
-          console.log('Validation errors array:', errorData.errors);
-          const validationErrors = errorData.errors.map(e => {
-            console.log('Error object:', e);
-            return e.msg || e.message || JSON.stringify(e);
-          }).join(', ');
+          const validationErrors = errorData.errors.map(e => e.msg || e.message || JSON.stringify(e)).join(', ');
           errorMessage = `Validation error: ${validationErrors}`;
-          console.log('Final error message:', errorMessage);
         } else {
           errorMessage = errorData?.error || errorData?.message || `Server error: ${err.response.status}`;
         }
       } else if (err.request) {
         // Request was made but no response received
         errorMessage = 'No response from server. Please check your connection.';
-        console.log('No response error:', err.request);
       } else {
         // Something else happened
         errorMessage = err.message || 'An unexpected error occurred';
-        console.log('Other error:', err.message);
       }
       
       setError(errorMessage);

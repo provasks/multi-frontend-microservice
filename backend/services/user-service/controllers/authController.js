@@ -66,15 +66,8 @@ class AuthController {
    */
   async login(req, res) {
     try {
-      // Log the incoming request for debugging
-      console.log('Login request received');
-      console.log('Request body:', req.body);
-      console.log('Request headers:', req.headers);
-      console.log('Content-Type:', req.headers['content-type']);
-      
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        console.error('Login validation errors:', JSON.stringify(errors.array(), null, 2));
         return res.status(400).json({ 
           error: 'Validation failed',
           errors: errors.array() 
@@ -82,10 +75,6 @@ class AuthController {
       }
 
       const { email, password } = req.body;
-      
-      // Log the received data for debugging
-      console.log('Login attempt for email:', email);
-      
       const user = await userService.authenticateUser(email, password);
       
       if (!user) {
